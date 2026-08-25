@@ -1,0 +1,27 @@
+---
+interface Item {
+  title: string;
+  text: string;
+}
+
+interface Props {
+  heading: string;
+  items: Item[];
+}
+
+const { heading, items } = Astro.props;
+---
+
+<section class="info-section wrap">
+  <h3>{heading}</h3>
+  <div class="grid">
+    {
+      items.map((item) => (
+        <div class="card">
+          <b>{item.title}</b>
+          <p>{item.text}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>

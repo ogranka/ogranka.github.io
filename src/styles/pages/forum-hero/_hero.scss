@@ -1,0 +1,180 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+
+  // Виньетка поверх canvas, чтобы текст читался на любом рельефе
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(105% 78% at 12% 46%, rgba(5, 11, 28, .82) 0%, rgba(5, 11, 28, .22) 52%, transparent 74%),
+      linear-gradient(to bottom, rgba(5, 11, 28, .6) 0%, transparent 24%, transparent 82%, rgba(5, 11, 28, .92) 100%);
+  }
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-in {
+  position: relative;
+  z-index: 2;
+  padding: 104px 0 104px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+
+  &::before {
+    content: "";
+    width: 44px;
+    height: 1.5px;
+    background: var(--cyan);
+  }
+}
+
+h1 {
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -.026em;
+  max-width: 19ch;
+  margin-bottom: 24px;
+
+  em {
+    font-style: normal;
+    color: var(--cyan);
+  }
+}
+
+.lede {
+  font-size: clamp(.98rem, 1.2vw, 1.14rem);
+  color: var(--ink-dim);
+  max-width: 50ch;
+  margin-bottom: 34px;
+  font-weight: 300;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 34px;
+  margin-bottom: 36px;
+
+  div {
+    display: flex;
+    align-items: baseline;
+    gap: 11px;
+  }
+
+  b {
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+
+  small {
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  // Появляется по таймеру, а не по наблюдателю: он отсекает нижние 8% экрана,
+  // а подсказка стоит у самого низа — условие показа не наступало никогда.
+  opacity: 0;
+  animation: hintIn .8s cubic-bezier(.2, .7, .3, 1) .55s forwards;
+
+  i {
+    display: block;
+    width: 1px;
+    height: 42px;
+    background: linear-gradient(var(--cyan), transparent);
+    animation: drop 2.1s ease-in-out infinite;
+  }
+}
+
+@keyframes hintIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drop {
+  0%,
+  100% {
+    opacity: .25;
+    transform: scaleY(.45);
+    transform-origin: top;
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+}
+
+@media (max-width: 860px) {
+  .hero-in {
+    padding: 112px 0 90px;
+  }
+
+  .meta {
+    gap: 12px 22px;
+  }
+
+  // На телефоне спорит с меткой концепта
+  .scroll-hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint {
+    opacity: 1;
+    animation: none;
+
+    i {
+      animation: none;
+    }
+  }
+}

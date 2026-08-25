@@ -1,0 +1,13 @@
+---
+interface Props {
+  title: string;
+  text: string;
+}
+
+const { title, text } = Astro.props;
+---
+
+<section class="cta-box wrap">
+  <b>{title}</b>
+  <p>{text}</p>
+</section>

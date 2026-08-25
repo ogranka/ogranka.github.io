@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import InfoSection from '../components/InfoSection.astro';
+import CtaBox from '../components/CtaBox.astro';
+import BrowserFrame from '../components/compare/BrowserFrame.astro';
+import CompareSlider from '../components/compare/CompareSlider.astro';
+import SiteBefore from '../components/compare/SiteBefore.astro';
+import SiteAfter from '../components/compare/SiteAfter.astro';
+import ArrowsOut from '../assets/icons/arrows-out.svg';
+import '../styles/pages/before-after.scss';
+
+const changes = [
+  {
+    title: 'Цены вместо «договорной»',
+    text: '«Договорная» читается как «дорого и по настроению». Конкретная цифра снимает страх звонка.',
+  },
+  {
+    title: 'Одно действие вместо шести ссылок',
+    text: 'Было меню из шести пунктов и гостевая книга. Стало — одна кнопка «Записаться», к которой ведёт вся страница.',
+  },
+  {
+    title: 'Иерархия вместо крика',
+    text: 'Бегущая строка и мигающий текст требуют внимания, но не отвечают ни на один вопрос пациента. Теперь главное крупно, второстепенное — тише.',
+  },
+  {
+    title: 'Доверие деталями',
+    text: 'Живой отзыв, лицензия, часы работы, адрес. Не «мы рады приветствовать Вас», а факты, которые проверяются.',
+  },
+  {
+    title: 'Адаптив',
+    text: 'Старая версия на телефоне требует лупы. Новая перестраивается: сузьте окно браузера и подвигайте шторку ещё раз.',
+  },
+  {
+    title: 'Скорость',
+    text: 'Обе панели на этой странице — чистый HTML и CSS, без единой библиотеки. Страница целиком легче одной фотографии со старого сайта.',
+  },
+];
+---
+
+<BaseLayout title="Было → стало: один сайт, два впечатления">
+  <PageHeader crumb="интерактивный кейс">
+    <Fragment slot="title">
+      Тот же сайт. Та же информация. <em>Другое&nbsp;впечатление.</em>
+    </Fragment>
+    <Fragment slot="lede">
+      Слева — сайт, каким он встретил 2012 год и в котором живёт до сих пор. Справа — он же после
+      переработки: контент не изменился, изменилась подача.
+    </Fragment>
+    <div class="hint">
+      <ArrowsOut />
+      Двигайте шторку — мышью, пальцем или стрелками ←→
+    </div>
+  </PageHeader>
+
+  <div class="wrap">
+    <BrowserFrame url="denta-lux-clinic.ru — демонстрация, вымышленная клиника">
+      <CompareSlider>
+        <SiteBefore slot="before" />
+        <SiteAfter slot="after" />
+      </CompareSlider>
+    </BrowserFrame>
+    <p class="after-note">
+      «Дента-Люкс» — вымышленная клиника. Оба варианта сверстаны с нуля для этой демонстрации;
+      совпадения с реальными сайтами — свойство эпохи, а не цитата.
+    </p>
+  </div>
+
+  <InfoSection heading="Что именно изменилось" items={changes} />
+
+  <CtaBox
+    title="У вашего сайта тоже есть «было»?"
+    text="Переработка не означает «всё выбросить». Контент, структура и то, что уже работает, — остаются. Меняется подача, скорость и путь посетителя до заявки."
+  />
+</BaseLayout>

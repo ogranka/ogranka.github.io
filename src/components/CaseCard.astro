@@ -1,0 +1,18 @@
+---
+interface Props {
+  href: string;
+  kicker: string;
+  title: string;
+  description: string;
+  cta: string;
+}
+
+const { href, kicker, title, description, cta } = Astro.props;
+---
+
+<a class="case-card" href={href}>
+  <i class="kicker">{kicker}</i>
+  <b class="title">{title}</b>
+  <p>{description}</p>
+  <span class="go">{cta} →</span>
+</a>

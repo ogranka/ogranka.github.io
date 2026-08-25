@@ -1,0 +1,19 @@
+.cta-box {
+  margin: 0 auto 90px;
+  padding: 34px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  border: 1px solid #f0d9cd;
+
+  b {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+
+  p {
+    margin-top: 8px;
+    color: #7c4a34;
+    max-width: 60ch;
+  }
+}

@@ -1,0 +1,25 @@
+@use '../global';
+@use '../components/page-header';
+@use '../components/case-card';
+@use '../components/site-footer';
+
+:root {
+  --wrap-max: 980px;
+  --header-pad: 72px 0 30px;
+}
+
+.services {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  span {
+    font-size: 13.5px;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 7px 14px;
+    color: var(--dim);
+  }
+}

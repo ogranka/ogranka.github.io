@@ -1,0 +1,51 @@
+.cases {
+  margin: 46px auto 90px;
+  display: grid;
+  gap: 16px;
+}
+
+.case-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 26px 28px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .25s, box-shadow .25s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px -24px rgba(28, 26, 23, .35);
+  }
+
+  .kicker {
+    display: block;
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+
+  p {
+    margin-top: 8px;
+    color: var(--dim);
+    font-size: .97rem;
+    max-width: 64ch;
+  }
+
+  .go {
+    margin-top: 14px;
+    display: inline-block;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+}

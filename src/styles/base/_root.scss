@@ -1,0 +1,13 @@
+:root {
+  --paper: #faf8f4;
+  --ink: #1c1a17;
+  --dim: #6d675e;
+  --line: #e5e0d7;
+  --accent: #c2451e;
+  --accent-soft: #fbeee8;
+  --ok: #2c6e49;
+  --bad: #b3261e;
+
+  // Переопределяются на уровне страницы
+  --wrap-max: 980px;
+}

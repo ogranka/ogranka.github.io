@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Golos Text', system-ui, sans-serif;
+  line-height: 1.55;
+}
+
+.wrap {
+  width: min(var(--wrap-max), 94vw);
+  margin: 0 auto;
+}

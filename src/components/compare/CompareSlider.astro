@@ -1,0 +1,32 @@
+---
+import Chevrons from '../../assets/icons/chevrons.svg';
+---
+
+<div class="compare" data-compare>
+  <span class="tag b">Было</span>
+  <span class="tag a">Стало</span>
+
+  <!-- «Стало» — нижний слой, «Было» — верхний, обрезается шторкой -->
+  <div class="pane after"><slot name="after" /></div>
+  <div class="pane before"><slot name="before" /></div>
+
+  <div class="divider">
+    <button
+      class="knob"
+      data-knob
+      role="slider"
+      aria-label="Шторка сравнения: влево — было, вправо — стало"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="50"
+    >
+      <Chevrons />
+    </button>
+  </div>
+</div>
+
+<script>
+  import { initCompareSliders } from '../../scripts/compare-slider';
+
+  initCompareSliders();
+</script>

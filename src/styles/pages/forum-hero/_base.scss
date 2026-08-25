@@ -1,0 +1,123 @@
+// У концепта форума собственная тёмная палитра, не связанная с токенами портфолио.
+:root {
+  --bg: #050b1c;
+  --bg-2: #081228;
+  --ink: #eaf2ff;
+  --ink-dim: #8fa3c4;
+  --line: rgba(140, 175, 225, .14);
+  --cyan: #35d6d0;
+  --copper: #f0913a;
+  --font: 'Manrope', 'Helvetica Neue', Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  width: min(1240px, 92vw);
+  margin: 0 auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .01em;
+  padding: 13px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+  background: var(--copper);
+  color: #1a0d02;
+  transition: transform .25s cubic-bezier(.2, .7, .3, 1), box-shadow .25s;
+  box-shadow: 0 6px 24px -8px rgba(240, 145, 58, .8);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 34px -8px rgba(240, 145, 58, .95);
+  }
+
+  &.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    box-shadow: none;
+
+    &:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+  }
+}
+
+// Плавное появление блоков при попадании в кадр
+.rise {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .85s cubic-bezier(.2, .7, .3, 1), transform .85s cubic-bezier(.2, .7, .3, 1);
+
+  &.on {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.concept-badge {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  background: rgba(5, 11, 28, .72);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 860px) {
+  .concept-badge {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .btn {
+    transition: none;
+  }
+}

@@ -1,0 +1,35 @@
+---
+// Мини-сайт внутри дорожки. У тяжёлой версии есть баннер и куки-плашка,
+// которые «приезжают» по сценарию; лёгкая обходится без них.
+interface Props {
+  variant: 'heavy' | 'light';
+}
+
+const { variant } = Astro.props;
+---
+
+<div class="demo" data-demo style="display:none">
+  {variant === 'heavy' && <div class="d-banner" data-banner>🔥 СКИДКА −20% НА ВСЁ! Только сегодня!</div>}
+  <div class="d-head">
+    <span class="d-logo" data-ghost="fonts">Пекарня «Колос»</span>
+    <nav class="d-nav" data-ghost="fonts"><span>Меню</span><span>Доставка</span><span>О нас</span></nav>
+  </div>
+  <div class="d-hero" data-ghost="content">
+    <h4>Свежий хлеб к 8 утра</h4>
+    <p>Печём на закваске каждый день. Доставка по району за 40 минут.</p>
+    <span class="d-btn">Заказать</span>
+  </div>
+  <div class="d-grid" data-ghost="content">
+    <div class="d-card"><b>Бородинский</b><i>120 ₽</i></div>
+    <div class="d-card"><b>Багет</b><i>90 ₽</i></div>
+    <div class="d-card"><b>Круассан</b><i>140 ₽</i></div>
+  </div>
+  {
+    variant === 'heavy' && (
+      <div class="d-cookie" data-cookie>
+        <span>Мы используем cookie, нажимая «Ок» вы соглашаетесь…</span>
+        <u>Ок</u>
+      </div>
+    )
+  }
+</div>

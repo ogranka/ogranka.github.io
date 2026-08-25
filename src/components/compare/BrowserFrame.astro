@@ -1,0 +1,12 @@
+---
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+---
+
+<div class="browser-frame">
+  <div class="chrome"><i></i><i></i><i></i><span class="url">{url}</span></div>
+  <slot />
+</div>

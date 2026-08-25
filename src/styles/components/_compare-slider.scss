@@ -1,0 +1,107 @@
+@use '../abstracts/variables' as *;
+
+.compare {
+  position: relative;
+  --x: 44%;
+  touch-action: pan-y;
+  cursor: ew-resize;
+
+  .pane {
+    width: 100%;
+
+    &.before {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      clip-path: inset(0 calc(100% - var(--x)) 0 0);
+
+      .site {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .b-body {
+        flex: 1;
+      }
+    }
+  }
+
+  .divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--x);
+    z-index: 4;
+    width: 0;
+    pointer-events: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -1.5px;
+      width: 3px;
+      background: var(--ink);
+    }
+  }
+
+  .knob {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-shadow: 0 6px 20px rgba(28, 26, 23, .4);
+    pointer-events: auto;
+    cursor: ew-resize;
+    border: 0;
+
+    &:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+  }
+
+  .tag {
+    position: absolute;
+    top: 14px;
+    z-index: 3;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    pointer-events: none;
+
+    &.b {
+      left: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--dim);
+    }
+
+    &.a {
+      right: 14px;
+      background: var(--ink);
+      color: #fff;
+    }
+  }
+}
+
+@media (max-width: $bp-mobile) {
+  .compare .knob {
+    width: 44px;
+    height: 44px;
+  }
+}

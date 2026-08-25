@@ -1,0 +1,20 @@
+---
+interface Props {
+  crumb?: string;
+}
+
+const { crumb } = Astro.props;
+---
+
+<header class="page-header wrap">
+  {
+    crumb && (
+      <div class="crumb">
+        <a href="/">Портфолио</a> · {crumb}
+      </div>
+    )
+  }
+  <h1><slot name="title" /></h1>
+  <p class="lede"><slot name="lede" /></p>
+  <slot />
+</header>

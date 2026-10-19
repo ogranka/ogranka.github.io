@@ -1,0 +1,19 @@
+@use '../components/page-header';
+@use '../components/phone-strip';
+@use '../components/case-spec';
+@use '../components/info-section';
+@use '../components/cta-box';
+
+:root {
+  --title-max: 24ch;
+}
+
+.note {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--dim);
+}
+
+.info-section .grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}

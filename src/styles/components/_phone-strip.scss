@@ -1,0 +1,118 @@
+@use '../abstracts/variables' as *;
+
+.phones {
+  margin-top: 32px;
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-bottom: 20px;
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    button {
+      flex: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--dim);
+      transition: background .2s, color .2s;
+
+      &[aria-selected='true'] {
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+      }
+    }
+  }
+
+  &__open {
+    font-size: 15px;
+    color: var(--dim);
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
+
+    &:hover {
+      color: var(--ink);
+    }
+  }
+
+  &__noscript {
+    margin-bottom: 16px;
+    color: var(--dim);
+    font-size: 15px;
+  }
+
+  &__strip {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+    padding: 6px 0 14px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.phone {
+  flex: 0 0 340px;
+  width: 340px;
+  scroll-snap-align: start;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+
+  iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 390 / 844;
+    border: 0;
+    border-radius: 40px;
+    background: #fcf8f7;
+    box-shadow: 0 0 0 9px #1f2326, 0 0 0 10px #4a4f57, 0 30px 60px -24px rgba(0, 0, 0, .45);
+  }
+
+  figcaption {
+    font-size: 14px;
+    color: var(--dim);
+  }
+
+  @media (max-width: $bp-mobile) {
+    flex-basis: 100%;
+    width: 100%;
+    max-width: 390px;
+
+    iframe {
+      border-radius: 34px;
+      box-shadow: 0 0 0 7px #1f2326, 0 0 0 8px #4a4f57, 0 24px 50px -24px rgba(0, 0, 0, .45);
+    }
+  }
+}
+
+@media (max-width: $bp-mobile) {
+  .phones__strip {
+    gap: 20px;
+    padding-inline: 2px;
+  }
+}

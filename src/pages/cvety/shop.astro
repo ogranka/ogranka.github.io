@@ -1,0 +1,439 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import ShopLogo from '../../components/cvety/ShopLogo.astro';
+import { lists, hero, categories, gallery, featured, rub } from '../../data/cvety';
+import onestCyr from '../../assets/fonts/onest-cyrillic.woff2?url';
+import oswaldCyr from '../../assets/fonts/oswald-cyrillic.woff2?url';
+import '../../styles/pages/cvety-shop.scss';
+
+const photos = import.meta.glob<{ default: ImageMetadata }>('../../assets/cvety/*.webp', { eager: true });
+const photo = (key: string) => photos[`../../assets/cvety/${key}.webp`].default;
+
+const cardSizes = '(max-width: 480px) 46vw, 220px';
+const phone = '+7 999 000-00-00';
+const phoneHref = 'tel:+79990000000';
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <title>Пион и мята, доставка букетов</title>
+    <meta name="description" content="Демонстрационный магазин букетов: каталог, фильтр, сборка букета, корзина и оформление заказа." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#fcf8f7" />
+    <link rel="preload" href={onestCyr} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={oswaldCyr} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23e4476f'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3.3 6.5L4 20l1.2-3.6A8 8 0 0 1 4 12Z"></path><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"></path></symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2Z"></path></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z"></path></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"></path></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"></path></symbol>
+        <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
+        <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></symbol>
+        <symbol id="i-card" viewBox="0 0 48 48"><rect x="7" y="12" width="34" height="24" rx="3"></rect><path d="m7 14 17 12 17-12"></path></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 11v6M14 11v6M6.5 7l1 13h9l1-13M9 7V4h6v3"></path></symbol>
+      </defs>
+    </svg>
+
+    <div class="app" id="app">
+      <!-- ГЛАВНАЯ -->
+      <main class="screen" data-screen="home">
+        <section class="hero" aria-roledescription="слайдер" aria-label="Подборки">
+          <header class="topbar topbar--over">
+            <ShopLogo tone="light" />
+            <a class="round round--glass" href={phoneHref} aria-label="Позвонить"><svg><use href="#i-phone"></use></svg></a>
+          </header>
+          <div class="hero__track" id="heroTrack">
+            {
+              hero.map((slide, index) => (
+                <a class="hero__slide" href="#catalog">
+                  <Image src={photo(slide.img)} alt={slide.alt} widths={[480, 720, 960]} sizes="100vw" loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} />
+                  <h2>{slide.title}</h2>
+                </a>
+              ))
+            }
+          </div>
+          <div class="hero__dots" id="heroDots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+        </section>
+
+        <section class="promo" aria-label="Скидка по промокоду">
+          <p class="promo__big">−15%</p>
+          <div class="promo__body">
+            <p>на первый заказ по&nbsp;промокоду</p>
+            <button class="code" type="button" data-copy="МЯТА"><span>МЯТА</span><svg><use href="#i-copy"></use></svg></button>
+          </div>
+        </section>
+
+        <nav class="circles" aria-label="Разделы">
+          {
+            categories.map((cat) => (
+              <a href="#catalog">
+                <Image src={photo(cat.img)} alt="" width={184} height={184} loading="lazy" />
+                <span>{cat.name}</span>
+              </a>
+            ))
+          }
+        </nav>
+
+        <section class="block">
+          <div class="block__head"><h2 class="display">Сейчас сезон</h2><a href="#catalog" class="link">Все</a></div>
+          <div class="grid">
+            {
+              lists.season.map((p) => (
+                <article class="pcard">
+                  <a class="pcard__photo" href="#product">
+                    <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
+                    {p.sale && <span class="badge">−15% по МЯТА</span>}
+                  </a>
+                  <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+                  <a class="pcard__name" href="#product">{p.name}</a>
+                  <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
+                </article>
+              ))
+            }
+          </div>
+        </section>
+      </main>
+
+      <!-- КАТАЛОГ -->
+      <main class="screen" data-screen="catalog" hidden>
+        <header class="topbar topbar--sticky">
+          <ShopLogo />
+          <a class="round" href={phoneHref} aria-label="Позвонить"><svg><use href="#i-phone"></use></svg></a>
+        </header>
+
+        <div class="cat-head">
+          <h1 class="display">Авторские букеты</h1>
+          <p class="muted">16 букетов, привезём за&nbsp;2&nbsp;часа</p>
+        </div>
+
+        <nav class="chips" aria-label="Подкатегории">
+          <a href="#catalog">Все букеты</a>
+          <a href="#catalog" aria-current="page">Авторские</a>
+          <a href="#catalog">Монобукеты</a>
+          <a href="#catalog">До 6&nbsp;000&nbsp;₽</a>
+          <a href="#catalog">До 10&nbsp;000&nbsp;₽</a>
+          <a href="#catalog">Большие</a>
+          <a href="#catalog">С эвкалиптом</a>
+          <a href="#catalog">На день рождения</a>
+        </nav>
+
+        <div class="toolbar">
+          <button class="pill pill--line" type="button" data-sheet="filter"><svg><use href="#i-filter"></use></svg>Фильтр<b class="count" id="filterCount">2</b></button>
+          <button class="pill pill--ghost" type="button" data-sheet="sort" id="sortBtn">Сначала популярные<svg><use href="#i-down"></use></svg></button>
+        </div>
+
+        <div class="grid" id="catalogGrid">
+          {
+            lists.catalog.map((p, index) => (
+              <article class="pcard" data-price={p.price} data-sale={p.sale ? '' : undefined}>
+                <a class="pcard__photo" href="#product">
+                  <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading={index > 1 ? 'lazy' : 'eager'} />
+                  {p.sale && <span class="badge">−15% по МЯТА</span>}
+                </a>
+                <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+                <a class="pcard__name" href="#product">{p.name}</a>
+                <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
+              </article>
+            ))
+          }
+        </div>
+        <p class="empty muted" id="catalogEmpty" hidden>По этим условиям ничего нет. Сбросьте фильтр, чтобы увидеть все букеты.</p>
+      </main>
+
+      <!-- КАРТОЧКА ТОВАРА -->
+      <main class="screen" data-screen="product" hidden>
+        <header class="topbar topbar--sticky">
+          <a class="round" href="#catalog" aria-label="Назад в каталог"><svg><use href="#i-back"></use></svg></a>
+          <ShopLogo />
+          <button class="round" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+        </header>
+
+        <div class="gallery">
+          <div class="gallery__track" id="galTrack">
+            {gallery.map((g, index) => <Image src={photo(g.img)} alt={g.alt} widths={[480, 720, 960]} sizes="100vw" loading={index === 0 ? 'eager' : 'lazy'} />)}
+          </div>
+          <span class="gallery__count" id="galCount">1 из {gallery.length}</span>
+        </div>
+
+        <div class="pd">
+          <h1 class="pd__title">{featured.name}</h1>
+          <p class="pd__price">{rub(featured.price)}</p>
+          <ul class="pd__delivery">
+            <li><svg><use href="#i-clock"></use></svg>Привезём сегодня за&nbsp;2&nbsp;часа</li>
+            <li><svg><use href="#i-clock"></use></svg>К точному времени +1&nbsp;500&nbsp;₽</li>
+          </ul>
+          <p class="pd__text">Пионы «Сара Бернар» 15&nbsp;шт, веточки мяты и&nbsp;эвкалипта, пудровая бумага, аквабокс.</p>
+        </div>
+
+        <section class="block block--tight">
+          <h2 class="display">Настройте букет</h2>
+          <div class="tune">
+            <button class="tune__tile" type="button" data-sheet="card">
+              <span class="tune__art tune__art--card"><svg><use href="#i-card"></use></svg></span>
+              <span class="tune__name">Открытка</span>
+              <span class="tune__val" id="cardVal">Бесплатно, напишем ваш текст</span>
+            </button>
+            <button class="tune__tile" type="button" data-sheet="ribbon">
+              <span class="tune__art tune__art--ribbon" id="ribbonArt"><i style="--c:#f4c9d3"></i><i style="--c:#ffffff"></i><i style="--c:#bfe3d6"></i><i style="--c:#7a2842"></i></span>
+              <span class="tune__name">Лента</span>
+              <span class="tune__val" id="ribbonVal">8 цветов на выбор</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="block block--tight">
+          <h2 class="display">Подробности</h2>
+          <dl class="spec">
+            <div><dt>Высота</dt><dd>45–50 см</dd></div>
+            <div><dt>Диаметр</dt><dd>40 см</dd></div>
+            <div><dt>Аквабокс с водой</dt><dd><svg aria-label="есть"><use href="#i-check"></use></svg></dd></div>
+            <div><dt>Средство для стойкости</dt><dd><svg aria-label="есть"><use href="#i-check"></use></svg></dd></div>
+            <div><dt>Инструкция по уходу</dt><dd><svg aria-label="есть"><use href="#i-check"></use></svg></dd></div>
+          </dl>
+        </section>
+
+        <section class="block">
+          <div class="block__head"><h2 class="display">Добавить к заказу</h2></div>
+          <div class="rail">
+            {
+              lists.upsell.map((p) => (
+                <article class="pcard">
+                  <a class="pcard__photo" href="#product">
+                    <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
+                  </a>
+                  <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+                  <a class="pcard__name" href="#product">{p.name}</a>
+                  <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
+                </article>
+              ))
+            }
+          </div>
+        </section>
+      </main>
+
+      <!-- ОФОРМЛЕНИЕ ЗАКАЗА -->
+      <main class="screen screen--checkout" data-screen="checkout" hidden>
+        <header class="topbar topbar--sticky">
+          <button class="round" type="button" data-co-back aria-label="Назад"><svg><use href="#i-back"></use></svg></button>
+          <h1 class="display co__title">Оформление</h1>
+          <span class="round round--blank" aria-hidden="true"></span>
+        </header>
+
+        <ol class="steps" id="coSteps" aria-label="Шаги оформления">
+          <li aria-current="step"><span>Получатель</span></li>
+          <li><span>Доставка</span></li>
+          <li><span>Открытка</span></li>
+          <li><span>Оплата</span></li>
+        </ol>
+
+        <div class="co__empty" id="coEmpty" hidden>
+          <p class="display">Корзина пустая</p>
+          <p class="muted">Нажмите на цену под букетом, и он окажется здесь.</p>
+          <a class="pill pill--ink pill--wide" href="#catalog">В каталог</a>
+        </div>
+
+        <form class="co" id="coForm" novalidate>
+          <fieldset class="co__step" data-step="1">
+            <legend class="display">Кому и куда</legend>
+            <label class="fld" data-fld>
+              <span class="fld__label">Имя получателя</span>
+              <input name="name" type="text" autocomplete="name" required minlength="2" placeholder="Анна" />
+              <span class="fld__err" aria-live="polite"></span>
+            </label>
+            <label class="fld" data-fld>
+              <span class="fld__label">Телефон получателя</span>
+              <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+7 900 000-00-00" />
+              <span class="fld__err" aria-live="polite"></span>
+            </label>
+            <label class="fld" data-fld id="addressFld">
+              <span class="fld__label">Адрес</span>
+              <input name="address" type="text" autocomplete="street-address" required placeholder="Улица, дом, квартира" />
+              <span class="fld__err" aria-live="polite"></span>
+            </label>
+            <label class="switch"><span>Сюрприз: адрес уточним у получателя по телефону</span><input type="checkbox" name="surprise" /><i></i></label>
+            <label class="fld" data-fld>
+              <span class="fld__label">Ваш телефон для связи</span>
+              <input name="sender" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+7 900 000-00-00" />
+              <span class="fld__err" aria-live="polite"></span>
+            </label>
+          </fieldset>
+
+          <fieldset class="co__step" data-step="2" hidden>
+            <legend class="display">Когда привезти</legend>
+            <div class="fgroup">
+              <h3>День</h3>
+              <div class="opts" id="dayOpts" role="group" aria-label="День доставки"></div>
+            </div>
+            <div class="fgroup">
+              <h3>Интервал</h3>
+              <div class="opts" id="slotOpts" role="group" aria-label="Интервал доставки">
+                <button type="button" aria-pressed="false" data-slot="10:00–13:00">10:00–13:00</button>
+                <button type="button" aria-pressed="false" data-slot="13:00–16:00">13:00–16:00</button>
+                <button type="button" aria-pressed="false" data-slot="16:00–19:00">16:00–19:00</button>
+                <button type="button" aria-pressed="false" data-slot="19:00–22:00">19:00–22:00</button>
+              </div>
+              <p class="fld__err" id="slotErr" aria-live="polite"></p>
+            </div>
+            <div class="fgroup">
+              <label class="switch"><span>К точному времени, +1&nbsp;500&nbsp;₽</span><input type="checkbox" name="exact" /><i></i></label>
+              <label class="fld" data-fld id="exactFld" hidden>
+                <span class="fld__label">Время</span>
+                <input name="exactTime" type="time" />
+                <span class="fld__err" aria-live="polite"></span>
+              </label>
+            </div>
+            <p class="muted small">Доставка по городу 400&nbsp;₽, от 5&nbsp;000&nbsp;₽ бесплатно.</p>
+          </fieldset>
+
+          <fieldset class="co__step" data-step="3" hidden>
+            <legend class="display">Открытка</legend>
+            <p class="muted">Напечатаем текст на открытке и вложим в конверт. Это бесплатно.</p>
+            <label class="switch"><span>Без открытки</span><input type="checkbox" name="noCard" /><i></i></label>
+            <label class="field" id="coCardField"><span class="sr">Текст открытки</span><textarea name="card" id="coCardText" maxlength="200" rows="4" placeholder="Например: С днём рождения, мама! Люблю тебя"></textarea></label>
+            <p class="hint"><span id="coCardLen">0</span> из 200 знаков</p>
+          </fieldset>
+
+          <fieldset class="co__step" data-step="4" hidden>
+            <legend class="display">Оплата</legend>
+            <div class="pay" role="radiogroup" aria-label="Способ оплаты">
+              <label class="pay__opt"><input type="radio" name="pay" value="Картой онлайн" checked /><span>Картой онлайн</span><small>Visa, Mir, Mastercard</small></label>
+              <label class="pay__opt"><input type="radio" name="pay" value="СБП" /><span>СБП</span><small>По QR-коду в приложении банка</small></label>
+              <label class="pay__opt"><input type="radio" name="pay" value="Курьеру" /><span>Курьеру</span><small>Наличными или картой при получении</small></label>
+            </div>
+            <div class="summary" id="coSummary"></div>
+            <label class="agree" data-fld>
+              <input type="checkbox" name="agree" required />
+              <span>Согласен на обработку персональных данных и с условиями доставки</span>
+              <span class="fld__err" aria-live="polite"></span>
+            </label>
+          </fieldset>
+
+          <div class="co__nav">
+            <button type="button" class="pill pill--line" data-co-prev hidden>Назад</button>
+            <button type="button" class="pill pill--ink" data-co-next>Дальше</button>
+          </div>
+        </form>
+
+        <section class="co__done" id="coDone" hidden aria-live="polite">
+          <span class="co__done-mark"><svg><use href="#i-check"></use></svg></span>
+          <h2 class="display">Заказ принят</h2>
+          <p id="coDoneText"></p>
+          <p class="muted">Это демонстрация: ничего не списано и никто не приедет. В рабочем магазине здесь был бы номер заказа и смс.</p>
+          <a class="pill pill--ink pill--wide" href="#catalog">Вернуться в каталог</a>
+        </section>
+      </main>
+
+      <!-- Плавающий блок действий, общий для всех экранов -->
+      <div class="dock" id="dock">
+        <button class="dock__buy" type="button" id="buyBtn" hidden>В корзину за&nbsp;{rub(featured.price)}</button>
+        <button class="round round--ink" type="button" data-sheet="search" aria-label="Поиск" id="searchBtn"><svg><use href="#i-search"></use></svg></button>
+        <button class="round round--ink" type="button" data-sheet="cart" aria-label="Корзина"><svg><use href="#i-bag"></use></svg><b class="count" id="cartCount" hidden>0</b></button>
+        <button class="round round--soft" type="button" data-sheet="chat" aria-label="Написать нам"><svg><use href="#i-chat"></use></svg></button>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <!-- Шторка снизу -->
+      <div class="scrim" id="scrim" hidden></div>
+      <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+        <div class="sheet__grip" aria-hidden="true"></div>
+        <header class="sheet__head">
+          <h2 class="display" id="sheetTitle"></h2>
+          <button class="round round--flat" type="button" data-close aria-label="Закрыть"><svg><use href="#i-close"></use></svg></button>
+        </header>
+        <div class="sheet__body" id="sheetBody"></div>
+      </section>
+
+      <template id="t-filter">
+        <div class="fgroup">
+          <h3>Цена</h3>
+          <div class="range"><label>от<input type="text" inputmode="numeric" name="min" value="3 000" /></label><label>до<input type="text" inputmode="numeric" name="max" value="25 000" /></label></div>
+        </div>
+        <div class="fgroup">
+          <h3>Цветы в составе</h3>
+          <div class="opts">
+            <button type="button" aria-pressed="true">Пионы</button><button type="button" aria-pressed="true">Розы</button><button type="button" aria-pressed="false">Гортензии</button><button type="button" aria-pressed="false">Тюльпаны</button><button type="button" aria-pressed="false">Эустома</button><button type="button" aria-pressed="false">Анемоны</button><button type="button" aria-pressed="false">Эвкалипт</button><button type="button" aria-pressed="false">Георгины</button>
+          </div>
+        </div>
+        <div class="fgroup">
+          <h3>Оттенок</h3>
+          <div class="swatches">
+            <button type="button" aria-pressed="false" aria-label="Белый" style="--c:#ffffff"></button><button type="button" aria-pressed="true" aria-label="Розовый" style="--c:#f6a9c0"></button><button type="button" aria-pressed="false" aria-label="Сиреневый" style="--c:#b7a6dc"></button><button type="button" aria-pressed="false" aria-label="Голубой" style="--c:#a9c8ea"></button><button type="button" aria-pressed="false" aria-label="Персиковый" style="--c:#f5b48f"></button><button type="button" aria-pressed="false" aria-label="Бордовый" style="--c:#8a2a44"></button><button type="button" aria-pressed="false" aria-label="Разноцветный" style="--c:conic-gradient(#f6a9c0,#f5b48f,#f3d36b,#a9c8ea,#b7a6dc,#f6a9c0)"></button>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label class="switch"><span>Только со скидкой по МЯТА</span><input type="checkbox" name="sale" /><i></i></label>
+          <label class="switch"><span>Есть в наличии сегодня</span><input type="checkbox" checked /><i></i></label>
+        </div>
+        <div class="sheet__foot">
+          <button class="pill pill--line" type="button" data-reset>Сбросить</button>
+          <button class="pill pill--ink" type="button" data-apply>Показать <span data-apply-count>16</span></button>
+        </div>
+      </template>
+
+      <template id="t-sort">
+        <div class="list-opts">
+          <button type="button" aria-pressed="true" data-sort="popular">Сначала популярные</button>
+          <button type="button" aria-pressed="false" data-sort="cheap">Сначала дешевле</button>
+          <button type="button" aria-pressed="false" data-sort="dear">Сначала дороже</button>
+          <button type="button" aria-pressed="false" data-sort="new">Новинки</button>
+        </div>
+      </template>
+
+      <template id="t-card">
+        <p class="muted">Напечатаем ваш текст на открытке и вложим в конверт. Если оставить поле пустым, положим открытку без подписи.</p>
+        <label class="field"><span class="sr">Текст открытки</span><textarea id="cardText" maxlength="200" rows="4" placeholder="Например: С днём рождения, мама! Люблю тебя"></textarea></label>
+        <p class="hint"><span id="cardLen">0</span> из 200 знаков</p>
+        <div class="sheet__foot"><button class="pill pill--ink pill--wide" type="button" data-save="card">Сохранить текст</button></div>
+      </template>
+
+      <template id="t-ribbon">
+        <div class="ribbons">
+          <button type="button" style="--c:#f4c9d3" data-ribbon="Пудровая"><i></i>Пудровая</button>
+          <button type="button" style="--c:#ffffff" data-ribbon="Белая"><i></i>Белая</button>
+          <button type="button" style="--c:#f1e6d2" data-ribbon="Молочная"><i></i>Молочная</button>
+          <button type="button" style="--c:#bfe3d6" data-ribbon="Мятная"><i></i>Мятная</button>
+          <button type="button" style="--c:#afcbe8" data-ribbon="Небесная"><i></i>Небесная</button>
+          <button type="button" style="--c:#e4476f" data-ribbon="Пионовая"><i></i>Пионовая</button>
+          <button type="button" style="--c:#7a2842" data-ribbon="Бордовая"><i></i>Бордовая</button>
+          <button type="button" style="--c:#4a4a5c" data-ribbon="Графит"><i></i>Графит</button>
+        </div>
+      </template>
+
+      <template id="t-search">
+        <label class="field field--search"><svg><use href="#i-search"></use></svg><span class="sr">Поиск</span><input type="search" placeholder="Пионы, розы, в коробке" enterkeyhint="search" /></label>
+        <h3 class="sheet__sub">Часто ищут</h3>
+        <div class="opts opts--links"><a href="#catalog" data-close>Пионы</a><a href="#catalog" data-close>101 роза</a><a href="#catalog" data-close>Гортензии</a><a href="#catalog" data-close>Букет на день рождения</a><a href="#catalog" data-close>Цветы в коробке</a></div>
+      </template>
+
+      <template id="t-chat">
+        <p class="muted">Ответим в мессенджере или по телефону. Можно прислать фото, соберём похожий букет.</p>
+        <div class="contacts">
+          <a href="#" class="pill pill--line pill--wide" data-close><svg><use href="#i-chat"></use></svg>Написать в мессенджер</a>
+          <a href={phoneHref} class="pill pill--ink pill--wide"><svg><use href="#i-phone"></use></svg>{phone}</a>
+        </div>
+      </template>
+    </div>
+
+    <script>
+      import { initShop } from '../../scripts/cvety-shop';
+
+      initShop();
+    </script>
+  </body>
+</html>

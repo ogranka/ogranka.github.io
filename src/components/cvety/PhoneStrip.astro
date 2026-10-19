@@ -1,0 +1,46 @@
+---
+interface Screen {
+  id: string;
+  label: string;
+  title: string;
+}
+
+interface Props {
+  base: string;
+  screens: Screen[];
+}
+
+const { base, screens } = Astro.props;
+---
+
+<div class="phones" data-phones>
+  <div class="phones__head">
+    <div class="phones__tabs" role="tablist" aria-label="Экраны магазина">
+      {
+        screens.map((s, i) => (
+          <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-tab={i}>
+            {s.label}
+          </button>
+        ))
+      }
+    </div>
+    <a class="phones__open" href={base} target="_blank" rel="noopener">Открыть магазин в новой вкладке</a>
+  </div>
+  <noscript><p class="phones__noscript">Живые экраны открываются со включённым JavaScript. <a href={base}>Открыть магазин отдельной страницей</a>.</p></noscript>
+  <div class="phones__strip" data-strip>
+    {
+      screens.map((s, i) => (
+        <figure class="phone" data-phone={i}>
+          <iframe data-src={`${base}?s=${s.id}`} title={s.title} loading="lazy" />
+          <figcaption>{s.label}</figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  import { initPhoneStrip } from '../../scripts/phone-strip';
+
+  initPhoneStrip();
+</script>

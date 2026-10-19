@@ -2,8 +2,8 @@
 
 import '../../styles/pages/forum-hero.scss';
 
-const FONTS_HREF =
-  'https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap';
+// Manrope лежит на сайте: без запроса к Google Fonts и без передачи адреса посетителя
+import manropeCyr from '../../assets/fonts/manrope-cyrillic.woff2?url';
 
 const heroMeta = [
   { value: '2', label: 'дня работы' },
@@ -51,9 +51,7 @@ const program = [
     <meta name="description" content="Демонстрационный концепт первого экрана сайта отраслевого форума." />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href={FONTS_HREF} rel="stylesheet" />
+    <link rel="preload" href={manropeCyr} as="font" type="font/woff2" crossorigin />
   </head>
   <body>
   <div class="concept-badge">Демонстрационный концепт</div>
@@ -79,8 +77,8 @@ const program = [
         <a class="lnk" href="#prog">Партнёрам</a>
         <a class="lnk" href="#final">Контакты</a>
         <a class="btn" href="#final">Регистрация</a>
-        <button class="menu-btn" aria-label="Меню">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <button class="menu-btn" type="button" aria-label="Меню" aria-expanded="false" data-menu>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
           </svg>
         </button>
@@ -88,6 +86,7 @@ const program = [
     </div>
   </header>
 
+  <main>
   <div class="hero">
     <canvas class="field" data-field aria-hidden="true"></canvas>
     <div class="wrap hero-in">
@@ -168,6 +167,8 @@ const program = [
       </div>
     </div>
   </section>
+
+  </main>
 
   <footer>
     <div class="wrap">

@@ -8,12 +8,11 @@ interface Props {
   title: string;
   description: string;
   preview?: ImageMetadata;
-  previewAlt?: string;
   size?: 'wide' | 'half';
   index?: number;
 }
 
-const { href, kind, title, description, preview, previewAlt = '', size = 'half', index = 0 } = Astro.props;
+const { href, kind, title, description, preview, size = 'half', index = 0 } = Astro.props;
 ---
 
 <a class:list={['case-card', 'pressable', size]} href={href} data-reveal style={`--i:${index}`}>
@@ -22,7 +21,7 @@ const { href, kind, title, description, preview, previewAlt = '', size = 'half',
     <span class="shot">
       {
         preview ? (
-          <Image src={preview} alt={previewAlt} widths={[480, 760, 1100]} sizes="(max-width: 760px) 92vw, 720px" loading={index === 0 ? 'eager' : 'lazy'} />
+          <Image src={preview} alt="" widths={[480, 760, 1100]} sizes="(max-width: 760px) 92vw, 720px" loading={index === 0 ? 'eager' : 'lazy'} />
         ) : (
           <span class="placeholder" aria-hidden="true" />
         )

@@ -610,7 +610,8 @@ export function initShop() {
     return firstBad;
   };
 
-  const goto = (n: number) => {
+  // focus: перевести фокус на заголовок шага, когда шаг сменил сам покупатель
+  const goto = (n: number, focus = false) => {
     step = n;
     stepEls.forEach((el) => (el.hidden = Number(el.dataset.step) !== n));
     stepDots.forEach((li, i) => {
@@ -623,6 +624,7 @@ export function initShop() {
     nextBtn.textContent = n === 4 ? `Оплатить ${rub(total())}` : 'Дальше';
     if (n === 4) renderSummary();
     window.scrollTo(0, 0);
+    if (focus) stepEls[n - 1].querySelector<HTMLElement>('legend')?.focus({ preventScroll: true });
   };
 
   // Промокод действует на букеты с отметкой «−15% по МЯТА»
@@ -736,14 +738,14 @@ export function initShop() {
       $('#slotErr')!.textContent = '';
     }
     if ('promo' in t.dataset) return applyPromo();
-    if (t === prevBtn) goto(step - 1);
+    if (t === prevBtn) goto(step - 1, true);
     if (t === nextBtn) {
       const bad = validate();
       if (bad) {
         if (bad !== 'slot') field(bad).focus();
         return;
       }
-      if (step < 4) return goto(step + 1);
+      if (step < 4) return goto(step + 1, true);
       const n = 1000 + Math.floor(Math.random() * 9000);
       $('#coDoneText')!.textContent = `Заказ № ${n} на ${rub(total())}, оплата ${payMethod()}. Привезём ${delivery.day.toLowerCase()}, ${delivery.slot}, получатель ${field('name').value.trim()}.`;
       form.hidden = true;
@@ -784,7 +786,7 @@ export function initShop() {
   // «Назад» в шапке оформления: на шаг назад, а с первого шага на экран,
   // с которого пришли. history.back() во фрейме увёл бы со страницы кейса.
   $('[data-co-back]')!.addEventListener('click', () => {
-    if (step > 1 && !form.hidden) return goto(step - 1);
+    if (step > 1 && !form.hidden) return goto(step - 1, true);
     go(`#${previous && previous !== 'checkout' ? previous : 'catalog'}`);
   });
 

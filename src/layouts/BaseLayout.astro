@@ -63,7 +63,9 @@ const ogImage = new URL(`/og/${ogSlug}.jpg`, Astro.site);
   </head>
   <body>
     <div class="backdrop" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+    <a class="skip-link" href="#content">К содержимому</a>
     <TopBar caseNav={caseNav} />
+    <span id="content" tabindex="-1"></span>
     <slot />
     <SiteFooter />
     <script>

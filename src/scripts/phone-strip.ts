@@ -69,7 +69,7 @@ export function initPhoneStrip() {
     if (document.readyState === 'complete') loadAll();
     else window.addEventListener('load', loadAll, { once: true });
 
-    const select = (i: number) => tabs.forEach((t, k) => t.setAttribute('aria-selected', String(k === i)));
+    const select = (i: number) => tabs.forEach((t, k) => t.setAttribute('aria-pressed', String(k === i)));
 
     tabs.forEach((tab, i) => {
       tab.addEventListener('click', () => {

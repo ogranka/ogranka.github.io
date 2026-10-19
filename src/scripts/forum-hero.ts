@@ -9,6 +9,19 @@ function initHeader(): void {
   const onScroll = (): void => header.classList.toggle('solid', scrollY > 40);
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Меню на телефоне: кнопка раскрывает ссылки, выбор пункта закрывает меню
+  const menu = header.querySelector<HTMLButtonElement>('[data-menu]');
+  if (!menu) return;
+  const setOpen = (open: boolean): void => {
+    header.classList.toggle('menu-open', open);
+    menu.setAttribute('aria-expanded', String(open));
+  };
+  menu.addEventListener('click', () => setOpen(!header.classList.contains('menu-open')));
+  header.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
 }
 
 function initRiseAnimation(): void {

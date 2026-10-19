@@ -1,6 +1,7 @@
 // Чат с консультантом магазина: шторка, подсказки, стриминг ответа по SSE,
 // история в sessionStorage, передача флористу. Без библиотек.
-const ENDPOINT = 'https://ai.82-21-53-138.sslip.io/chat';
+// Адрес прокси можно переопределить при сборке, например под свой поддомен
+const ENDPOINT = import.meta.env.PUBLIC_CHAT_ENDPOINT || 'https://ai.82-21-53-138.sslip.io/chat';
 const STORE = 'pm-chat';
 const MAX_TURNS = 12;
 const MAX_LEN = 600;

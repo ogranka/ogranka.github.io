@@ -15,12 +15,13 @@ const { data } = article;
 const rubric = bySlug(rubrics, data.rubric);
 const author = bySlug(authors, data.author);
 const sizes = variant === 'feature' ? '(max-width: 760px) 92vw, 650px' : variant === 'compact' ? '(max-width: 760px) 40vw, 200px' : '(max-width: 760px) 92vw, 360px';
-const widths = variant === 'feature' ? [480, 720, 960] : variant === 'compact' ? [240, 480] : [400, 800];
+// Три ширины на весь журнал: меньше файлов в сборке, браузер выбирает по sizes
+const widths = variant === 'feature' ? [400, 800, 1200] : variant === 'compact' ? [400] : [400, 800];
 ---
 
 <article class:list={['card', `card--${variant}`, { 'card--special': data.kind === 'special' }]}>
   <a class="card__cover" href={articleUrl(article)} tabindex="-1" aria-hidden="true">
-    <Image src={photo(data.cover)} alt="" widths={widths} sizes={sizes} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
+    <Image src={photo(data.cover)} alt="" widths={widths} sizes={sizes} quality={65} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
   </a>
   <div class="card__body">
     <p class="card__meta">

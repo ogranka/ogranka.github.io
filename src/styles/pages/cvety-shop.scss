@@ -73,7 +73,19 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+a, button, label { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+/* Свое состояние нажатия вместо системной подсветки */
+.round, .pill, .chips a, .price-btn, .code, .opts button, .opts a, .swatches button, .ribbons button,
+.tune__tile, .dock__buy, .pcard__photo, .circles a, .list-opts button, .pay__opt, .chat__hints button, .chat__florist, .link {
+  transition: transform .12s cubic-bezier(.2, .8, .2, 1), background .2s, color .2s;
+}
+.round:active, .pill:active, .chips a:active, .price-btn:active, .code:active, .opts button:active, .opts a:active,
+.swatches button:active, .ribbons button:active, .tune__tile:active, .dock__buy:active, .pcard__photo:active,
+.circles a:active, .list-opts button:active, .pay__opt:active, .chat__hints button:active, .chat__florist:active, .link:active {
+  transform: scale(.97);
+}
 body {
   margin: 0;
   background: var(--paper);

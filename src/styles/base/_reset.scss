@@ -9,6 +9,27 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+[role='button'],
+label,
+summary {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+// Своё состояние нажатия вместо системной подсветки
+button:active:not([disabled]),
+.pressable:active {
+  transform: scale(.98);
+  transition: transform .12s var(--ease);
+}
+
+a:active {
+  opacity: .75;
 }
 
 body {

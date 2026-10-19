@@ -1,5 +1,8 @@
 @use '../abstracts/variables' as *;
 
+// Ряд телефонов. На десктопе четыре рамки делят контейнер поровну, экран
+// внутри масштабируется (--s ставит скрипт). Уже 1000 px ряд прокручивается:
+// две рамки в кадре на планшете, одна на телефоне.
 .phones {
   margin-top: 32px;
 
@@ -9,7 +12,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px 24px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   }
 
   &__tabs {
@@ -54,65 +57,81 @@
     }
   }
 
+  &__hint,
   &__noscript {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     color: var(--dim);
-    font-size: 15px;
+    font-size: 14px;
+  }
+
+  &__hint {
+    display: none;
   }
 
   &__strip {
-    display: flex;
-    gap: 24px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 0;
-    padding: 6px 0 14px;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding-top: 8px;
   }
 }
 
 .phone {
-  flex: 0 0 340px;
-  width: 340px;
-  scroll-snap-align: start;
   display: grid;
-  gap: 14px;
+  gap: 12px;
   justify-items: center;
+  min-width: 0;
+
+  &__frame {
+    --s: 1;
+    width: 100%;
+    padding: 9px;
+    border-radius: 42px;
+    background: #1f2326;
+    box-shadow: inset 0 0 0 1px #4a4f57, 0 24px 50px -24px rgba(0, 0, 0, .5);
+    overflow: hidden;
+    height: calc(780px * var(--s) + 18px);
+  }
 
   iframe {
     display: block;
-    width: 100%;
-    aspect-ratio: 390 / 844;
+    width: 360px;
+    height: 780px;
     border: 0;
-    border-radius: 40px;
+    border-radius: calc(33px / var(--s));
     background: #fcf8f7;
-    box-shadow: 0 0 0 9px #1f2326, 0 0 0 10px #4a4f57, 0 30px 60px -24px rgba(0, 0, 0, .45);
+    transform: scale(var(--s));
+    transform-origin: 0 0;
   }
 
   figcaption {
     font-size: 14px;
     color: var(--dim);
   }
+}
 
-  @media (max-width: $bp-mobile) {
-    flex-basis: 100%;
-    width: 100%;
-    max-width: 390px;
+@media (max-width: $bp-wide) {
+  .phones__hint {
+    display: block;
+  }
 
-    iframe {
-      border-radius: 34px;
-      box-shadow: 0 0 0 7px #1f2326, 0 0 0 8px #4a4f57, 0 24px 50px -24px rgba(0, 0, 0, .45);
-    }
+  .phones__strip {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 8px 0 12px;
+    scrollbar-width: thin;
+  }
+
+  .phone {
+    flex: 0 0 calc((100% - 16px) / 2);
+    scroll-snap-align: start;
   }
 }
 
 @media (max-width: $bp-mobile) {
-  .phones__strip {
-    gap: 20px;
-    padding-inline: 2px;
+  .phone {
+    flex-basis: 100%;
   }
 }

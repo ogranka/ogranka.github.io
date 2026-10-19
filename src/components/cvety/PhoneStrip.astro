@@ -26,12 +26,15 @@ const { base, screens } = Astro.props;
     </div>
     <a class="phones__open" href={base} target="_blank" rel="noopener">Открыть магазин в новой вкладке</a>
   </div>
+  <p class="phones__hint">Листайте ряд вбок или выбирайте экран вкладкой</p>
   <noscript><p class="phones__noscript">Живые экраны открываются со включённым JavaScript. <a href={base}>Открыть магазин отдельной страницей</a>.</p></noscript>
   <div class="phones__strip" data-strip>
     {
       screens.map((s, i) => (
         <figure class="phone" data-phone={i}>
-          <iframe data-src={`${base}?s=${s.id}`} title={s.title} loading="lazy" />
+          <div class="phone__frame" data-frame>
+            <iframe data-src={`${base}?s=${s.id}`} title={s.title} loading="lazy" />
+          </div>
           <figcaption>{s.label}</figcaption>
         </figure>
       ))

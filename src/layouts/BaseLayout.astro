@@ -41,6 +41,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </script>
   </head>
   <body>
+    <div class="backdrop" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
     <TopBar caseNav={caseNav} />
     <slot />
     <SiteFooter />

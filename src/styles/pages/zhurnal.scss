@@ -87,6 +87,39 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+label {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+// Свое состояние нажатия вместо системной подсветки
+.card,
+.z-cities a,
+.z-rubrics a,
+.z-search,
+.z-theme,
+.pager a,
+.rubric-list a,
+.search__list a,
+.author {
+  transition: transform .12s var(--ease), opacity .12s;
+}
+
+.card:active,
+.z-cities a:active,
+.z-rubrics a:active,
+.z-search:active,
+.z-theme:active,
+.pager a:active,
+.rubric-list a:active,
+.search__list a:active,
+.author:active {
+  transform: scale(.98);
 }
 
 body {

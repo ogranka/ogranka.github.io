@@ -25,7 +25,7 @@ const cases = [
     description: 'Чат на витрине отвечает по каталогу и правилам доставки, ведёт к корзине и передаёт сложные вопросы флористу.',
     preview: preview('assistant'),
     previewAlt: 'Чат консультанта в мобильном магазине букетов',
-    size: 'third' as const,
+    size: 'half' as const,
   },
   {
     href: '/zhurnal/',
@@ -61,7 +61,7 @@ const cases = [
     description: 'Анимированный первый экран уровня студийного сайта: частицы на canvas, 17 КБ кода.',
     preview: preview('forum-hero'),
     previewAlt: 'Тёмный первый экран сайта форума с анимацией частиц',
-    size: 'half' as const,
+    size: 'wide' as const,
   },
 ];
 
@@ -99,7 +99,10 @@ const steps = [
     </section>
 
     <section class="wrap" aria-labelledby="cases-h">
-      <h2 id="cases-h" class="visually-hidden">Кейсы</h2>
+      <div class="cases-head">
+        <h2 id="cases-h">Кейсы</h2>
+        <p>Каждый кейс это страница с задачей, решением и живой версией внутри: можно открыть и потрогать.</p>
+      </div>
       <div class="cases">
         {cases.map((item, index) => <CaseCard {...item} index={index} />)}
       </div>

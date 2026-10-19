@@ -16,19 +16,23 @@ interface Props {
 const { href, kind, title, description, preview, previewAlt = '', size = 'third', index = 0 } = Astro.props;
 ---
 
-<a class:list={['case-card', size]} href={href} data-reveal style={`--i:${index}`}>
+<a class:list={['case-card', 'pressable', size]} href={href} data-reveal style={`--i:${index}`}>
   <span class="preview">
-    {
-      preview ? (
-        <Image src={preview} alt={previewAlt} widths={[480, 760, 1100]} sizes="(max-width: 760px) 92vw, 720px" loading={index === 0 ? 'eager' : 'lazy'} />
-      ) : (
-        <span class="placeholder" aria-hidden="true" />
-      )
-    }
+    <span class="chrome" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="shot">
+      {
+        preview ? (
+          <Image src={preview} alt={previewAlt} widths={[480, 760, 1100]} sizes="(max-width: 760px) 92vw, 720px" loading={index === 0 ? 'eager' : 'lazy'} />
+        ) : (
+          <span class="placeholder" aria-hidden="true" />
+        )
+      }
+    </span>
   </span>
   <span class="body">
     <span class="kind">{kind}</span>
     <b>{title}</b>
     <p>{description}</p>
+    <span class="go">Открыть кейс<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
   </span>
 </a>

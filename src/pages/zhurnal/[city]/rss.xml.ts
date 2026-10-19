@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { cities, authors, bySlug, edition } from '../../../data/zhurnal';
+import { cities, authors, rubrics, bySlug, edition } from '../../../data/zhurnal';
 import { cityArticles, articleUrl, cityUrl } from '../../../data/zhurnal-content';
 
 export function getStaticPaths() {
@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ props, site }) => {
       <guid isPermaLink="true">${abs(articleUrl(a))}</guid>
       <description>${esc(a.data.description)}</description>
       <pubDate>${a.data.date.toUTCString()}</pubDate>
-      <category>${esc(a.data.rubric)}</category>
+      <category>${esc(bySlug(rubrics, a.data.rubric).name)}</category>
       <dc:creator>${esc(bySlug(authors, a.data.author).name)}</dc:creator>
     </item>`,
     )

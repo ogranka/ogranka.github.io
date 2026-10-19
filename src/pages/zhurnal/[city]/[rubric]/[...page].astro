@@ -31,11 +31,19 @@ const jsonLd = [
     ],
   },
 ];
+// 1 материал, 2 материала, 5 материалов
+const materials = (n: number) => {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'материал';
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'материала';
+  return 'материалов';
+};
 ---
 
 <ZhurnalLayout
   title={page.currentPage > 1 ? `${section.name}, страница ${page.currentPage}` : section.name}
-  description={`${section.name} в ${city.prepositional}: ${section.about.toLowerCase()}. ${page.total} материалов.`}
+  description={`${section.name} в ${city.prepositional}: ${section.about.toLowerCase()}. ${page.total} ${materials(page.total)}.`}
   city={city}
   path={path}
   jsonLd={jsonLd}

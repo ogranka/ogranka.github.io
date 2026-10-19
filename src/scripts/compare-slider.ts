@@ -69,7 +69,9 @@ function startIdleWobble(root: HTMLElement): void {
       root.style.setProperty('--x', `${IDLE_X}%`);
     }
   }, 16);
+  // Человек сам взялся за шторку мышью или стрелками: покачивание больше не мешает
   root.addEventListener('pointerdown', () => clearInterval(timer), { once: true });
+  root.addEventListener('keydown', () => clearInterval(timer), { once: true });
 }
 
 export function initCompareSliders(): void {

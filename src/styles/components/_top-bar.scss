@@ -1,29 +1,41 @@
+@use '../abstracts/variables' as *;
+
+// Шапка: бренд слева, меню справа, переключатель темы в правом углу.
+// Слова не переносятся: если меню не помещается, оно целиком уходит
+// на вторую строку под бренд.
 .top-bar {
   padding: 18px 0;
 
   .wrap {
+    position: relative;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 22px;
+    gap: 0 22px;
+    padding-right: 54px;
+    min-height: 38px;
   }
 
   .brand {
     font-weight: 700;
     letter-spacing: -.01em;
     text-decoration: none;
-    margin-right: auto;
+    white-space: nowrap;
+    line-height: 38px;
   }
 
   nav {
     display: flex;
     gap: 20px;
+    margin-left: auto;
     font-size: 15px;
+    white-space: nowrap;
   }
 
   nav a {
     color: var(--dim);
     text-decoration: none;
-    padding: 6px 0;
+    line-height: 38px;
     transition: color .2s;
 
     &:hover {
@@ -32,6 +44,9 @@
   }
 
   .theme {
+    position: absolute;
+    right: 0;
+    top: 0;
     width: 38px;
     height: 38px;
     border-radius: 50%;
@@ -55,6 +70,17 @@
       display: none;
     }
   }
+
+  @media (max-width: $bp-mobile) {
+    .wrap {
+      gap: 0 16px;
+    }
+
+    nav {
+      gap: 14px;
+      font-size: 14px;
+    }
+  }
 }
 
 :root[data-theme='dark'] .top-bar .theme {
@@ -76,12 +102,5 @@
     .moon {
       display: block;
     }
-  }
-}
-
-@media (max-width: 480px) {
-  .top-bar nav {
-    gap: 14px;
-    font-size: 14px;
   }
 }

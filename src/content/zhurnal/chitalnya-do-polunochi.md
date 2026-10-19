@@ -6,7 +6,7 @@ rubric: mesta
 author: marina-sokolova
 date: 2026-10-14
 cover: z16
-coverAlt: 'Вечерний город с историческими зданиями в сумерках'
+coverAlt: 'Светлый читальный зал с книжными полками и столами у окна'
 featured: true
 ---
 

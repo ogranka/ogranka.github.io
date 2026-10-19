@@ -21,7 +21,7 @@
 | z13.webp | @juzu_me | https://unsplash.com/photos/people-relaxing-in-a-sunny-park-with-green-grass-3AWZEQhtN9A |
 | z14.webp | @venczakjanos | https://unsplash.com/photos/three-friends-sit-by-the-river-overlooking-city-inZtebehTsg |
 | z15.webp | @vonshnauzer | https://unsplash.com/photos/bridge-over-river-during-daytime-E-7LjfN73po |
-| z16.webp | @evgeeeenchik | https://unsplash.com/photos/snowy-cityscape-with-historic-buildings-at-dusk-lv2dqvgSSH8 |
+| z16.webp | @okuyama_leo | https://unsplash.com/photos/books-on-shelves-in-a-modern-library-reading-area-kmVR1xWdSxs |
 
 Шрифты: Literata (латинская часть сокращена до цифр и знаков) и Geologica, Google Fonts, лицензия SIL Open Font License 1.1,
 файлы лежат в `src/assets/fonts/`.

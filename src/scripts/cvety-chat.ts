@@ -15,7 +15,20 @@ interface Msg {
 
 export interface ChatHooks {
   onFlorist: () => void;
+  /** Показать пример диалога, пока своей истории нет: так кейс не открывается пустым чатом */
+  example?: boolean;
 }
+
+// Настоящий ответ консультанта на этот вопрос, записанный 19.10.2026. Только для
+// показа: в историю и в запрос к серверу не попадает.
+const EXAMPLE: Msg[] = [
+  { role: 'user', content: 'Что подарить маме' },
+  {
+    role: 'assistant',
+    content:
+      'Маме отлично подойдут пионы «Сара Бернар» за 12 900 руб.: 15 пышных пионов с мятой и эвкалиптом, сегодня есть в наличии. Если хочется понежнее и подешевле, посмотрите «Нежность утра» за 6 100 руб. или «Роза и сирень в лиловом» за 7 400 руб., на нее сейчас скидка 15 процентов по промокоду МЯТА на первый заказ. Расскажите, какой у вас бюджет и какие цветы мама любит, подскажу точнее.',
+  },
+];
 
 export interface ChatHandle {
   ask: (text: string) => Promise<void>;
@@ -77,6 +90,14 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks): ChatHandle {
   };
 
   bubble('assistant', HELLO);
+  const exampleEls: HTMLElement[] = [];
+  if (hooks.example && !history.length) {
+    exampleEls.push(bubble('note', 'Пример разговора. Спросите своё, консультант ответит вживую.'));
+    EXAMPLE.forEach((m) => exampleEls.push(bubble(m.role, m.content)));
+    // Подсказка с тем же вопросом, что в примере, лишняя
+    hints.querySelectorAll('[data-hint]').forEach((h) => h.textContent === EXAMPLE[0].content && h.remove());
+    log.scrollTop = 0;
+  }
   history.forEach((m) => bubble(m.role, m.content));
   hints.hidden = history.length > 0;
 
@@ -87,6 +108,8 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks): ChatHandle {
     send.disabled = true;
     hints.hidden = true;
     input.value = '';
+    // Пример уступает место настоящему разговору
+    exampleEls.splice(0).forEach((el) => el.remove());
     history = [...history, { role: 'user', content: q }].slice(-MAX_TURNS + 1);
     bubble('user', q);
     const answer = bubble('assistant', '');

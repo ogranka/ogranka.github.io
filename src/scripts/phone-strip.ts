@@ -7,6 +7,9 @@ const SCREEN_WIDTH = 360;
 
 export function initPhoneStrip() {
   document.querySelectorAll<HTMLElement>('[data-phones]').forEach((root) => {
+    // Скрипт подключают и лента, и одиночный телефон: второй вызов root пропускает
+    if (root.dataset.ready) return;
+    root.dataset.ready = '';
     const strip = root.querySelector<HTMLElement>('[data-strip]')!;
     const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
     const phones = [...strip.querySelectorAll<HTMLElement>('[data-phone]')];
@@ -35,8 +38,25 @@ export function initPhoneStrip() {
         delete f.dataset.src;
       }
     };
+    // Первый телефон сразу после загрузки страницы, остальные, когда попадают
+    // в экран: на телефоне лента листается вбок, и все четыре копии магазина
+    // сразу не нужны. Без IntersectionObserver грузим по очереди, как раньше.
     const loadAll = () => {
       load(0);
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (!e.isIntersecting) return;
+              load(phones.indexOf(e.target as HTMLElement));
+              io.unobserve(e.target);
+            });
+          },
+          { rootMargin: '0px 120px' },
+        );
+        phones.slice(1).forEach((p) => io.observe(p));
+        return;
+      }
       let k = 1;
       const next = () => {
         if (k < iframes.length) {

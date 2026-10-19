@@ -82,6 +82,10 @@ function initParticleField(): void {
   let mouseY = 0;
   let targetX = 0;
   let targetY = 0;
+  let background: CanvasGradient | null = null;
+  // Без IntersectionObserver считаем сцену видимой всегда, как было раньше
+  let visible = true;
+  let running = false;
 
   // Палитра корзин считается один раз: ALPHA_STEPS градаций прозрачности
   // на LIFT_STEPS градаций высоты.
@@ -108,6 +112,11 @@ function initParticleField(): void {
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Фон одинаковый в каждом кадре: собираем градиент один раз на размер
+    background = ctx.createLinearGradient(0, 0, 0, height);
+    background.addColorStop(0, '#050b1c');
+    background.addColorStop(0.55, '#071433');
+    background.addColorStop(1, '#040814');
 
     const narrow = width < 760;
     cols = narrow ? 70 : 132;
@@ -135,11 +144,7 @@ function initParticleField(): void {
     mouseX += (targetX - mouseX) * 0.045;
     mouseY += (targetY - mouseY) * 0.045;
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, '#050b1c');
-    gradient.addColorStop(0.55, '#071433');
-    gradient.addColorStop(1, '#040814');
-    ctx.fillStyle = gradient;
+    if (background) ctx.fillStyle = background;
     ctx.fillRect(0, 0, width, height);
 
     const focal = 330; // фокусное: меньше — шире охват
@@ -182,7 +187,21 @@ function initParticleField(): void {
       }
       bucket.length = 0;
     }
-    if (!reduceMotion) requestAnimationFrame(frame);
+    // Сцена за пределами экрана не считается: 8 тысяч точек в кадр зря грели бы телефон
+    if (!reduceMotion && visible) requestAnimationFrame(frame);
+    else running = false;
+  }
+
+  const resume = (): void => {
+    if (reduceMotion || running || !visible) return;
+    running = true;
+    requestAnimationFrame(frame);
+  };
+  if ('IntersectionObserver' in window && canvas) {
+    new IntersectionObserver((entries) => {
+      visible = entries.some((e) => e.isIntersecting);
+      resume();
+    }).observe(canvas);
   }
 
   addEventListener(
@@ -205,7 +224,7 @@ function initParticleField(): void {
 
   build();
   if (reduceMotion) frame(0);
-  else requestAnimationFrame(frame);
+  else resume();
 }
 
 export function initForumHero(): void {

@@ -228,6 +228,7 @@ export function initShop() {
   const sheet = $('#sheet')!;
   const scrim = $('#scrim')!;
   const body = $('#sheetBody')!;
+  const background = [...screens, dock];
   let lastFocus: HTMLElement | null = null;
   let closeTimer = 0;
   let chat: ChatHandle | null = null;
@@ -264,7 +265,7 @@ export function initShop() {
     if (kind === 'cart') {
       renderCart();
     } else if (kind === 'chat') {
-      chat = renderChat(body, { onFlorist: () => openSheet('florist') });
+      chat = renderChat(body, { onFlorist: () => openSheet('florist'), example: new URLSearchParams(location.search).get('example') === '1' });
     } else {
       body.append(($('#t-' + kind) as HTMLTemplateElement).content.cloneNode(true));
     }
@@ -285,6 +286,8 @@ export function initShop() {
       $$('[data-sort]', body).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sort === sortMode)));
     }
     sheet.hidden = scrim.hidden = false;
+    // Шторка модальная: экран и плавающий блок за ней недоступны с клавиатуры и скринридеру
+    background.forEach((el) => (el.inert = true));
     requestAnimationFrame(() => {
       sheet.classList.add('show');
       scrim.classList.add('show');
@@ -301,6 +304,7 @@ export function initShop() {
     chat = null;
     sheet.classList.remove('show');
     scrim.classList.remove('show');
+    background.forEach((el) => (el.inert = false));
     document.documentElement.style.overflow = '';
     clearTimeout(closeTimer);
     closeTimer = window.setTimeout(() => {

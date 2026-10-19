@@ -65,7 +65,7 @@ class Lane {
   reset(): void {
     this.mbEl.textContent = '0,0 МБ';
     this.requestsEl.textContent = '0';
-    this.timeEl.textContent = '0.0 с';
+    this.timeEl.textContent = '0,0 с';
     this.statusEl.textContent = 'Ожидание старта';
     this.statusEl.classList.remove('done');
     this.demoEl.style.display = 'none';
@@ -213,6 +213,23 @@ export function initSpeedRace(): void {
   };
 
   button.addEventListener('click', start);
+
+  // Гонка стартует сама, когда дорожки почти целиком на экране: иначе посетитель
+  // видит два пустых окна и может не заметить кнопку. Один раз, дальше по кнопке.
+  const track = heavyRoot.parentElement;
+  const auto = !location.search.includes('final') && !location.search.includes('auto');
+  if (auto && track && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        if (!running && !verdictEl.textContent) setTimeout(start, 400);
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(track);
+    button.addEventListener('click', () => io.disconnect(), { once: true });
+  }
 
   // Служебные режимы для скриншотов: ?final — сразу финал, ?auto — автозапуск.
   if (location.search.includes('final')) {

@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { cases } from '../data/cases';
+import '../styles/pages/not-found.scss';
+---
+
+<BaseLayout title="Страница не найдена. Сергей Д." description="Такой страницы нет. Все кейсы на главной." noindex caseNav>
+  <main class="not-found wrap">
+    <h1>Такой страницы нет</h1>
+    <p class="lede">Возможно, ссылка устарела или в адресе опечатка. Все кейсы собраны на главной.</p>
+    <a class="home pressable" href="/">На главную</a>
+    <ul>
+      {
+        cases.map((c) => (
+          <li>
+            <a href={c.href}>{c.title}</a>
+            <span>{c.kind}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</BaseLayout>

@@ -29,6 +29,8 @@ const fullTitle = `${title} · ${edition.name} ${city.name}`;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <!-- Демо-издание с вымышленными авторами: показываем, но не отдаём в поиск -->
+    <meta name="robots" content="noindex, follow" />
     <meta property="og:site_name" content={`${edition.name} ${city.name}`} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

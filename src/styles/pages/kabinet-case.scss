@@ -1,0 +1,52 @@
+@use '../abstracts/variables' as *;
+
+:root {
+  --title-max: 24ch;
+}
+
+.demo-frame {
+  margin-top: 28px;
+  border-radius: var(--r-m);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+
+  iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 640px;
+    border: 0;
+    // Цвет листа кабинета, пока фрейм грузится
+    background: #fdfdfb;
+  }
+}
+
+:root[data-theme='dark'] .demo-frame iframe {
+  background: #141923;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .demo-frame iframe {
+    background: #141923;
+  }
+}
+
+.demo-open {
+  margin-top: 10px;
+  font-size: var(--fs-s);
+  color: var(--dim);
+
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
+  }
+}
+
+@media (max-width: $bp-mobile) {
+  .demo-frame iframe {
+    aspect-ratio: 9 / 16;
+    min-height: 0;
+  }
+}

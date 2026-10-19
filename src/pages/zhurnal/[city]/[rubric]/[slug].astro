@@ -25,7 +25,7 @@ const toc = headings.filter((h) => h.depth === 2);
 const minutes = readingTime(article.body || '');
 const related = [...siblings.filter((a) => a.data.rubric === data.rubric), ...siblings.filter((a) => a.data.rubric !== data.rubric)].slice(0, 3);
 const path = articleUrl(article);
-const og = await getImage({ src: photo(data.cover), width: 1200, height: 750, format: 'jpg' });
+const og = await getImage({ src: photo(data.cover), width: 1200, height: 750, format: 'jpg', quality: 70 });
 const absolute = (p: string) => new URL(p, Astro.site).href;
 
 const jsonLd = [
@@ -72,7 +72,7 @@ const jsonLd = [
       </p>
     </header>
     <figure class="post__cover">
-      <Image src={photo(data.cover)} alt={data.coverAlt} widths={[600, 900, 1200]} sizes="(max-width: 760px) 100vw, 1120px" loading="eager" fetchpriority="high" />
+      <Image src={photo(data.cover)} alt={data.coverAlt} widths={[400, 800, 1200]} sizes="(max-width: 760px) 100vw, 1120px" quality={65} loading="eager" fetchpriority="high" />
     </figure>
     <div class="post__layout">
       <aside class="post__side">

@@ -9,7 +9,12 @@
     font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.02;
-    max-width: 14ch;
+    max-width: 20ch;
+    text-wrap: balance;
+
+    .nowrap {
+      white-space: nowrap;
+    }
   }
 
   .lede {

@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import CaseSpec from '../components/CaseSpec.astro';
 import InfoSection from '../components/InfoSection.astro';
 import CtaBox from '../components/CtaBox.astro';
+import NextCase from '../components/NextCase.astro';
 import PhoneStrip from '../components/cvety/PhoneStrip.astro';
 import '../styles/pages/cvety.scss';
 
@@ -76,5 +77,6 @@ const how = [
       title="Нужен магазин или витрина для телефона?"
       text="Соберу такую же под ваш товар: каталог, корзина, оплата и доставка. Смета по разделам, оплата по этапам после приёмки, тестовая копия до запуска."
     />
+    <NextCase current="/cvety/" />
   </main>
 </BaseLayout>

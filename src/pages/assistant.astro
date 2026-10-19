@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import CaseSpec from '../components/CaseSpec.astro';
 import InfoSection from '../components/InfoSection.astro';
 import CtaBox from '../components/CtaBox.astro';
+import NextCase from '../components/NextCase.astro';
 import PhoneSingle from '../components/cvety/PhoneSingle.astro';
 import '../styles/pages/assistant.scss';
 
@@ -77,5 +78,6 @@ const how = [
       title="Нужен консультант на вашем сайте?"
       text="Соберу базу знаний из вашего каталога и правил, поставлю чат на сайт и сервер с лимитами. Ответы только по вашим данным, передача менеджеру одной кнопкой. Смета по разделам, оплата по этапам после приёмки."
     />
+    <NextCase current="/assistant/" />
   </main>
 </BaseLayout>

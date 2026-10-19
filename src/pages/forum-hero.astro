@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import CaseSpec from '../components/CaseSpec.astro';
 import InfoSection from '../components/InfoSection.astro';
 import CtaBox from '../components/CtaBox.astro';
+import NextCase from '../components/NextCase.astro';
 import '../styles/pages/forum-hero-case.scss';
 
 const details = [
@@ -67,5 +68,6 @@ const details = [
       title="Хотите такой же первый экран?"
       text="Соберу под ваш сайт: мероприятие, компания, продукт. Сначала концепт одного экрана, чтобы увидеть результат до оплаты всего проекта."
     />
+    <NextCase current="/forum-hero/" />
   </main>
 </BaseLayout>

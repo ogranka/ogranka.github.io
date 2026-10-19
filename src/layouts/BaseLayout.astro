@@ -1,5 +1,8 @@
 ---
 import geologicaCyr from '../assets/fonts/geologica-cyrillic.woff2?url';
+// Цифры, латиница и знаки препинания живут в латинском наборе: без предзагрузки
+// строка с «8+» и «NDA» перерисовывается позже и тянет LCP
+import geologicaLatin from '../assets/fonts/geologica-latin.woff2?url';
 import TopBar from '../components/TopBar.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import '../styles/global.scss';
@@ -32,6 +35,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="theme-color" content="#121317" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href={geologicaCyr} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geologicaLatin} as="font" type="font/woff2" crossorigin />
     <script is:inline>
       document.documentElement.classList.add('js');
       try {

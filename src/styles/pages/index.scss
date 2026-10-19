@@ -4,6 +4,14 @@
 .hero {
   padding: 56px 0 8px;
 
+  @media (min-width: $bp-wide) {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+    gap: 56px;
+    align-items: center;
+    padding-top: 64px;
+  }
+
   h1 {
     font-size: clamp(2.3rem, 1.3rem + 4.6vw, 4.2rem);
     font-weight: 700;
@@ -12,9 +20,10 @@
     max-width: 20ch;
     text-wrap: balance;
 
-    .nowrap {
-      white-space: nowrap;
-    }
+  }
+
+  .nowrap {
+    white-space: nowrap;
   }
 
   .lede {
@@ -24,11 +33,125 @@
     font-size: 1.1rem;
     text-wrap: pretty;
   }
+
+  // Строка доверия: факты, а не слоган, поэтому обычным текстом с меткой слева
+  .trust {
+    margin-top: 18px;
+    max-width: 58ch;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent);
+    font-weight: 500;
+    text-wrap: pretty;
+  }
 }
 
-.process {
-  margin-top: 96px;
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
 
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15.5px;
+  text-decoration: none;
+  transition: background .2s var(--ease), box-shadow .2s var(--ease);
+}
+
+.btn--ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn--line {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+
+  &:hover {
+    background: var(--surface);
+  }
+}
+
+// Три настоящих превью кейсов внахлёст. Только на широком экране: на телефоне
+// сразу под первым экраном идут сами кейсы.
+.collage {
+  display: none;
+
+  @media (min-width: $bp-wide) {
+    display: block;
+    position: relative;
+    aspect-ratio: 1 / .92;
+  }
+}
+
+.collage__item {
+  position: absolute;
+  overflow: hidden;
+  border-radius: var(--r-m);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: transform .25s var(--ease);
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  &:hover,
+  &:focus-visible {
+    z-index: 4;
+    transform: translateY(-4px);
+  }
+}
+
+.collage__item--1 {
+  top: 0;
+  left: 0;
+  width: 80%;
+  z-index: 1;
+}
+
+.collage__item--2 {
+  top: 30%;
+  right: 0;
+  width: 62%;
+  z-index: 2;
+}
+
+.collage__item--3 {
+  bottom: 0;
+  left: 8%;
+  width: 60%;
+  z-index: 3;
+}
+
+.collage__chrome {
+  display: flex;
+  gap: 5px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+}
+
+// Заголовки и строки пунктов в трёх блоках под кейсами устроены одинаково
+.includes,
+.process,
+.after-launch {
   h2 {
     font-size: clamp(1.6rem, 1.1rem + 2vw, 2.3rem);
     font-weight: 700;
@@ -36,29 +159,9 @@
     margin-bottom: 28px;
   }
 
-  ol {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    counter-reset: step;
-  }
-
   li {
     padding-top: 18px;
     border-top: 1px solid var(--line-strong);
-  }
-
-  .num {
-    display: inline-grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 14px;
   }
 
   b {
@@ -74,6 +177,64 @@
     color: var(--dim);
     font-size: 15.5px;
     text-wrap: pretty;
+  }
+}
+
+.includes,
+.after-launch {
+  margin-top: 96px;
+
+  ul {
+    display: grid;
+    gap: 24px 40px;
+  }
+
+  @media (max-width: 520px) {
+    margin-top: 72px;
+
+    ul {
+      gap: 18px;
+    }
+  }
+}
+
+.includes ul {
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.after-launch ul {
+  grid-template-columns: repeat(3, 1fr);
+
+  @media (max-width: $bp-wide) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.process {
+  margin-top: 96px;
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    counter-reset: step;
+  }
+
+  .num {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 14px;
   }
 
   @media (max-width: $bp-wide) {

@@ -1,0 +1,77 @@
+---
+// Переход к следующему кейсу внизу страницы кейса, порядок как на главной
+import { nextCase } from '../data/cases';
+
+interface Props {
+  current: string;
+}
+
+const next = nextCase(Astro.props.current);
+---
+
+<nav class="next-case wrap" aria-label="Следующий кейс">
+  <a class="pressable" href={next.href}>
+    <span class="label">Следующий кейс</span>
+    <span class="title">{next.title}</span>
+    <span class="kind">{next.kind}</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+  </a>
+</nav>
+
+<style lang="scss">
+  .next-case {
+    margin-top: 40px;
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'label icon' 'title icon' 'kind icon';
+    align-items: center;
+    column-gap: 16px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .label {
+    grid-area: label;
+    color: var(--dim);
+    font-size: 14.5px;
+  }
+
+  .title {
+    grid-area: title;
+    margin-top: 4px;
+    font-size: clamp(1.35rem, 1rem + 1.4vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+  }
+
+  .kind {
+    grid-area: kind;
+    margin-top: 6px;
+    color: var(--dim);
+    font-size: 15px;
+  }
+
+  svg {
+    grid-area: icon;
+    width: 28px;
+    height: 28px;
+    transition: transform .2s var(--ease);
+  }
+
+  a:hover svg {
+    transform: translateX(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg {
+      transition: none;
+    }
+  }
+</style>

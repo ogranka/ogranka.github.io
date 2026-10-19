@@ -4,6 +4,7 @@ import PageHeader from '../../components/PageHeader.astro';
 import CaseSpec from '../../components/CaseSpec.astro';
 import InfoSection from '../../components/InfoSection.astro';
 import CtaBox from '../../components/CtaBox.astro';
+import NextCase from '../../components/NextCase.astro';
 import { cities } from '../../data/zhurnal';
 import '../../styles/pages/zhurnal-case.scss';
 
@@ -75,5 +76,6 @@ const how = [
       title="Нужен сайт для издания, блога или базы знаний?"
       text="Соберу такую же редакционную систему под ваши рубрики и авторов: контент в файлах или в удобной админке, быстрые страницы, разметка для поиска. Смета по разделам, оплата по этапам после приёмки."
     />
+    <NextCase current="/zhurnal/" />
   </main>
 </BaseLayout>

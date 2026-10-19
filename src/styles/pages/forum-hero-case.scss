@@ -1,7 +1,4 @@
-@use '../components/page-header';
-@use '../components/case-spec';
-@use '../components/info-section';
-@use '../components/cta-box';
+@use '../abstracts/variables' as *;
 
 :root {
   --title-max: 22ch;
@@ -26,7 +23,7 @@
 
 .demo-open {
   margin-top: 10px;
-  font-size: 14px;
+  font-size: var(--fs-s);
   color: var(--dim);
 
   a {
@@ -36,7 +33,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: $bp-mobile) {
   .demo-frame iframe {
     aspect-ratio: 9 / 14;
     min-height: 0;

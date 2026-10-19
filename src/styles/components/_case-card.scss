@@ -108,7 +108,7 @@
 
   .kind {
     align-self: flex-start;
-    font-size: 13px;
+    font-size: var(--fs-xs);
     font-weight: 500;
     padding: 4px 10px;
     border-radius: 999px;
@@ -117,7 +117,7 @@
   }
 
   b {
-    font-size: 1.25rem;
+    font-size: var(--fs-xl);
     font-weight: 700;
     letter-spacing: -.015em;
     line-height: 1.2;
@@ -126,7 +126,7 @@
 
   p {
     color: var(--dim);
-    font-size: 15.5px;
+    font-size: var(--fs-m);
     text-wrap: pretty;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -144,7 +144,7 @@
     border-radius: 999px;
     background: var(--ink);
     color: var(--paper);
-    font-size: 14.5px;
+    font-size: var(--fs-sm);
     font-weight: 600;
     transition: gap .2s var(--ease);
 
@@ -167,7 +167,7 @@
     }
 
     b {
-      font-size: 1.15rem;
+      font-size: var(--fs-l);
     }
   }
 }

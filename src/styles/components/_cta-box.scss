@@ -1,3 +1,4 @@
+@use '../abstracts/variables' as *;
 .cta-box {
   margin: 56px auto 0;
 
@@ -10,7 +11,7 @@
 
   b {
     display: block;
-    font-size: 1.35rem;
+    font-size: var(--fs-2xl);
     font-weight: 700;
     letter-spacing: -.015em;
     line-height: 1.2;
@@ -23,11 +24,11 @@
   }
 
   .how {
-    font-size: 15px;
+    font-size: var(--fs-sm);
     color: var(--dim);
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: $bp-small) {
     .box {
       padding: 24px 20px;
     }

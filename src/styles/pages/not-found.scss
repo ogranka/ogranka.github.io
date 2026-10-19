@@ -14,7 +14,7 @@
     margin-top: 18px;
     max-width: 52ch;
     color: var(--dim);
-    font-size: 1.1rem;
+    font-size: var(--fs-l);
   }
 
   .home {
@@ -50,11 +50,11 @@
 
   li span {
     color: var(--dim);
-    font-size: 15px;
+    font-size: var(--fs-sm);
     text-align: right;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: $bp-small) {
     padding-top: 48px;
 
     li {

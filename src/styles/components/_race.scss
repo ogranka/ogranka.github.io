@@ -11,7 +11,7 @@
   color: var(--paper);
   font-family: inherit;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--fs-m);
   padding: 15px 28px;
   border-radius: 999px;
   transition: transform .2s;
@@ -63,11 +63,11 @@
   background: var(--surface-2);
 
   b {
-    font-size: 15px;
+    font-size: var(--fs-sm);
   }
 
   span {
-    font-size: 12.5px;
+    font-size: var(--fs-xs);
     color: var(--dim);
   }
 }
@@ -88,14 +88,14 @@
 
   b {
     display: block;
-    font-size: 20px;
+    font-size: var(--fs-xl);
     font-weight: 800;
     letter-spacing: -.02em;
     font-variant-numeric: tabular-nums;
   }
 
   span {
-    font-size: 11px;
+    font-size: var(--fs-2xs);
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--dim);
@@ -104,7 +104,7 @@
 
 .status {
   padding: 8px 14px;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: var(--dim);
   border-bottom: 1px solid var(--line);
   min-height: 34px;
@@ -135,7 +135,7 @@
   align-items: center;
   justify-content: center;
   color: #736d64;
-  font-size: 13px;
+  font-size: var(--fs-xs);
 }
 
 .spinner {
@@ -155,13 +155,13 @@
 
 .finish {
   margin: 10px 0 0;
-  font-size: 14px;
+  font-size: var(--fs-s);
   color: var(--dim);
 }
 
 .note {
   margin: 26px 0 0;
-  font-size: 13.5px;
+  font-size: var(--fs-xs);
   color: var(--dim);
   max-width: 78ch;
 }

@@ -1,8 +1,4 @@
 @use '../abstracts/variables' as *;
-@use '../components/page-header';
-@use '../components/case-spec';
-@use '../components/info-section';
-@use '../components/cta-box';
 
 :root {
   --title-max: 24ch;
@@ -27,40 +23,13 @@
 
 .demo-open {
   margin-top: 10px;
-  font-size: 14px;
+  font-size: var(--fs-s);
   color: var(--dim);
 
   a {
     color: inherit;
     text-underline-offset: 3px;
     text-decoration-color: var(--line-strong);
-  }
-}
-
-.info-section .grid {
-  grid-template-columns: repeat(6, 1fr);
-
-  .card {
-    grid-column: span 2;
-  }
-
-  .card:nth-child(4),
-  .card:nth-child(5) {
-    grid-column: span 3;
-  }
-
-  @media (max-width: $bp-wide) {
-    grid-template-columns: repeat(2, 1fr);
-
-    .card,
-    .card:nth-child(4),
-    .card:nth-child(5) {
-      grid-column: auto;
-    }
-  }
-
-  @media (max-width: $bp-mobile) {
-    grid-template-columns: 1fr;
   }
 }
 

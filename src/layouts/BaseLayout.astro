@@ -4,6 +4,7 @@ import geologicaCyr from '../assets/fonts/geologica-cyrillic.woff2?url';
 // строка с цифрами и «NDA» перерисовывается позже и тянет LCP
 import geologicaLatin from '../assets/fonts/geologica-latin.woff2?url';
 import TopBar from '../components/TopBar.astro';
+import ThemeBoot from '../components/ThemeBoot.astro';
 import { cases } from '../data/cases';
 import SiteFooter from '../components/SiteFooter.astro';
 import '../styles/global.scss';
@@ -53,13 +54,7 @@ const ogImage = new URL(`/og/${ogSlug}.jpg`, Astro.site);
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <link rel="preload" href={geologicaCyr} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={geologicaLatin} as="font" type="font/woff2" crossorigin />
-    <script is:inline>
-      document.documentElement.classList.add('js');
-      try {
-        var t = localStorage.getItem('theme');
-        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
-      } catch (e) {}
-    </script>
+    <ThemeBoot />
   </head>
   <body>
     <div class="backdrop" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>

@@ -1,9 +1,4 @@
 @use '../abstracts/variables' as *;
-@use '../components/page-header';
-@use '../components/phone-strip';
-@use '../components/case-spec';
-@use '../components/info-section';
-@use '../components/cta-box';
 
 :root {
   --title-max: 24ch;
@@ -11,35 +6,7 @@
 
 .note {
   margin-top: 4px;
-  font-size: 14px;
+  font-size: var(--fs-s);
   color: var(--dim);
 }
 
-// Пять карточек «Как устроено»: 3 + 2 на широком экране, 2 + 2 + 1 на планшете,
-// одна колонка на телефоне.
-.info-section .grid {
-  grid-template-columns: repeat(6, 1fr);
-
-  .card {
-    grid-column: span 2;
-  }
-
-  .card:nth-child(4),
-  .card:nth-child(5) {
-    grid-column: span 3;
-  }
-
-  @media (max-width: $bp-wide) {
-    grid-template-columns: repeat(2, 1fr);
-
-    .card,
-    .card:nth-child(4),
-    .card:nth-child(5) {
-      grid-column: auto;
-    }
-  }
-
-  @media (max-width: $bp-mobile) {
-    grid-template-columns: 1fr;
-  }
-}

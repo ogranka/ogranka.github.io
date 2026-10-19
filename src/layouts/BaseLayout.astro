@@ -1,14 +1,18 @@
 ---
-const GOLOS_FONTS_HREF =
-  'https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;800&family=PT+Serif:ital@1&display=swap';
+import geologicaCyr from '../assets/fonts/geologica-cyrillic.woff2?url';
+import TopBar from '../components/TopBar.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import '../styles/global.scss';
 
 interface Props {
   title: string;
-  fontsHref?: string;
+  description: string;
   noindex?: boolean;
+  caseNav?: boolean;
 }
 
-const { title, fontsHref = GOLOS_FONTS_HREF, noindex = false } = Astro.props;
+const { title, description, noindex = false, caseNav = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -17,13 +21,35 @@ const { title, fontsHref = GOLOS_FONTS_HREF, noindex = false } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121317" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href={fontsHref} rel="stylesheet" />
+    <link rel="preload" href={geologicaCyr} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
   </head>
   <body>
+    <TopBar caseNav={caseNav} />
     <slot />
+    <SiteFooter />
+    <script>
+      import { initTheme } from '../scripts/theme';
+      import { initReveal } from '../scripts/reveal';
+
+      initTheme();
+      initReveal();
+    </script>
   </body>
 </html>

@@ -1,0 +1,35 @@
+---
+interface Props {
+  task: string;
+  solution: string;
+  result: string[];
+  stack: string[];
+}
+
+const { task, solution, result, stack } = Astro.props;
+---
+
+<section class="case-spec wrap" aria-label="О проекте">
+  <dl>
+    <div data-reveal>
+      <dt>Задача</dt>
+      <dd>{task}</dd>
+    </div>
+    <div data-reveal>
+      <dt>Решение</dt>
+      <dd>{solution}</dd>
+    </div>
+    <div data-reveal>
+      <dt>Что получил клиент</dt>
+      <dd>
+        <ul>{result.map((item) => <li>{item}</li>)}</ul>
+      </dd>
+    </div>
+    <div data-reveal>
+      <dt>Стек</dt>
+      <dd>
+        <ul class="stack">{stack.map((item) => <li>{item}</li>)}</ul>
+      </dd>
+    </div>
+  </dl>
+</section>

@@ -1,13 +1,55 @@
+// Токены хаба. Светлая тема по умолчанию, тёмная по prefers-color-scheme
+// или по атрибуту data-theme, который ставит переключатель.
+@mixin dark-tokens {
+  color-scheme: dark;
+  --paper: #121317;
+  --surface: #1b1d23;
+  --surface-2: #22252d;
+  --ink: #eef0f4;
+  --dim: #9ca3b0;
+  --line: #2b2f38;
+  --line-strong: #3a3f4a;
+  --accent: #93a4ff;
+  --accent-ink: #0f1430;
+  --accent-soft: #232a4a;
+  --ok: #5fcf8f;
+  --bad: #ff7b72;
+  --shadow: 0 30px 70px -30px rgba(0, 0, 0, .8);
+}
+
 :root {
-  --paper: #faf8f4;
-  --ink: #1c1a17;
-  --dim: #6d675e;
-  --line: #e5e0d7;
-  --accent: #c2451e;
-  --accent-soft: #fbeee8;
-  --ok: #2c6e49;
+  color-scheme: light;
+  --paper: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #eceef2;
+  --ink: #16181d;
+  --dim: #5f6572;
+  --line: #dee1e6;
+  --line-strong: #c4c9d1;
+  --accent: #2a4bd7;
+  --accent-ink: #ffffff;
+  --accent-soft: #e8ecfb;
+  --ok: #1f7a4d;
   --bad: #b3261e;
+  --shadow: 0 30px 70px -36px rgba(22, 24, 29, .45);
+
+  --font: 'Geologica', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --r-s: 10px;
+  --r-m: 18px;
+  --r-l: 28px;
+  --gut: 16px;
 
   // Переопределяются на уровне страницы
-  --wrap-max: 980px;
+  --wrap-max: 1120px;
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
 }

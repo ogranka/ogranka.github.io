@@ -13,11 +13,11 @@ const { heading, items } = Astro.props;
 ---
 
 <section class="info-section wrap">
-  <h3>{heading}</h3>
+  <h2>{heading}</h2>
   <div class="grid">
     {
-      items.map((item) => (
-        <div class="card">
+      items.map((item, index) => (
+        <div class="card" data-reveal style={`--i:${index % 3}`}>
           <b>{item.title}</b>
           <p>{item.text}</p>
         </div>

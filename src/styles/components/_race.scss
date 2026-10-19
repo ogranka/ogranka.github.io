@@ -8,12 +8,12 @@
   border: 0;
   cursor: pointer;
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
   font-family: inherit;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1rem;
   padding: 15px 28px;
-  border-radius: 12px;
+  border-radius: 999px;
   transition: transform .2s;
 
   &:hover {
@@ -41,7 +41,7 @@
 .lane {
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fff;
+  background: var(--surface);
   overflow: hidden;
   box-shadow: 0 20px 50px -30px rgba(28, 26, 23, .22);
 
@@ -60,7 +60,7 @@
   gap: 10px;
   padding: 14px 18px;
   border-bottom: 1px solid var(--line);
-  background: #f4f1ea;
+  background: var(--surface-2);
 
   b {
     font-size: 15px;
@@ -124,6 +124,7 @@
   height: 330px;
   overflow: hidden;
   background: #fff;
+  color: #1c1a17;
 }
 
 .blank {

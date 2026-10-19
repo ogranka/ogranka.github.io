@@ -4,6 +4,7 @@ import geologicaCyr from '../assets/fonts/geologica-cyrillic.woff2?url';
 // строка с «8+» и «NDA» перерисовывается позже и тянет LCP
 import geologicaLatin from '../assets/fonts/geologica-latin.woff2?url';
 import TopBar from '../components/TopBar.astro';
+import { cases } from '../data/cases';
 import SiteFooter from '../components/SiteFooter.astro';
 import '../styles/global.scss';
 
@@ -12,10 +13,16 @@ interface Props {
   description: string;
   noindex?: boolean;
   caseNav?: boolean;
+  /** Разметка JSON-LD для страницы, если нужна */
+  jsonLd?: object;
 }
 
-const { title, description, noindex = false, caseNav = false } = Astro.props;
+const { title, description, noindex = false, caseNav = false, jsonLd } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// Картинка превью ссылки: своя у каждого кейса, у остальных страниц общая хабовая.
+// Делается скриптом tools/og/make-og.mjs в папке портфолио.
+const ogSlug = cases.find((c) => c.href === Astro.url.pathname)?.preview ?? 'home';
+const ogImage = new URL(`/og/${ogSlug}.jpg`, Astro.site);
 ---
 
 <!doctype html>
@@ -30,10 +37,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Сергей Д. Сайты и веб-сервисы под ключ" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#121317" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <link rel="preload" href={geologicaCyr} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={geologicaLatin} as="font" type="font/woff2" crossorigin />
     <script is:inline>

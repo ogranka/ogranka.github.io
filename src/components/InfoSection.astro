@@ -1,4 +1,5 @@
 ---
+import '../styles/components/_info-section.scss';
 interface Item {
   title: string;
   text: string;
@@ -12,7 +13,7 @@ interface Props {
 const { heading, items } = Astro.props;
 ---
 
-<section class="info-section wrap">
+<section class:list={['info-section', 'wrap', { 'info-section--five': items.length === 5 }]}>
   <h2>{heading}</h2>
   <div class="grid">
     {

@@ -1,9 +1,4 @@
 @use '../abstracts/variables' as *;
-@use '../components/page-header';
-@use '../components/phone-strip';
-@use '../components/case-spec';
-@use '../components/info-section';
-@use '../components/cta-box';
 
 :root {
   --title-max: 24ch;
@@ -39,7 +34,7 @@
 
   b {
     display: block;
-    font-size: 1.1rem;
+    font-size: var(--fs-l);
     margin-bottom: 14px;
   }
 
@@ -67,42 +62,15 @@
       border-radius: 50%;
       background: var(--accent);
       color: var(--accent-ink);
-      font-size: 14px;
+      font-size: var(--fs-s);
       font-weight: 600;
     }
   }
 
   &__note {
     margin-top: 18px;
-    font-size: 14px;
+    font-size: var(--fs-s);
     color: var(--dim);
-  }
-}
-
-.info-section .grid {
-  grid-template-columns: repeat(6, 1fr);
-
-  .card {
-    grid-column: span 2;
-  }
-
-  .card:nth-child(4),
-  .card:nth-child(5) {
-    grid-column: span 3;
-  }
-
-  @media (max-width: $bp-wide) {
-    grid-template-columns: repeat(2, 1fr);
-
-    .card,
-    .card:nth-child(4),
-    .card:nth-child(5) {
-      grid-column: auto;
-    }
-  }
-
-  @media (max-width: $bp-mobile) {
-    grid-template-columns: 1fr;
   }
 }
 

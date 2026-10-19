@@ -24,12 +24,7 @@ export function initPhoneStrip() {
       });
     };
     fit();
-    if ('ResizeObserver' in window) {
-      const ro = new ResizeObserver(fit);
-      ro.observe(strip);
-    } else {
-      window.addEventListener('resize', fit);
-    }
+    new ResizeObserver(fit).observe(strip);
 
     const load = (i: number) => {
       const f = iframes[i];

@@ -111,7 +111,8 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks): ChatHandle {
     input.value = '';
     // Пример уступает место настоящему разговору
     exampleEls.splice(0).forEach((el) => el.remove());
-    history = [...history, { role: 'user', content: q }].slice(-MAX_TURNS + 1);
+    const turn: Msg = { role: 'user', content: q };
+    history = [...history, turn].slice(-MAX_TURNS + 1);
     bubble('user', q);
     const answer = bubble('assistant', '');
     answer.classList.add('is-typing');

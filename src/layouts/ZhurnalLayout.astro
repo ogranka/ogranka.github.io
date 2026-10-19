@@ -3,6 +3,7 @@ import { edition, cities, rubrics, type City } from '../data/zhurnal';
 import { cityUrl, rubricUrl, searchUrl, rssUrl } from '../data/zhurnal-content';
 import literataCyr from '../assets/fonts/literata-cyrillic.woff2?url';
 import geologicaCyr from '../assets/fonts/geologica-cyrillic.woff2?url';
+import ThemeBoot from '../components/ThemeBoot.astro';
 import '../styles/pages/zhurnal.scss';
 
 interface Props {
@@ -46,13 +47,7 @@ const fullTitle = `${title} · ${edition.name} ${city.name}`;
     <link rel="preload" href={literataCyr} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={geologicaCyr} as="font" type="font/woff2" crossorigin />
     {jsonLd.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
-    <script is:inline>
-      document.documentElement.classList.add('js');
-      try {
-        var t = localStorage.getItem('theme');
-        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
-      } catch (e) {}
-    </script>
+    <ThemeBoot />
   </head>
   <body>
     <div class="progress" data-progress aria-hidden="true"></div>

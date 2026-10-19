@@ -6,7 +6,9 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function initHeader(): void {
   const header = document.querySelector<HTMLElement>('[data-header]');
   if (!header) return;
-  const onScroll = (): void => header.classList.toggle('solid', scrollY > 40);
+  const onScroll = (): void => {
+    header.classList.toggle('solid', scrollY > 40);
+  };
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 

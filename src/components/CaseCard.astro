@@ -9,11 +9,11 @@ interface Props {
   description: string;
   preview?: ImageMetadata;
   previewAlt?: string;
-  size?: 'wide' | 'half' | 'third';
+  size?: 'wide' | 'half';
   index?: number;
 }
 
-const { href, kind, title, description, preview, previewAlt = '', size = 'third', index = 0 } = Astro.props;
+const { href, kind, title, description, preview, previewAlt = '', size = 'half', index = 0 } = Astro.props;
 ---
 
 <a class:list={['case-card', 'pressable', size]} href={href} data-reveal style={`--i:${index}`}>

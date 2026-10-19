@@ -19,12 +19,12 @@ const cases = [
     size: 'wide' as const,
   },
   {
-    href: '/before-after/',
-    kind: 'Переработка сайта',
-    title: 'Сайт клиники: было и стало',
-    description: 'Тот же контент под одной шторкой: страница 2012 года и её сегодняшняя версия.',
-    preview: preview('before-after'),
-    previewAlt: 'Шторка сравнения: старый и новый сайт клиники',
+    href: '/assistant/',
+    kind: 'ИИ-консультант',
+    title: 'Консультант в чате магазина',
+    description: 'Чат на витрине отвечает по каталогу и правилам доставки, ведёт к корзине и передаёт сложные вопросы флористу.',
+    preview: preview('assistant'),
+    previewAlt: 'Чат консультанта в мобильном магазине букетов',
     size: 'third' as const,
   },
   {
@@ -34,7 +34,16 @@ const cases = [
     description: 'Издание о жизни города с двумя городами в одной редакции: лента, рубрики, статьи, авторы, поиск и SEO-слой.',
     preview: preview('zhurnal'),
     previewAlt: 'Главная страница городского журнала с материалом дня и лентой',
-    size: 'third' as const,
+    size: 'half' as const,
+  },
+  {
+    href: '/before-after/',
+    kind: 'Переработка сайта',
+    title: 'Сайт клиники: было и стало',
+    description: 'Тот же контент под одной шторкой: страница 2012 года и её сегодняшняя версия.',
+    preview: preview('before-after'),
+    previewAlt: 'Шторка сравнения: старый и новый сайт клиники',
+    size: 'half' as const,
   },
   {
     href: '/speed-race/',
@@ -43,7 +52,7 @@ const cases = [
     description: 'Две одинаковые страницы грузятся наперегонки: конструктор против аккуратной сборки.',
     preview: preview('speed-race'),
     previewAlt: 'Две дорожки гонки загрузки со счётчиками',
-    size: 'third' as const,
+    size: 'half' as const,
   },
   {
     href: '/forum-hero/',
@@ -52,7 +61,7 @@ const cases = [
     description: 'Анимированный первый экран уровня студийного сайта: частицы на canvas, 17 КБ кода.',
     preview: preview('forum-hero'),
     previewAlt: 'Тёмный первый экран сайта форума с анимацией частиц',
-    size: 'third' as const,
+    size: 'half' as const,
   },
 ];
 

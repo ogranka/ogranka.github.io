@@ -1,0 +1,44 @@
+@use '../components/page-header';
+@use '../components/case-spec';
+@use '../components/info-section';
+@use '../components/cta-box';
+
+:root {
+  --title-max: 22ch;
+}
+
+.demo-frame {
+  margin-top: 28px;
+  border-radius: var(--r-m);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #050b1c;
+  box-shadow: var(--shadow);
+
+  iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 520px;
+    border: 0;
+  }
+}
+
+.demo-open {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--dim);
+
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
+  }
+}
+
+@media (max-width: 760px) {
+  .demo-frame iframe {
+    aspect-ratio: 9 / 14;
+    min-height: 0;
+  }
+}

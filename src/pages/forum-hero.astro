@@ -1,175 +1,71 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import '../styles/pages/forum-hero.scss';
+import PageHeader from '../components/PageHeader.astro';
+import CaseSpec from '../components/CaseSpec.astro';
+import InfoSection from '../components/InfoSection.astro';
+import CtaBox from '../components/CtaBox.astro';
+import '../styles/pages/forum-hero-case.scss';
 
-const FONTS_HREF =
-  'https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap';
-
-const heroMeta = [
-  { value: '2', label: 'дня работы' },
-  { value: '11', label: 'сессий и треков' },
-  { value: '6', label: 'отраслевых направлений' },
-];
-
-const stats = [
-  { count: 1450, label: 'участников' },
-  { count: 86, label: 'компаний' },
-  { count: 23, label: 'региона' },
-  { count: 12, label: 'соглашений' },
-];
-
-const program = [
+const details = [
   {
-    kicker: 'ПЛЕНАРНОЕ ЗАСЕДАНИЕ',
-    title: 'Меры государственной поддержки',
-    text: 'Основные приоритеты поддержки горнодобывающей промышленности. 12 ноября, 10:00–12:00.',
+    title: 'Частицы на canvas',
+    text: 'Рельеф из точек рисуется на canvas и реагирует на курсор. Никаких библиотек: 17 КБ кода, 60 кадров в секунду на обычном ноутбуке.',
   },
   {
-    kicker: 'ДЕЛОВОЙ ЗАВТРАК',
-    title: 'Новый инвестиционный цикл',
-    text: 'Запуск нового инвестиционного цикла в отрасли: масштабирование добычи и модернизация мощностей.',
+    title: 'Появление по очереди',
+    text: 'Заголовок, подзаголовок, цифры и кнопки выходят с задержкой в сотню миллисекунд друг за другом. Одна оркестрованная сцена вместо случайных эффектов.',
   },
   {
-    kicker: 'СЕССИЯ',
-    title: 'Источники финансирования',
-    text: 'Новые источники финансирования проектов горнодобывающих компаний.',
+    title: 'Цифры набираются в кадре',
+    text: 'Счётчики участников и компаний стартуют, когда блок попадает в экран. Это IntersectionObserver, он есть в каждом браузере.',
   },
   {
-    kicker: 'ОТРАСЛЕВОЙ ТРЕК',
-    title: 'Геологоразведка',
-    text: 'Геологоразведка и новые месторождения: как не остановить сердцебиение отрасли. 13 ноября.',
+    title: 'Бережно к слабым устройствам',
+    text: 'При системной настройке «меньше движения» анимации выключаются, страница остаётся читаемой и быстрой.',
   },
 ];
 ---
 
 <BaseLayout
-  title="Форум «Горнодобывающая промышленность» — концепт главной"
-  fontsHref={FONTS_HREF}
-  noindex
+  title="Сайт отраслевого форума: оживший первый экран"
+  description="Концепт первого экрана сайта отраслевого форума: анимация частиц на canvas, появление блоков и счётчики без библиотек, 17 КБ кода."
+  caseNav
 >
-  <div class="concept-badge">Демонстрационный концепт</div>
+  <main>
+    <PageHeader kind="Первый экран сайта">
+      <Fragment slot="title">Первый экран, который выглядит как дорогой студийный сайт</Fragment>
+      <Fragment slot="lede">
+        Концепт главной страницы отраслевого форума: рельеф из частиц, появление блоков, счётчики.
+        Всё это 17 КБ кода без единой библиотеки. Ниже живая версия, подвигайте курсором по фону.
+      </Fragment>
+    </PageHeader>
 
-  <header class="site-head" data-header>
     <div class="wrap">
-      <nav>
-        <a class="brand" href="#">
-          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
-            <path d="M17 3 31 28H3L17 3Z" stroke="#35d6d0" stroke-width="1.6" stroke-linejoin="round"></path>
-            <path
-              d="M17 12 24 24H10L17 12Z"
-              fill="#35d6d0"
-              fill-opacity=".2"
-              stroke="#35d6d0"
-              stroke-width="1.2"
-              stroke-linejoin="round"></path>
-          </svg>
-          <span>Горнодобывающая<br />промышленность</span>
-        </a>
-        <a class="lnk" href="#stats">О форуме</a>
-        <a class="lnk" href="#prog">Программа</a>
-        <a class="lnk" href="#prog">Партнёрам</a>
-        <a class="lnk" href="#final">Контакты</a>
-        <a class="btn" href="#final">Регистрация</a>
-        <button class="menu-btn" aria-label="Меню">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-          </svg>
-        </button>
-      </nav>
-    </div>
-  </header>
-
-  <div class="hero">
-    <canvas class="field" data-field aria-hidden="true"></canvas>
-    <div class="wrap hero-in">
-      <div class="eyebrow rise" data-d="0">12–13 ноября 2026 · Сколково</div>
-      <h1 class="rise" data-d="1">
-        Горнодобывающая промышленность: <em>инвестиционные проекты</em> и меры поддержки
-      </h1>
-      <p class="lede rise" data-d="2">
-        Площадка для подготовки системных предложений в адрес Правительства РФ: меры господдержки,
-        налоговое стимулирование, технологический суверенитет и логистика отрасли.
+      <div class="demo-frame">
+        <iframe src="/forum-hero/demo/" title="Концепт главной страницы форума" loading="lazy"></iframe>
+      </div>
+      <p class="demo-open">
+        <a href="/forum-hero/demo/" target="_blank" rel="noopener">Открыть концепт на весь экран</a>
       </p>
-      <div class="meta rise" data-d="3">
-        {
-          heroMeta.map((item) => (
-            <div>
-              <b>{item.value}</b>
-              <small>{item.label}</small>
-            </div>
-          ))
-        }
-      </div>
-      <div class="cta rise" data-d="4">
-        <a class="btn" href="#final">Зарегистрироваться</a>
-        <a class="btn ghost" href="#prog">Смотреть программу</a>
-      </div>
     </div>
-    <div class="scroll-hint"><span>Листайте</span><i></i></div>
-  </div>
 
-  <section id="stats" class="band">
-    <div class="wrap">
-      <h2 class="h2 rise">Форум в цифрах</h2>
-      <p class="sub rise">
-        Числа набираются, когда блок попадает в кадр — этого достаточно, чтобы страница перестала
-        быть статичной картинкой. Значения здесь демонстрационные, подставляются реальные.
-      </p>
-      <div class="stats">
-        {
-          stats.map((item, index) => (
-            <div class="stat rise" data-d={index}>
-              <b data-count={item.count}>0</b>
-              <span>{item.label}</span>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+    <CaseSpec
+      task="Организатору форума нужен первый экран, после которого не стыдно слать ссылку партнёрам: «как у дорогих студий», но без их бюджета и без тяжёлых библиотек, которые тянут сайт вниз."
+      solution="Нарисовал сцену на canvas и собрал анимации на стандартных средствах браузера: появление блоков, счётчики, реакция карточек на курсор. Без WebGL-движков и без jQuery."
+      result={[
+        'Первый экран уровня студийного сайта за два дня работы',
+        'Страница весит меньше одной фотографии',
+        'Анимации уважают настройку «меньше движения»',
+        'Концепт легко переносится на реальный сайт форума',
+      ]}
+      stack={['Canvas 2D', 'IntersectionObserver', 'TypeScript', 'SCSS', 'Astro для сборки']}
+    />
 
-  <section id="prog">
-    <div class="wrap">
-      <h2 class="h2 rise">Из деловой программы</h2>
-      <p class="sub rise">
-        Пункты из опубликованной программы форума. Карточки реагируют на курсор и появляются по
-        очереди — из таких мелочей складывается ощущение живого сайта.
-      </p>
-      <div class="cards">
-        {
-          program.map((item, index) => (
-            <article class="card rise" data-d={index}>
-              <i>{item.kicker}</i>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
+    <InfoSection heading="Как устроено" items={details} />
 
-  <section id="final" class="band final">
-    <div class="wrap">
-      <h2 class="h2 rise">Участие в форуме</h2>
-      <p class="sub rise">Регистрация участников и партнёрские пакеты.</p>
-      <div class="cta rise">
-        <a class="btn" href="#">Зарегистрироваться</a>
-        <a class="btn ghost" href="#">Партнёрские пакеты</a>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="wrap">
-      <span>Демонстрационный концепт главной страницы. Не является официальным сайтом мероприятия.</span>
-      <span>© 2026 Сергей Д. · Все права защищены</span>
-    </div>
-  </footer>
+    <CtaBox
+      title="Хотите такой же первый экран?"
+      text="Соберу под ваш сайт: мероприятие, компания, продукт. Сначала концепт одного экрана, чтобы увидеть результат до оплаты всего проекта."
+    />
+  </main>
 </BaseLayout>
-
-<script>
-  import { initForumHero } from '../scripts/forum-hero';
-
-  initForumHero();
-</script>

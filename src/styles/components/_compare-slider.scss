@@ -56,7 +56,7 @@
     height: 52px;
     border-radius: 50%;
     background: var(--ink);
-    color: #fff;
+    color: var(--paper);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,7 +86,7 @@
 
     &.b {
       left: 14px;
-      background: #fff;
+      background: var(--surface);
       border: 1px solid var(--line);
       color: var(--dim);
     }
@@ -94,7 +94,7 @@
     &.a {
       right: 14px;
       background: var(--ink);
-      color: #fff;
+      color: var(--paper);
     }
   }
 }

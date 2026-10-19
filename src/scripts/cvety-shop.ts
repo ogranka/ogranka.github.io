@@ -258,7 +258,7 @@ export function initShop() {
       return order.get(a)! - order.get(b)!;
     });
     sorted.forEach((c) => grid.append(c));
-    const labels: Record<string, string> = { popular: 'Сначала популярные', cheap: 'Сначала дешевле', dear: 'Сначала дороже', new: 'Новинки' };
+    const labels: Record<string, string> = { popular: 'Популярные', cheap: 'Дешевле', dear: 'Дороже', new: 'Новинки' };
     $('#sortBtn')!.firstChild!.textContent = labels[mode];
   };
 
@@ -282,7 +282,7 @@ export function initShop() {
     }
     if (t === buy) {
       buy.dataset.added = '';
-      buy.textContent = 'В корзине, оформить';
+      buy.textContent = 'В корзине · оформить';
       if (!cart.includes(featured.id)) return addToCart(featured.id);
       return openSheet('cart');
     }

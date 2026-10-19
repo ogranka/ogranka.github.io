@@ -15,6 +15,8 @@
   --ok: #5fcf8f;
   --bad: #ff7b72;
   --shadow: 0 30px 70px -30px rgba(0, 0, 0, .8);
+  --blob-1: rgba(147, 164, 255, .14);
+  --blob-2: rgba(95, 207, 143, .09);
 }
 
 :root {
@@ -32,6 +34,8 @@
   --ok: #1f7a4d;
   --bad: #b3261e;
   --shadow: 0 30px 70px -36px rgba(22, 24, 29, .45);
+  --blob-1: rgba(42, 75, 215, .16);
+  --blob-2: rgba(31, 122, 77, .11);
 
   --font: 'Geologica', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ease: cubic-bezier(.2, .7, .2, 1);

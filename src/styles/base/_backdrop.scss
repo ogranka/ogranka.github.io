@@ -1,0 +1,67 @@
+// Фон хаба: два мягких цветовых пятна из токенов медленно плывут за контентом.
+// Только transform и opacity, без скриптов; при reduced-motion пятна стоят.
+body {
+  position: relative;
+  isolation: isolate;
+
+  &::before,
+  &::after {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    width: 70vmax;
+    height: 70vmax;
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  &::before {
+    top: -30vmax;
+    left: -20vmax;
+    background: radial-gradient(circle at center, var(--blob-1) 0%, transparent 62%);
+    animation: blob-a 52s ease-in-out infinite alternate;
+  }
+
+  &::after {
+    right: -25vmax;
+    bottom: -30vmax;
+    background: radial-gradient(circle at center, var(--blob-2) 0%, transparent 62%);
+    animation: blob-b 64s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes blob-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(18vmax, 10vmax, 0) scale(1.12);
+  }
+
+  100% {
+    transform: translate3d(30vmax, -6vmax, 0) scale(.94);
+  }
+}
+
+@keyframes blob-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-20vmax, -14vmax, 0) scale(1.1);
+  }
+
+  100% {
+    transform: translate3d(-8vmax, -28vmax, 0) scale(.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
+}

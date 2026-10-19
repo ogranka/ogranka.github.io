@@ -1,0 +1,55 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ZhurnalLayout from '../../../../layouts/ZhurnalLayout.astro';
+import ArticleCard from '../../../../components/zhurnal/ArticleCard.astro';
+import Pagination from '../../../../components/zhurnal/Pagination.astro';
+import { cities, rubrics, edition } from '../../../../data/zhurnal';
+import { cityArticles, cityUrl, rubricUrl } from '../../../../data/zhurnal-content';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const sections = [{ slug: 'lenta', name: 'Лента', about: 'Все материалы по порядку выхода' }, ...rubrics];
+  const paths = [];
+  for (const city of cities) {
+    const all = await cityArticles(city.slug);
+    for (const section of sections) {
+      const list = section.slug === 'lenta' ? all : all.filter((a) => a.data.rubric === section.slug);
+      paths.push(...paginate(list, { params: { city: city.slug, rubric: section.slug }, props: { city, section }, pageSize: 4 }));
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+const { page, city, section } = Astro.props;
+const path = rubricUrl(city.slug, section.slug, page.currentPage);
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: `${edition.name} ${city.name}`, item: new URL(cityUrl(city.slug), Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: section.name, item: new URL(rubricUrl(city.slug, section.slug), Astro.site).href },
+    ],
+  },
+];
+---
+
+<ZhurnalLayout
+  title={page.currentPage > 1 ? `${section.name}, страница ${page.currentPage}` : section.name}
+  description={`${section.name} в ${city.prepositional}: ${section.about.toLowerCase()}. ${page.total} материалов.`}
+  city={city}
+  path={path}
+  jsonLd={jsonLd}
+>
+  <header class="section-head">
+    <h1>{section.name}</h1>
+    <p>{section.about}</p>
+  </header>
+  {
+    page.data.length ? (
+      <div class="feed__grid">{page.data.map((a) => <ArticleCard article={a} />)}</div>
+    ) : (
+      <p class="z-empty">В этой рубрике пока пусто. Загляните в <a href={rubricUrl(city.slug, 'lenta')}>ленту</a>.</p>
+    )
+  }
+  <Pagination current={page.currentPage} total={page.lastPage} url={(n) => rubricUrl(city.slug, section.slug, n)} />
+</ZhurnalLayout>

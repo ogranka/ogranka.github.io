@@ -1,0 +1,61 @@
+---
+import ZhurnalLayout from '../../../layouts/ZhurnalLayout.astro';
+import ArticleCard from '../../../components/zhurnal/ArticleCard.astro';
+import { cities, rubrics, edition, formatDate } from '../../../data/zhurnal';
+import { cityArticles, cityUrl, rubricUrl } from '../../../data/zhurnal-content';
+
+export async function getStaticPaths() {
+  return cities.map((city) => ({ params: { city: city.slug }, props: { city } }));
+}
+
+const { city } = Astro.props;
+const articles = await cityArticles(city.slug);
+const feature = articles.find((a) => a.data.featured) || articles[0];
+const feed = articles.filter((a) => a !== feature);
+const issueDate = formatDate(articles[0].data.date);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'NewsMediaOrganization',
+    name: `${edition.name} ${city.name}`,
+    url: new URL(cityUrl(city.slug), Astro.site).href,
+  },
+];
+---
+
+<ZhurnalLayout
+  title="Главная"
+  description={`${edition.name} ${city.name}: ${city.tagline.toLowerCase()}. Места, еда, маршруты, события и люди города, новый выпуск каждую неделю.`}
+  city={city}
+  path={cityUrl(city.slug)}
+  jsonLd={jsonLd}
+>
+  <p class="issue">Выпуск от {issueDate}</p>
+  <section class="feature" aria-label="Материал дня">
+    <ArticleCard article={feature} variant="feature" eager />
+  </section>
+
+  <section class="feed" aria-labelledby="feed-h">
+    <h2 id="feed-h" class="z-h2">В этом выпуске</h2>
+    <div class="feed__grid">
+      {feed.map((a) => <ArticleCard article={a} />)}
+    </div>
+  </section>
+
+  <section class="rubric-list" aria-labelledby="rubrics-h">
+    <h2 id="rubrics-h" class="z-h2">Рубрики {city.genitive}</h2>
+    <ul>
+      {
+        rubrics.map((r) => (
+          <li>
+            <a href={rubricUrl(city.slug, r.slug)}>
+              <b>{r.name}</b>
+              <span>{r.about}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</ZhurnalLayout>

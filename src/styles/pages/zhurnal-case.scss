@@ -1,0 +1,72 @@
+@use '../abstracts/variables' as *;
+@use '../components/page-header';
+@use '../components/case-spec';
+@use '../components/info-section';
+@use '../components/cta-box';
+
+:root {
+  --title-max: 24ch;
+}
+
+.demo-frame {
+  margin-top: 28px;
+  border-radius: var(--r-m);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fbfaf7;
+  box-shadow: var(--shadow);
+
+  iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 560px;
+    border: 0;
+  }
+}
+
+.demo-open {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--dim);
+
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
+  }
+}
+
+.info-section .grid {
+  grid-template-columns: repeat(6, 1fr);
+
+  .card {
+    grid-column: span 2;
+  }
+
+  .card:nth-child(4),
+  .card:nth-child(5) {
+    grid-column: span 3;
+  }
+
+  @media (max-width: $bp-wide) {
+    grid-template-columns: repeat(2, 1fr);
+
+    .card,
+    .card:nth-child(4),
+    .card:nth-child(5) {
+      grid-column: auto;
+    }
+  }
+
+  @media (max-width: $bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $bp-mobile) {
+  .demo-frame iframe {
+    aspect-ratio: 9 / 14;
+    min-height: 0;
+  }
+}

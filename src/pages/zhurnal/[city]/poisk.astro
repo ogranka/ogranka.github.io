@@ -1,0 +1,42 @@
+---
+import ZhurnalLayout from '../../../layouts/ZhurnalLayout.astro';
+import { cities, rubrics, bySlug, formatDate } from '../../../data/zhurnal';
+import { cityArticles, articleUrl, searchUrl } from '../../../data/zhurnal-content';
+
+export async function getStaticPaths() {
+  return cities.map((city) => ({ params: { city: city.slug }, props: { city } }));
+}
+
+const { city } = Astro.props;
+const articles = await cityArticles(city.slug);
+---
+
+<ZhurnalLayout title="Поиск" description={`Поиск по заголовкам материалов ${city.genitive}: места, еда, маршруты, события, люди.`} city={city} path={searchUrl(city.slug)}>
+  <section class="search" data-search>
+    <header class="section-head">
+      <h1>Поиск по {city.prepositional}</h1>
+      <p>Ищет по заголовкам и подзаголовкам прямо в браузере, без запросов на сервер.</p>
+    </header>
+    <form class="search__form" role="search" onsubmit="return false">
+      <label>
+        <span class="z-sr">Что ищем</span>
+        <input type="search" name="q" placeholder="Например: трамвай, рынок, набережная" autocomplete="off" />
+      </label>
+    </form>
+    <p class="search__count" data-count aria-live="polite"></p>
+    <ul class="search__list">
+      {
+        articles.map((a) => (
+          <li data-item={`${a.data.title} ${a.data.description}`}>
+            <a href={articleUrl(a)}>
+              <span class="search__rubric">{bySlug(rubrics, a.data.rubric).name}</span>
+              <b>{a.data.title}</b>
+              <small>{formatDate(a.data.date)}</small>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="z-empty" data-empty hidden>Ничего не нашлось. Попробуйте короче: одно слово из заголовка.</p>
+  </section>
+</ZhurnalLayout>

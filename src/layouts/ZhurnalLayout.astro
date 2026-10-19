@@ -1,0 +1,136 @@
+---
+import { edition, cities, rubrics, type City } from '../data/zhurnal';
+import { cityUrl, rubricUrl, searchUrl, rssUrl } from '../data/zhurnal-content';
+import literataCyr from '../assets/fonts/literata-cyrillic.woff2?url';
+import geologicaCyr from '../assets/fonts/geologica-cyrillic.woff2?url';
+import '../styles/pages/zhurnal.scss';
+
+interface Props {
+  title: string;
+  description: string;
+  city: City;
+  path: string;
+  ogImage?: string;
+  ogType?: string;
+  jsonLd?: unknown[];
+}
+
+const { title, description, city, path, ogImage, ogType = 'website', jsonLd = [] } = Astro.props;
+const site = Astro.site!;
+const canonical = new URL(path, site).href;
+const fullTitle = `${title} · ${edition.name} ${city.name}`;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content={`${edition.name} ${city.name}`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="ru_RU" />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, site).href} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <link rel="alternate" type="application/rss+xml" title={`${edition.name} ${city.name}`} href={new URL(rssUrl(city.slug), site).href} />
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16150f" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231b1a17'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' fill='%23fbfaf7'%3EО%3C/text%3E%3C/svg%3E" />
+    <link rel="preload" href={literataCyr} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geologicaCyr} as="font" type="font/woff2" crossorigin />
+    {jsonLd.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="progress" data-progress aria-hidden="true"></div>
+    <header class="z-head">
+      <div class="z-wrap z-head__top">
+        <a class="z-logo" href={cityUrl(city.slug)}>
+          <b>{edition.name}</b>
+          <span>{city.name}</span>
+        </a>
+        <nav class="z-cities" aria-label="Города">
+          {
+            cities.map((c) => (
+              <a href={cityUrl(c.slug)} aria-current={c.slug === city.slug ? 'page' : undefined}>
+                <span class="z-cities__name">{c.name}</span>
+                <small>{c.slug}.{edition.domain}</small>
+              </a>
+            ))
+          }
+        </nav>
+        <div class="z-head__tools">
+          <a class="z-search" href={searchUrl(city.slug)} aria-label="Поиск по материалам">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <span>Поиск</span>
+          </a>
+          <button class="z-theme" type="button" data-theme-toggle aria-label="Переключить тему">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"></path></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path></svg>
+          </button>
+        </div>
+      </div>
+      <nav class="z-wrap z-rubrics" aria-label="Рубрики">
+        <a href={rubricUrl(city.slug, 'lenta')} aria-current={Astro.url.pathname.includes('/lenta/') ? 'page' : undefined}>Лента</a>
+        {
+          rubrics.map((r) => (
+            <a href={rubricUrl(city.slug, r.slug)} aria-current={Astro.url.pathname.includes(`/${r.slug}/`) ? 'page' : undefined}>
+              {r.name}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+
+    <main class="z-wrap">
+      <slot />
+    </main>
+
+    <footer class="z-foot">
+      <div class="z-wrap">
+        <div class="z-foot__grid">
+          <div>
+            <b>{edition.name}</b>
+            <p>{edition.tagline}. Вымышленное издание о вымышленных городах: демонстрация для портфолио, совпадения случайны.</p>
+          </div>
+          <div>
+            <b>Города</b>
+            <ul>{cities.map((c) => <li><a href={cityUrl(c.slug)}>{c.name}</a></li>)}</ul>
+          </div>
+          <div>
+            <b>Рубрики</b>
+            <ul>{rubrics.map((r) => <li><a href={rubricUrl(city.slug, r.slug)}>{r.name}</a></li>)}</ul>
+          </div>
+          <div>
+            <b>Подписка</b>
+            <ul>
+              <li><a href={rssUrl(city.slug)}>RSS {city.genitive}</a></li>
+              <li><a href={`${import.meta.env.BASE_URL}zhurnal/sitemap.xml`}>Карта сайта</a></li>
+              <li><a href="/zhurnal/">О проекте</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="z-foot__note">© 2026 Сергей Д. Фото: Unsplash. Тексты, авторы и города придуманы.</p>
+      </div>
+    </footer>
+
+    <script>
+      import { initTheme } from '../scripts/theme';
+      import { initZhurnal } from '../scripts/zhurnal';
+
+      initTheme();
+      initZhurnal();
+    </script>
+  </body>
+</html>

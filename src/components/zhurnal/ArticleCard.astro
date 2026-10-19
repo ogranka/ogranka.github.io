@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+import { photo } from '../../data/zhurnal-photos';
+import { rubrics, authors, bySlug, formatDate } from '../../data/zhurnal';
+import { articleUrl, rubricUrl, type Article } from '../../data/zhurnal-content';
+
+interface Props {
+  article: Article;
+  variant?: 'feature' | 'default' | 'compact';
+  eager?: boolean;
+}
+
+const { article, variant = 'default', eager = false } = Astro.props;
+const { data } = article;
+const rubric = bySlug(rubrics, data.rubric);
+const author = bySlug(authors, data.author);
+const sizes = variant === 'feature' ? '(max-width: 760px) 92vw, 650px' : variant === 'compact' ? '(max-width: 760px) 40vw, 200px' : '(max-width: 760px) 92vw, 360px';
+const widths = variant === 'feature' ? [480, 720, 960] : variant === 'compact' ? [240, 480] : [400, 800];
+---
+
+<article class:list={['card', `card--${variant}`, { 'card--special': data.kind === 'special' }]}>
+  <a class="card__cover" href={articleUrl(article)} tabindex="-1" aria-hidden="true">
+    <Image src={photo(data.cover)} alt="" widths={widths} sizes={sizes} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
+  </a>
+  <div class="card__body">
+    <p class="card__meta">
+      <a href={rubricUrl(data.city, data.rubric)}>{rubric.name}</a>
+      {data.kind === 'special' && <span class="card__special">Партнёрский материал</span>}
+    </p>
+    <h3 class="card__title"><a href={articleUrl(article)}>{data.title}</a></h3>
+    {variant !== 'compact' && <p class="card__text">{data.description}</p>}
+    <p class="card__by">
+      {author.name}<span aria-hidden="true">, </span><time datetime={data.date.toISOString().slice(0, 10)}>{formatDate(data.date)}</time>
+    </p>
+  </div>
+</article>

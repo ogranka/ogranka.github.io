@@ -1,16 +1,35 @@
 // Лента телефонов: вкладки прокручивают ленту, прокрутка подсвечивает вкладку.
-// Фреймы с магазином подключаются после загрузки страницы, чтобы не
-// отбирать канал у шрифтов и текста кейса: первый сразу, остальные по очереди.
+// Экран магазина свёрстан на 360 px и масштабируется под ширину рамки, чтобы
+// на десктопе четыре телефона помещались в контейнер целиком.
+// Фреймы подключаются после загрузки страницы, чтобы не отбирать канал у
+// шрифтов и текста кейса: первый сразу, остальные по очереди.
+const SCREEN_WIDTH = 360;
+
 export function initPhoneStrip() {
   document.querySelectorAll<HTMLElement>('[data-phones]').forEach((root) => {
     const strip = root.querySelector<HTMLElement>('[data-strip]')!;
     const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
     const phones = [...strip.querySelectorAll<HTMLElement>('[data-phone]')];
-    const frames = phones.map((p) => p.querySelector<HTMLIFrameElement>('iframe')!);
+    const frames = phones.map((p) => p.querySelector<HTMLElement>('[data-frame]')!);
+    const iframes = phones.map((p) => p.querySelector<HTMLIFrameElement>('iframe')!);
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    const fit = () => {
+      frames.forEach((frame) => {
+        const inner = frame.clientWidth - 2 * parseFloat(getComputedStyle(frame).paddingLeft);
+        frame.style.setProperty('--s', String(inner / SCREEN_WIDTH));
+      });
+    };
+    fit();
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(fit);
+      ro.observe(strip);
+    } else {
+      window.addEventListener('resize', fit);
+    }
+
     const load = (i: number) => {
-      const f = frames[i];
+      const f = iframes[i];
       if (f && f.dataset.src) {
         f.src = f.dataset.src;
         delete f.dataset.src;
@@ -20,7 +39,7 @@ export function initPhoneStrip() {
       load(0);
       let k = 1;
       const next = () => {
-        if (k < frames.length) {
+        if (k < iframes.length) {
           load(k++);
           setTimeout(next, 400);
         }

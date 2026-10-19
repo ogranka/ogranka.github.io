@@ -1,0 +1,57 @@
+---
+import ZhurnalLayout from '../../../../layouts/ZhurnalLayout.astro';
+import ArticleCard from '../../../../components/zhurnal/ArticleCard.astro';
+import { cities, authors, edition } from '../../../../data/zhurnal';
+import { allArticles, authorUrl, cityUrl } from '../../../../data/zhurnal-content';
+
+export async function getStaticPaths() {
+  const articles = await allArticles();
+  return cities.flatMap((city) =>
+    authors.map((author) => ({
+      params: { city: city.slug, author: author.slug },
+      props: { city, author, articles: articles.filter((a) => a.data.author === author.slug) },
+    })),
+  );
+}
+
+const { city, author, articles } = Astro.props;
+const here = articles.filter((a) => a.data.city === city.slug);
+const elsewhere = articles.filter((a) => a.data.city !== city.slug);
+const path = authorUrl(city.slug, author.slug);
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: { '@type': 'Person', name: author.name, jobTitle: author.role, description: author.about, worksFor: { '@type': 'Organization', name: edition.name } },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: `${edition.name} ${city.name}`, item: new URL(cityUrl(city.slug), Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: author.name, item: new URL(path, Astro.site).href },
+    ],
+  },
+];
+---
+
+<ZhurnalLayout title={author.name} description={`${author.name}, ${author.role.toLowerCase()} журнала «${edition.name}». ${author.about}`} city={city} path={path} jsonLd={jsonLd}>
+  <header class="section-head section-head--author">
+    <span class="author__initials author__initials--big" aria-hidden="true">{author.name.split(' ').map((w) => w[0]).join('')}</span>
+    <div>
+      <h1>{author.name}</h1>
+      <p class="section-head__role">{author.role}</p>
+      <p>{author.about}</p>
+    </div>
+  </header>
+  <h2 class="z-h2">Материалы в {city.prepositional}</h2>
+  {here.length ? <div class="feed__grid">{here.map((a) => <ArticleCard article={a} />)}</div> : <p class="z-empty">В этом городе автор пока не публиковался.</p>}
+  {
+    elsewhere.length > 0 && (
+      <>
+        <h2 class="z-h2">В других городах</h2>
+        <div class="feed__grid">{elsewhere.map((a) => <ArticleCard article={a} />)}</div>
+      </>
+    )
+  }
+</ZhurnalLayout>

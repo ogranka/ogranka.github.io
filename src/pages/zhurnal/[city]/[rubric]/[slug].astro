@@ -1,0 +1,122 @@
+---
+import { render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import ZhurnalLayout from '../../../../layouts/ZhurnalLayout.astro';
+import ArticleCard from '../../../../components/zhurnal/ArticleCard.astro';
+import { cities, rubrics, authors, edition, bySlug, formatDate, readingTime } from '../../../../data/zhurnal';
+import { allArticles, articleUrl, authorUrl, cityUrl, rubricUrl } from '../../../../data/zhurnal-content';
+import { photo } from '../../../../data/zhurnal-photos';
+
+export async function getStaticPaths() {
+  const articles = await allArticles();
+  return articles.map((article) => ({
+    params: { city: article.data.city, rubric: article.data.rubric, slug: article.id },
+    props: { article, siblings: articles.filter((a) => a.data.city === article.data.city && a.id !== article.id) },
+  }));
+}
+
+const { article, siblings } = Astro.props;
+const { data } = article;
+const { Content, headings } = await render(article);
+const city = bySlug(cities, data.city);
+const rubric = bySlug(rubrics, data.rubric);
+const author = bySlug(authors, data.author);
+const toc = headings.filter((h) => h.depth === 2);
+const minutes = readingTime(article.body || '');
+const related = [...siblings.filter((a) => a.data.rubric === data.rubric), ...siblings.filter((a) => a.data.rubric !== data.rubric)].slice(0, 3);
+const path = articleUrl(article);
+const og = await getImage({ src: photo(data.cover), width: 1200, height: 750, format: 'jpg' });
+const absolute = (p: string) => new URL(p, Astro.site).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': data.kind === 'special' ? 'AdvertiserContentArticle' : 'NewsArticle',
+    headline: data.title,
+    description: data.description,
+    image: [absolute(og.src)],
+    datePublished: data.date.toISOString(),
+    dateModified: data.date.toISOString(),
+    author: { '@type': 'Person', name: author.name, url: absolute(authorUrl(city.slug, author.slug)) },
+    publisher: { '@type': 'Organization', name: `${edition.name} ${city.name}` },
+    articleSection: rubric.name,
+    mainEntityOfPage: absolute(path),
+    inLanguage: 'ru',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: `${edition.name} ${city.name}`, item: absolute(cityUrl(city.slug)) },
+      { '@type': 'ListItem', position: 2, name: rubric.name, item: absolute(rubricUrl(city.slug, rubric.slug)) },
+      { '@type': 'ListItem', position: 3, name: data.title, item: absolute(path) },
+    ],
+  },
+];
+---
+
+<ZhurnalLayout title={data.title} description={data.description} city={city} path={path} ogImage={og.src} ogType="article" jsonLd={jsonLd}>
+  <article class="post" data-article>
+    <nav class="crumbs" aria-label="Вы здесь">
+      <a href={cityUrl(city.slug)}>{city.name}</a>
+      <a href={rubricUrl(city.slug, rubric.slug)}>{rubric.name}</a>
+    </nav>
+    <header class="post__head">
+      {data.kind === 'special' && <p class="post__special">Партнёрский материал{data.partner && `: ${data.partner}`}</p>}
+      <h1>{data.title}</h1>
+      <p class="post__lede">{data.description}</p>
+      <p class="post__meta">
+        <a href={authorUrl(city.slug, author.slug)}>{author.name}</a>
+        <time datetime={data.date.toISOString().slice(0, 10)}>{formatDate(data.date)}</time>
+        <span>{minutes} мин чтения</span>
+      </p>
+    </header>
+    <figure class="post__cover">
+      <Image src={photo(data.cover)} alt={data.coverAlt} widths={[600, 900, 1200]} sizes="(max-width: 760px) 100vw, 1120px" loading="eager" fetchpriority="high" />
+    </figure>
+    <div class="post__layout">
+      <aside class="post__side">
+        {
+          toc.length > 0 && (
+            <nav class="toc" data-toc aria-label="Содержание">
+              <b>Содержание</b>
+              <ol>
+                {toc.map((h) => (
+                  <li><a href={`#${h.slug}`}>{h.text}</a></li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+      </aside>
+      <div class="post__body prose">
+        <Content />
+        {
+          data.kind === 'special' && (
+            <aside class="partner">
+              <b>О партнёре</b>
+              <p>{data.partner}. Материал оплачен партнёром, редакция сохраняла контроль над текстом. Контакты партнёра здесь опущены: это демонстрационное издание.</p>
+            </aside>
+          )
+        }
+      </div>
+    </div>
+    <footer class="post__foot">
+      <a class="author" href={authorUrl(city.slug, author.slug)}>
+        <span class="author__initials" aria-hidden="true">{author.name.split(' ').map((w) => w[0]).join('')}</span>
+        <span>
+          <b>{author.name}</b>
+          <small>{author.role}</small>
+          <span class="author__about">{author.about}</span>
+        </span>
+      </a>
+    </footer>
+  </article>
+
+  <section class="related" aria-labelledby="related-h">
+    <h2 id="related-h" class="z-h2">Похожие материалы</h2>
+    <div class="feed__grid feed__grid--3">
+      {related.map((a) => <ArticleCard article={a} />)}
+    </div>
+  </section>
+</ZhurnalLayout>

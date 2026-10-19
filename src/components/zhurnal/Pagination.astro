@@ -1,0 +1,24 @@
+---
+interface Props {
+  current: number;
+  total: number;
+  url: (page: number) => string;
+}
+
+const { current, total, url } = Astro.props;
+const pages = Array.from({ length: total }, (_, i) => i + 1);
+---
+
+{
+  total > 1 && (
+    <nav class="pager" aria-label="Страницы">
+      {current > 1 ? <a href={url(current - 1)} rel="prev">Новее</a> : <span class="pager__off">Новее</span>}
+      <ol>
+        {pages.map((p) => (
+          <li>{p === current ? <span aria-current="page">{p}</span> : <a href={url(p)}>{p}</a>}</li>
+        ))}
+      </ol>
+      {current < total ? <a href={url(current + 1)} rel="next">Старше</a> : <span class="pager__off">Старше</span>}
+    </nav>
+  )
+}

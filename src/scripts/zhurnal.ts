@@ -18,7 +18,11 @@ export function initZhurnal() {
   if (toc && article && 'IntersectionObserver' in window) {
     const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
     const headings = links.map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1)))).filter(Boolean) as HTMLElement[];
-    const mark = (id: string) => links.forEach((l) => l.toggleAttribute('aria-current', decodeURIComponent(l.hash.slice(1)) === id));
+    const mark = (id: string) =>
+      links.forEach((l) => {
+        if (decodeURIComponent(l.hash.slice(1)) === id) l.setAttribute('aria-current', 'true');
+        else l.removeAttribute('aria-current');
+      });
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {

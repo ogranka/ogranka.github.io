@@ -2,7 +2,7 @@
 import type { ImageMetadata } from 'astro';
 import { Image, getImage } from 'astro:assets';
 import ShopLogo from '../../components/cvety/ShopLogo.astro';
-import { lists, hero, categories, gallery, featured, rub } from '../../data/cvety';
+import { products, lists, hero, categories, gallery, featured, rub, FLOWERS, TONES } from '../../data/cvety';
 import onestCyr from '../../assets/fonts/onest-cyrillic.woff2?url';
 import oswaldCyr from '../../assets/fonts/oswald-cyrillic.woff2?url';
 import '../../styles/pages/cvety-shop.scss';
@@ -13,6 +13,15 @@ const photo = (key: string) => photos[`../../assets/cvety/${key}.webp`].default;
 const cardSizes = '(max-width: 480px) 46vw, 220px';
 // Первый слайд это самый крупный элемент экрана: отдаём его вручную и предзагружаем.
 const heroFirst = await getImage({ src: photo(hero[0].img), widths: [480, 640, 800, 960], sizes: '100vw', format: 'webp', quality: 62 });
+// Фото для карточки любого букета: скрипт подставляет их, когда открыт #product/<id>.
+const productImages = Object.fromEntries(
+  await Promise.all(
+    products.map(async (p) => {
+      const img = await getImage({ src: photo(p.img), widths: [480, 720, 960], sizes: '100vw', format: 'webp' });
+      return [p.id, { src: img.src, srcset: img.srcSet.attribute }];
+    }),
+  ),
+);
 const phone = '+7 999 000-00-00';
 const phoneHref = 'tel:+79990000000';
 ---
@@ -89,7 +98,7 @@ const phoneHref = 'tel:+79990000000';
         <nav class="circles" aria-label="Разделы">
           {
             categories.map((cat) => (
-              <a href="#catalog">
+              <a href="#catalog" data-preset={cat.preset}>
                 <Image src={photo(cat.img)} alt="" width={184} height={184} loading="lazy" />
                 <span>{cat.name}</span>
               </a>
@@ -103,12 +112,12 @@ const phoneHref = 'tel:+79990000000';
             {
               lists.season.map((p) => (
                 <article class="pcard">
-                  <a class="pcard__photo" href="#product">
+                  <a class="pcard__photo" href={`#product/${p.id}`}>
                     <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
                     {p.sale && <span class="badge">−15% по МЯТА</span>}
                   </a>
                   <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
-                  <a class="pcard__name" href="#product">{p.name}</a>
+                  <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
                   <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
                 </article>
               ))
@@ -126,35 +135,33 @@ const phoneHref = 'tel:+79990000000';
 
         <div class="cat-head">
           <h1 class="display">Авторские букеты</h1>
-          <p class="muted">16 букетов, привезём за&nbsp;2&nbsp;часа</p>
+          <p class="muted"><span id="catalogCount">{lists.catalog.length} букетов</span>, привезём за&nbsp;2&nbsp;часа</p>
         </div>
 
-        <nav class="chips" aria-label="Подкатегории">
-          <a href="#catalog">Все букеты</a>
-          <a href="#catalog" aria-current="page">Авторские</a>
-          <a href="#catalog">Монобукеты</a>
-          <a href="#catalog">До 6&nbsp;000&nbsp;₽</a>
-          <a href="#catalog">До 10&nbsp;000&nbsp;₽</a>
-          <a href="#catalog">Большие</a>
-          <a href="#catalog">С эвкалиптом</a>
-          <a href="#catalog">На день рождения</a>
-        </nav>
+        <div class="chips" role="group" aria-label="Подборки каталога">
+          <button type="button" data-preset="all" aria-pressed="true">Все букеты</button>
+          <button type="button" data-preset="mono" aria-pressed="false">Монобукеты</button>
+          <button type="button" data-preset="under6" aria-pressed="false">До 6&nbsp;000&nbsp;₽</button>
+          <button type="button" data-preset="under10" aria-pressed="false">До 10&nbsp;000&nbsp;₽</button>
+          <button type="button" data-preset="big" aria-pressed="false">Большие</button>
+          <button type="button" data-preset="eucalyptus" aria-pressed="false">С эвкалиптом</button>
+        </div>
 
         <div class="toolbar">
-          <button class="pill pill--line" type="button" data-sheet="filter"><svg><use href="#i-filter"></use></svg>Фильтр<b class="count" id="filterCount">2</b></button>
+          <button class="pill pill--line" type="button" data-sheet="filter"><svg><use href="#i-filter"></use></svg>Фильтр<b class="count" id="filterCount" hidden>0</b></button>
           <button class="pill pill--ghost" type="button" data-sheet="sort" id="sortBtn">Популярные<svg><use href="#i-down"></use></svg></button>
         </div>
 
         <div class="grid" id="catalogGrid">
           {
             lists.catalog.map((p, index) => (
-              <article class="pcard" data-price={p.price} data-sale={p.sale ? '' : undefined}>
-                <a class="pcard__photo" href="#product">
+              <article class="pcard" data-id={p.id} data-price={p.price} data-sale={p.sale ? '' : undefined}>
+                <a class="pcard__photo" href={`#product/${p.id}`}>
                   <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading={index > 1 ? 'lazy' : 'eager'} />
                   {p.sale && <span class="badge">−15% по МЯТА</span>}
                 </a>
                 <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
-                <a class="pcard__name" href="#product">{p.name}</a>
+                <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
                 <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
               </article>
             ))
@@ -179,13 +186,13 @@ const phoneHref = 'tel:+79990000000';
         </div>
 
         <div class="pd">
-          <h1 class="pd__title">{featured.name}</h1>
-          <p class="pd__price">{rub(featured.price)}</p>
+          <h1 class="pd__title" id="pdTitle">{featured.name}</h1>
+          <p class="pd__price" id="pdPrice">{rub(featured.price)}</p>
           <ul class="pd__delivery">
-            <li><svg><use href="#i-clock"></use></svg>Привезём сегодня за&nbsp;2&nbsp;часа</li>
+            <li><svg><use href="#i-clock"></use></svg><span id="pdWhen">Привезём сегодня за&nbsp;2&nbsp;часа</span></li>
             <li><svg><use href="#i-clock"></use></svg>К точному времени +1&nbsp;500&nbsp;₽</li>
           </ul>
-          <p class="pd__text">Пионы «Сара Бернар» 15&nbsp;шт, веточки мяты и&nbsp;эвкалипта, пудровая бумага, аквабокс.</p>
+          <p class="pd__text" id="pdText">{featured.text}</p>
         </div>
 
         <section class="block block--tight">
@@ -207,8 +214,8 @@ const phoneHref = 'tel:+79990000000';
         <section class="block block--tight">
           <h2 class="display">Подробности</h2>
           <dl class="spec">
-            <div><dt>Высота</dt><dd>45–50 см</dd></div>
-            <div><dt>Диаметр</dt><dd>40 см</dd></div>
+            <div><dt>Высота</dt><dd id="pdHeight">{featured.size[0]} см</dd></div>
+            <div><dt>Диаметр</dt><dd id="pdDiameter">{featured.size[1]} см</dd></div>
             <div><dt>Аквабокс с водой</dt><dd><svg aria-label="есть"><use href="#i-check"></use></svg></dd></div>
             <div><dt>Средство для стойкости</dt><dd><svg aria-label="есть"><use href="#i-check"></use></svg></dd></div>
             <div><dt>Инструкция по уходу</dt><dd><svg aria-label="есть"><use href="#i-check"></use></svg></dd></div>
@@ -221,11 +228,11 @@ const phoneHref = 'tel:+79990000000';
             {
               lists.upsell.map((p) => (
                 <article class="pcard">
-                  <a class="pcard__photo" href="#product">
+                  <a class="pcard__photo" href={`#product/${p.id}`}>
                     <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
                   </a>
                   <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
-                  <a class="pcard__name" href="#product">{p.name}</a>
+                  <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
                   <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
                 </article>
               ))
@@ -323,6 +330,14 @@ const phoneHref = 'tel:+79990000000';
               <label class="pay__opt"><input type="radio" name="pay" value="СБП" /><span>СБП</span><small>По QR-коду в приложении банка</small></label>
               <label class="pay__opt"><input type="radio" name="pay" value="Курьеру" /><span>Курьеру</span><small>Наличными или картой при получении</small></label>
             </div>
+            <div class="promo-fld">
+              <label class="fld" data-fld>
+                <span class="fld__label">Промокод</span>
+                <input name="promo" type="text" autocomplete="off" autocapitalize="characters" placeholder="Например, МЯТА" />
+                <span class="fld__err" aria-live="polite"></span>
+              </label>
+              <button type="button" class="pill pill--line" data-promo>Применить</button>
+            </div>
             <div class="summary" id="coSummary"></div>
             <label class="agree" data-fld>
               <input type="checkbox" name="agree" required />
@@ -370,27 +385,27 @@ const phoneHref = 'tel:+79990000000';
       <template id="t-filter">
         <div class="fgroup">
           <h3>Цена</h3>
-          <div class="range"><label>от<input type="text" inputmode="numeric" name="min" value="3 000" /></label><label>до<input type="text" inputmode="numeric" name="max" value="25 000" /></label></div>
+          <div class="range"><label>от<input type="text" inputmode="numeric" name="min" placeholder="3 000" /></label><label>до<input type="text" inputmode="numeric" name="max" placeholder="25 000" /></label></div>
         </div>
         <div class="fgroup">
           <h3>Цветы в составе</h3>
           <div class="opts">
-            <button type="button" aria-pressed="true">Пионы</button><button type="button" aria-pressed="true">Розы</button><button type="button" aria-pressed="false">Гортензии</button><button type="button" aria-pressed="false">Тюльпаны</button><button type="button" aria-pressed="false">Эустома</button><button type="button" aria-pressed="false">Анемоны</button><button type="button" aria-pressed="false">Эвкалипт</button><button type="button" aria-pressed="false">Георгины</button>
+            {FLOWERS.map((f) => <button type="button" aria-pressed="false" data-flower={f}>{f}</button>)}
           </div>
         </div>
         <div class="fgroup">
           <h3>Оттенок</h3>
           <div class="swatches">
-            <button type="button" aria-pressed="false" aria-label="Белый" style="--c:#ffffff"></button><button type="button" aria-pressed="true" aria-label="Розовый" style="--c:#f6a9c0"></button><button type="button" aria-pressed="false" aria-label="Сиреневый" style="--c:#b7a6dc"></button><button type="button" aria-pressed="false" aria-label="Голубой" style="--c:#a9c8ea"></button><button type="button" aria-pressed="false" aria-label="Персиковый" style="--c:#f5b48f"></button><button type="button" aria-pressed="false" aria-label="Бордовый" style="--c:#8a2a44"></button><button type="button" aria-pressed="false" aria-label="Разноцветный" style="--c:conic-gradient(#f6a9c0,#f5b48f,#f3d36b,#a9c8ea,#b7a6dc,#f6a9c0)"></button>
+            {TONES.map((t) => <button type="button" aria-pressed="false" aria-label={t.name} data-tone={t.name} style={`--c:${t.color}`}></button>)}
           </div>
         </div>
         <div class="fgroup">
           <label class="switch"><span>Только со скидкой по МЯТА</span><input type="checkbox" name="sale" /><i></i></label>
-          <label class="switch"><span>Есть в наличии сегодня</span><input type="checkbox" checked /><i></i></label>
+          <label class="switch"><span>Привезти сегодня</span><input type="checkbox" name="today" /><i></i></label>
         </div>
         <div class="sheet__foot">
           <button class="pill pill--line" type="button" data-reset>Сбросить</button>
-          <button class="pill pill--ink" type="button" data-apply>Показать <span data-apply-count>16</span></button>
+          <button class="pill pill--ink" type="button" data-apply>Показать <span data-apply-count>{lists.catalog.length} букетов</span></button>
         </div>
       </template>
 
@@ -425,8 +440,10 @@ const phoneHref = 'tel:+79990000000';
 
       <template id="t-search">
         <label class="field field--search"><svg><use href="#i-search"></use></svg><span class="sr">Поиск</span><input type="search" placeholder="Пионы, розы, в коробке" enterkeyhint="search" /></label>
+        <ul class="search-res" data-results hidden></ul>
+        <p class="muted small" data-noresults hidden>Ничего не нашли. Попробуйте «пионы», «тюльпаны» или «эвкалипт».</p>
         <h3 class="sheet__sub">Часто ищут</h3>
-        <div class="opts opts--links"><a href="#catalog" data-close>Пионы</a><a href="#catalog" data-close>101 роза</a><a href="#catalog" data-close>Гортензии</a><a href="#catalog" data-close>Букет на день рождения</a><a href="#catalog" data-close>Цветы в коробке</a></div>
+        <div class="opts opts--links"><a href="#catalog" data-close data-preset="peonies">Пионы</a><a href="#catalog" data-close data-preset="tulips">Тюльпаны</a><a href="#catalog" data-close data-preset="hydrangeas">Гортензии</a><a href="#catalog" data-close data-preset="eucalyptus">С эвкалиптом</a><a href="#catalog" data-close data-preset="under6">До 6&nbsp;000&nbsp;₽</a></div>
       </template>
 
       <template id="t-florist">
@@ -438,6 +455,7 @@ const phoneHref = 'tel:+79990000000';
       </template>
     </div>
 
+    <script type="application/json" id="productImages" set:html={JSON.stringify(productImages)} />
     <script>
       import { initShop } from '../../scripts/cvety-shop';
 

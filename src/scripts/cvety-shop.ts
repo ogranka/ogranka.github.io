@@ -1,7 +1,8 @@
 // Магазин «Пион и мята»: экраны по адресу, слайдер, шторки, корзина,
-// фильтр и сортировка каталога, оформление заказа в четыре шага.
-import { products, featured, rub } from '../data/cvety';
-import { renderChat } from './cvety-chat';
+// фильтр, подборки и поиск по каталогу, карточка любого букета,
+// оформление заказа в четыре шага с промокодом.
+import { products, featured, rub, type Product } from '../data/cvety';
+import { renderChat, type ChatHandle } from './cvety-chat';
 
 const $ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel);
 const $$ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
@@ -22,6 +23,36 @@ const TITLES: Record<SheetKind, string> = {
 const DELIVERY = 400;
 const FREE_FROM = 5000;
 const EXACT_FEE = 1500;
+const PROMO = 'МЯТА';
+const PROMO_RATE = 0.15;
+// Курьер едет два часа: интервал на сегодня доступен, если успеваем к его концу
+const DELIVERY_HOURS = 2;
+
+interface Filter {
+  min: number;
+  max: number;
+  sale: boolean;
+  today: boolean;
+  mono: boolean;
+  flowers: string[];
+  tones: string[];
+}
+
+const EMPTY: Filter = { min: 0, max: Infinity, sale: false, today: false, mono: false, flowers: [], tones: [] };
+
+// Подборки: кнопки над каталогом, кружки на главной, «Часто ищут» в поиске
+const PRESETS: Record<string, Partial<Filter>> = {
+  all: {},
+  mono: { mono: true },
+  under6: { max: 6000 },
+  under10: { max: 10000 },
+  big: { min: 10000 },
+  eucalyptus: { flowers: ['Эвкалипт'] },
+  peonies: { flowers: ['Пионы'] },
+  roses: { flowers: ['Розы'] },
+  tulips: { flowers: ['Тюльпаны'] },
+  hydrangeas: { flowers: ['Гортензии'] },
+};
 
 export function initShop() {
   const app = $('#app');
@@ -31,24 +62,55 @@ export function initShop() {
   const buy = $<HTMLButtonElement>('#buyBtn')!;
   const searchBtn = $('#searchBtn')!;
   const screens = $$('[data-screen]');
+  const productById = (id: string) => products.find((p) => p.id === id);
 
-  // Экраны переключаются по #home, #catalog, #product, #checkout. У экранов
+  // Экраны переключаются по #home, #catalog, #product/<id>, #checkout. У экранов
   // нет таких id нарочно: иначе браузер прокручивал бы к якорю родительскую
   // страницу, когда магазин открыт во фрейме. Начальный экран можно задать
   // параметром ?s=catalog.
   const initial = new URLSearchParams(location.search).get('s') || '';
   const screenId = (s: HTMLElement) => s.dataset.screen;
 
+  // Во фрейме на странице кейса история браузера общая с родителем. Переходы
+  // внутри магазина заменяют запись, а не добавляют её, иначе «Назад» в браузере
+  // листал бы экраны телефона вместо ухода со страницы.
+  const inFrame = window.top !== window;
+  const go = (hash: string) => {
+    if (inFrame) location.replace(hash);
+    else location.hash = hash;
+  };
+  let current = '';
+  let previous = '';
+  if (inFrame) {
+    document.addEventListener(
+      'click',
+      (e) => {
+        const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+        const href = a?.getAttribute('href');
+        if (!a || !href || href === '#') return;
+        e.preventDefault();
+        go(href);
+      },
+      true,
+    );
+  }
+
   const show = () => {
-    const id = location.hash ? location.hash.slice(1) : initial || 'home';
+    const [id, arg] = (location.hash ? location.hash.slice(1) : initial || 'home').split('/');
     const target = screens.find((s) => screenId(s) === id) || screens[0];
+    const name = screenId(target)!;
+    if (name !== current) {
+      previous = current;
+      current = name;
+    }
     screens.forEach((s) => (s.hidden = s !== target));
-    const isProduct = screenId(target) === 'product';
-    const isCheckout = screenId(target) === 'checkout';
+    const isProduct = name === 'product';
+    const isCheckout = name === 'checkout';
     buy.hidden = !isProduct;
     searchBtn.hidden = isProduct;
     dock.classList.toggle('is-product', isProduct);
     dock.hidden = isCheckout;
+    if (isProduct) renderProduct(arg);
     if (isCheckout) renderCheckout();
     window.scrollTo(0, 0);
   };
@@ -84,16 +146,51 @@ export function initShop() {
     ),
   );
 
-  // Галерея карточки
+  // Карточка букета: данные из каталога, фото из карты, собранной при сборке.
+  // У фирменного букета своя галерея из четырёх фото, у остальных одно.
   const gal = $('#galTrack')!;
-  gal.addEventListener(
-    'scroll',
-    () => {
-      const n = Math.round(gal.scrollLeft / (gal.clientWidth + 8)) + 1;
-      $('#galCount')!.textContent = `${n} из ${gal.children.length}`;
-    },
-    { passive: true },
-  );
+  const galCount = $('#galCount')!;
+  const featuredGallery = gal.innerHTML;
+  const images: Record<string, { src: string; srcset: string }> = JSON.parse($('#productImages')?.textContent || '{}');
+  let shown: Product = featured;
+
+  const syncGalCount = () => {
+    const n = Math.round(gal.scrollLeft / (gal.clientWidth + 8)) + 1;
+    galCount.textContent = `${n} из ${gal.children.length}`;
+    galCount.hidden = gal.children.length < 2;
+  };
+  gal.addEventListener('scroll', syncGalCount, { passive: true });
+
+  const renderProduct = (id?: string) => {
+    const p = (id && productById(id)) || featured;
+    if (p.id !== shown.id || !gal.children.length) {
+      if (p.id === featured.id) {
+        gal.innerHTML = featuredGallery;
+      } else {
+        const img = document.createElement('img');
+        const src = images[p.id];
+        if (src) {
+          img.src = src.src;
+          img.srcset = src.srcset;
+        }
+        img.sizes = '100vw';
+        img.alt = p.name;
+        img.decoding = 'async';
+        gal.replaceChildren(img);
+      }
+      gal.scrollLeft = 0;
+    }
+    shown = p;
+    syncGalCount();
+    $('#pdTitle')!.textContent = p.name;
+    $('#pdPrice')!.textContent = rub(p.price);
+    $('#pdWhen')!.textContent = p.preorder ? 'По предзаказу, привезём завтра' : 'Привезём сегодня за 2 часа';
+    $('#pdText')!.textContent = p.text;
+    $('#pdHeight')!.textContent = `${p.size[0]} см`;
+    $('#pdDiameter')!.textContent = `${p.size[1]} см`;
+    $('[data-screen="product"] .topbar [data-like]')!.setAttribute('aria-pressed', 'false');
+    syncBuy();
+  };
 
   // Всплывашка
   const toast = $('#toast')!;
@@ -109,13 +206,18 @@ export function initShop() {
   // корзина сразу с двумя букетами.
   const cart: string[] = initial === 'checkout' ? [featured.id, 'roses-statice'] : [];
   const cartCount = $('#cartCount')!;
-  const productById = (id: string) => products.find((p) => p.id === id);
   const cartSum = () => cart.reduce((sum, id) => sum + (productById(id)?.price || 0), 0);
   const syncCart = () => {
     cartCount.textContent = String(cart.length);
     cartCount.hidden = cart.length === 0;
   };
   syncCart();
+  const syncBuy = () => {
+    const inCart = cart.includes(shown.id);
+    buy.textContent = inCart ? 'В корзине · оформить' : `В корзину · ${rub(shown.price)}`;
+    if (inCart) buy.dataset.added = '';
+    else delete buy.dataset.added;
+  };
   const addToCart = (id: string) => {
     cart.push(id);
     syncCart();
@@ -127,6 +229,8 @@ export function initShop() {
   const scrim = $('#scrim')!;
   const body = $('#sheetBody')!;
   let lastFocus: HTMLElement | null = null;
+  let closeTimer = 0;
+  let chat: ChatHandle | null = null;
   let cardText = '';
   let ribbon = '';
 
@@ -148,14 +252,19 @@ export function initShop() {
   };
 
   const openSheet = (kind: SheetKind) => {
-    lastFocus = document.activeElement as HTMLElement;
+    clearTimeout(closeTimer);
+    // При переходе из одной шторки в другую фокус после закрытия вернётся
+    // туда, откуда открыли первую
+    if ((sheet.hidden || !sheet.classList.contains('show')) && !sheet.contains(document.activeElement)) lastFocus = document.activeElement as HTMLElement;
+    chat?.dispose();
+    chat = null;
     $('#sheetTitle')!.textContent = TITLES[kind];
     body.innerHTML = '';
     sheet.classList.toggle('sheet--chat', kind === 'chat');
     if (kind === 'cart') {
       renderCart();
     } else if (kind === 'chat') {
-      renderChat(body, { onFlorist: () => openSheet('florist') });
+      chat = renderChat(body, { onFlorist: () => openSheet('florist') });
     } else {
       body.append(($('#t-' + kind) as HTMLTemplateElement).content.cloneNode(true));
     }
@@ -188,65 +297,90 @@ export function initShop() {
   };
 
   const closeSheet = () => {
+    chat?.dispose();
+    chat = null;
     sheet.classList.remove('show');
     scrim.classList.remove('show');
     document.documentElement.style.overflow = '';
-    setTimeout(() => {
+    clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(() => {
       sheet.hidden = scrim.hidden = true;
     }, 340);
-    lastFocus?.focus({ preventScroll: true });
+    if (lastFocus?.isConnected) lastFocus.focus({ preventScroll: true });
+    lastFocus = null;
   };
 
-  // Фильтр и сортировка каталога: работают по настоящим карточкам
+  // Фильтр, подборки и сортировка каталога: работают по настоящим карточкам
   const grid = $('#catalogGrid')!;
   const cards = $$('.pcard', grid);
   const order = new Map(cards.map((c, i) => [c, i]));
-  const filter = { min: 0, max: Infinity, sale: false };
+  const filter: Filter = { ...EMPTY };
+  // Флаг «монобукеты» ставит только подборка, в шторке его нет: храним
+  // отдельно, чтобы «Сбросить» в шторке снимал и его
+  let draftMono = false;
   let sortMode = 'popular';
 
   const parseNum = (v: string) => Number(v.replace(/\D/g, '')) || 0;
-  const readFilter = () => {
+  const pressed = (attr: string) => $$(`[data-${attr}][aria-pressed="true"]`, body).map((b) => b.dataset[attr]!);
+  const readFilter = (): Filter => {
     const min = $<HTMLInputElement>('input[name=min]', body);
     const max = $<HTMLInputElement>('input[name=max]', body);
-    const sale = $<HTMLInputElement>('input[name=sale]', body);
     return {
       min: min ? parseNum(min.value) : 0,
       max: max && parseNum(max.value) ? parseNum(max.value) : Infinity,
-      sale: !!sale?.checked,
+      sale: !!$<HTMLInputElement>('input[name=sale]', body)?.checked,
+      today: !!$<HTMLInputElement>('input[name=today]', body)?.checked,
+      mono: draftMono,
+      flowers: pressed('flower'),
+      tones: pressed('tone'),
     };
   };
   const restoreFilter = () => {
-    const sale = $<HTMLInputElement>('input[name=sale]', body);
-    if (sale) sale.checked = filter.sale;
-    const min = $<HTMLInputElement>('input[name=min]', body);
-    const max = $<HTMLInputElement>('input[name=max]', body);
-    if (min) min.value = filter.min ? filter.min.toLocaleString('ru-RU') : '3 000';
-    if (max) max.value = filter.max !== Infinity ? filter.max.toLocaleString('ru-RU') : '25 000';
+    draftMono = filter.mono;
+    $<HTMLInputElement>('input[name=sale]', body)!.checked = filter.sale;
+    $<HTMLInputElement>('input[name=today]', body)!.checked = filter.today;
+    $<HTMLInputElement>('input[name=min]', body)!.value = filter.min ? filter.min.toLocaleString('ru-RU') : '';
+    $<HTMLInputElement>('input[name=max]', body)!.value = filter.max !== Infinity ? filter.max.toLocaleString('ru-RU') : '';
+    $$('[data-flower]', body).forEach((b) => b.setAttribute('aria-pressed', String(filter.flowers.includes(b.dataset.flower!))));
+    $$('[data-tone]', body).forEach((b) => b.setAttribute('aria-pressed', String(filter.tones.includes(b.dataset.tone!))));
   };
-  const matches = (card: HTMLElement, f: typeof filter) => {
-    const price = Number(card.dataset.price);
-    return price >= f.min && price <= f.max && (!f.sale || 'sale' in card.dataset);
-  };
+  // Внутри группы условия складываются через «или», между группами через «и»
+  const matches = (p: Product, f: Filter) =>
+    p.price >= f.min &&
+    p.price <= f.max &&
+    (!f.sale || !!p.sale) &&
+    (!f.today || !p.preorder) &&
+    (!f.mono || !!p.mono) &&
+    (!f.flowers.length || f.flowers.some((x) => p.flowers.includes(x))) &&
+    (!f.tones.length || f.tones.some((x) => p.tones.includes(x)));
+  const cardProduct = (c: HTMLElement) => productById(c.dataset.id!)!;
+  const bouquets = (n: number) => `${n} ${plural(n, ['букет', 'букета', 'букетов'])}`;
+  const activeCount = (f: Filter) =>
+    [f.min > 0 || f.max !== Infinity, f.sale, f.today, f.mono, f.flowers.length > 0, f.tones.length > 0].filter(Boolean).length;
+
   const updateFilterCount = () => {
     const f = readFilter();
-    const n = cards.filter((c) => matches(c, f)).length;
     const el = $('[data-apply-count]', body);
-    if (el) el.textContent = `${n} ${plural(n, ['букет', 'букета', 'букетов'])}`;
+    if (el) el.textContent = bouquets(products.filter((p) => matches(p, f)).length);
   };
-  const applyFilter = () => {
-    Object.assign(filter, readFilter());
-    let shown = 0;
+  const applyFilter = (next: Filter, preset = '') => {
+    Object.assign(filter, next);
+    let n = 0;
     cards.forEach((c) => {
-      const ok = matches(c, filter);
+      const ok = matches(cardProduct(c), filter);
       c.hidden = !ok;
-      if (ok) shown++;
+      if (ok) n++;
     });
-    $('#catalogEmpty')!.hidden = shown > 0;
-    const active = (filter.min > 0 ? 1 : 0) + (filter.max !== Infinity ? 1 : 0) + (filter.sale ? 1 : 0);
+    $('#catalogEmpty')!.hidden = n > 0;
+    $('#catalogCount')!.textContent = bouquets(n);
+    const active = activeCount(filter);
     const badge = $('#filterCount')!;
-    badge.textContent = String(active || 2);
+    badge.textContent = String(active);
     badge.hidden = active === 0;
+    const chip = preset || (active ? '' : 'all');
+    $$('.chips [data-preset]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.preset === chip)));
   };
+  const applyPreset = (key: string) => applyFilter({ ...EMPTY, ...PRESETS[key] }, key);
   const applySort = (mode: string) => {
     sortMode = mode;
     const sorted = [...cards].sort((a, b) => {
@@ -262,8 +396,32 @@ export function initShop() {
     $('#sortBtn')!.firstChild!.textContent = labels[mode];
   };
 
-  body.addEventListener('input', () => {
+  // Поиск: по названию, составу и цветам. «Пионы» находит и «пион».
+  const search = (q: string) => {
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return [];
+    return products.filter((p) => {
+      const hay = `${p.name} ${p.text} ${p.flowers.join(' ')}`.toLowerCase();
+      return words.every((w) => hay.includes(w.length > 4 ? w.slice(0, -1) : w));
+    });
+  };
+  const renderResults = (q: string) => {
+    const list = $('[data-results]', body);
+    const none = $('[data-noresults]', body);
+    if (!list || !none) return;
+    const found = search(q);
+    list.innerHTML = found
+      .slice(0, 8)
+      .map((p) => `<li><a href="#product/${p.id}" data-close><span>${p.name}</span><b>${rub(p.price)}</b></a></li>`)
+      .join('');
+    list.hidden = !found.length;
+    none.hidden = !q.trim() || found.length > 0;
+  };
+
+  body.addEventListener('input', (e) => {
     if ($('[data-apply-count]', body)) updateFilterCount();
+    const t = e.target as HTMLInputElement;
+    if (t.type === 'search') renderResults(t.value);
   });
 
   document.addEventListener('click', (e) => {
@@ -271,6 +429,11 @@ export function initShop() {
     if (!t) return;
 
     if (t.dataset.sheet) return openSheet(t.dataset.sheet as SheetKind);
+    if (t.dataset.preset) {
+      applyPreset(t.dataset.preset);
+      if ('close' in t.dataset) closeSheet();
+      return;
+    }
     if ('like' in t.dataset) {
       const on = t.getAttribute('aria-pressed') !== 'true';
       t.setAttribute('aria-pressed', String(on));
@@ -281,14 +444,16 @@ export function initShop() {
       return addToCart(t.dataset.add);
     }
     if (t === buy) {
-      buy.dataset.added = '';
-      buy.textContent = 'В корзине · оформить';
-      if (!cart.includes(featured.id)) return addToCart(featured.id);
+      if (!cart.includes(shown.id)) {
+        addToCart(shown.id);
+        return syncBuy();
+      }
       return openSheet('cart');
     }
     if (t.dataset.remove !== undefined) {
       cart.splice(Number(t.dataset.remove), 1);
       syncCart();
+      syncBuy();
       renderCart();
       return;
     }
@@ -313,6 +478,7 @@ export function initShop() {
       return say('Текст открытки сохранили');
     }
     if ('reset' in t.dataset) {
+      draftMono = false;
       $$('[aria-pressed]', body).forEach((b) => b.setAttribute('aria-pressed', 'false'));
       $$<HTMLInputElement>('input[type=checkbox]', body).forEach((c) => (c.checked = false));
       $$<HTMLInputElement>('input[name=min], input[name=max]', body).forEach((i) => (i.value = ''));
@@ -320,7 +486,7 @@ export function initShop() {
       return;
     }
     if ('apply' in t.dataset) {
-      applyFilter();
+      applyFilter(readFilter());
       return closeSheet();
     }
     if (t.dataset.sort) {
@@ -330,6 +496,7 @@ export function initShop() {
     }
     if (t.closest('.opts, .swatches') && t.tagName === 'BUTTON' && !t.dataset.day && !t.dataset.slot) {
       t.setAttribute('aria-pressed', String(t.getAttribute('aria-pressed') !== 'true'));
+      if ($('[data-apply-count]', body)) updateFilterCount();
       return;
     }
     if ('close' in t.dataset) {
@@ -377,7 +544,8 @@ export function initShop() {
   const empty = $('#coEmpty')!;
   const done = $('#coDone')!;
   let step = 1;
-  const order_ = { day: '', slot: '' };
+  let promoOn = false;
+  const delivery = { day: '', today: true, slot: '' };
 
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
   const setError = (name: string, msg: string) => {
@@ -398,6 +566,12 @@ export function initShop() {
     const d = v.replace(/\D/g, '');
     return d.length === 11 && /^[78]/.test(d);
   };
+  const slotEnd = (slot: string) => Number(slot.split('–')[1].split(':')[0]);
+  const slotStart = (slot: string) => Number(slot.split('–')[0].split(':')[0]);
+  const minutes = (hhmm: string) => {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  };
 
   const validate = (): string | null => {
     let firstBad: string | null = null;
@@ -413,10 +587,15 @@ export function initShop() {
     }
     if (step === 2) {
       const err = $('#slotErr')!;
-      err.textContent = order_.slot ? '' : 'Выберите интервал доставки';
-      if (!order_.slot) firstBad = 'slot';
-      if (field('exact').checked && !field('exactTime').value) {
+      err.textContent = delivery.slot ? '' : 'Выберите интервал доставки';
+      if (!delivery.slot) firstBad = 'slot';
+      const time = field('exactTime').value;
+      if (!field('exact').checked) {
+        setError('exactTime', '');
+      } else if (!time) {
         bad('exactTime', 'Укажите время');
+      } else if (delivery.slot && (minutes(time) < slotStart(delivery.slot) * 60 || minutes(time) > slotEnd(delivery.slot) * 60)) {
+        bad('exactTime', `Время должно попадать в интервал ${delivery.slot}`);
       } else {
         setError('exactTime', '');
       }
@@ -442,9 +621,15 @@ export function initShop() {
     window.scrollTo(0, 0);
   };
 
-  const deliveryFee = () => (cartSum() >= FREE_FROM ? 0 : DELIVERY);
+  // Промокод действует на букеты с отметкой «−15% по МЯТА»
+  const saleSum = () => cart.reduce((sum, id) => sum + (productById(id)?.sale ? productById(id)!.price : 0), 0);
+  const discount = () => (promoOn ? Math.round(saleSum() * PROMO_RATE) : 0);
+  const goods = () => cartSum() - discount();
+  const deliveryFee = () => (goods() >= FREE_FROM ? 0 : DELIVERY);
   const exactFee = () => (field('exact').checked ? EXACT_FEE : 0);
-  const total = () => cartSum() + deliveryFee() + exactFee();
+  const total = () => goods() + deliveryFee() + exactFee();
+  const PAY_TEXT: Record<string, string> = { 'Картой онлайн': 'картой онлайн', СБП: 'по СБП', Курьеру: 'курьеру при получении' };
+  const payMethod = () => PAY_TEXT[form.querySelector<HTMLInputElement>('input[name=pay]:checked')?.value || ''] || PAY_TEXT['Картой онлайн'];
 
   const renderSummary = () => {
     const items = cart
@@ -453,12 +638,27 @@ export function initShop() {
         return `<div><span class="name">${p.name}</span><span>${rub(p.price)}</span></div>`;
       })
       .join('');
-    const when = `${order_.day}, ${order_.slot}${field('exact').checked && field('exactTime').value ? `, к ${field('exactTime').value}` : ''}`;
+    const when = `${delivery.day}, ${delivery.slot}${field('exact').checked && field('exactTime').value ? `, к ${field('exactTime').value}` : ''}`;
     $('#coSummary')!.innerHTML = `${items}
+      ${discount() ? `<div class="disc"><span class="name">Скидка по ${PROMO}</span><span>−${rub(discount())}</span></div>` : ''}
       <div><span class="name">Доставка, ${when}</span><span>${deliveryFee() ? rub(deliveryFee()) : 'бесплатно'}</span></div>
       ${exactFee() ? `<div><span class="name">К точному времени</span><span>${rub(exactFee())}</span></div>` : ''}
+      <div><span class="name">Оплата</span><span>${payMethod()}</span></div>
       <div class="total"><span>Итого</span><b>${rub(total())}</b></div>`;
     nextBtn.textContent = `Оплатить ${rub(total())}`;
+  };
+
+  // Интервалы на сегодня, к концу которых курьер уже не успеет, недоступны
+  const syncSlots = () => {
+    const hourNow = new Date().getHours() + new Date().getMinutes() / 60;
+    $$<HTMLButtonElement>('[data-slot]', form).forEach((b) => {
+      const late = delivery.today && slotEnd(b.dataset.slot!) <= hourNow + DELIVERY_HOURS;
+      b.disabled = late;
+      if (late && delivery.slot === b.dataset.slot) {
+        delivery.slot = '';
+        b.setAttribute('aria-pressed', 'false');
+      }
+    });
   };
 
   const renderDays = () => {
@@ -466,18 +666,26 @@ export function initShop() {
     if (box.children.length) return;
     const fmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short' });
     const wd = new Intl.DateTimeFormat('ru-RU', { weekday: 'short' });
-    for (let i = 0; i < 4; i++) {
+    const hourNow = new Date().getHours() + new Date().getMinutes() / 60;
+    const lastSlot = Math.max(...$$('[data-slot]', form).map((b) => slotEnd(b.dataset.slot!)));
+    // Если сегодня уже ничего не успеть, первым днём будет завтра
+    const from = lastSlot <= hourNow + DELIVERY_HOURS ? 1 : 0;
+    for (let i = from; i < from + 4; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
       const label = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : wd.format(d);
       const b = document.createElement('button');
       b.type = 'button';
       b.dataset.day = `${label}, ${fmt.format(d)}`.replace('.', '');
-      b.setAttribute('aria-pressed', String(i === 0));
+      b.dataset.today = String(i === 0);
+      b.setAttribute('aria-pressed', String(i === from));
       b.textContent = b.dataset.day;
       box.append(b);
     }
-    order_.day = (box.firstElementChild as HTMLElement).dataset.day!;
+    const first = box.firstElementChild as HTMLElement;
+    delivery.day = first.dataset.day!;
+    delivery.today = first.dataset.today === 'true';
+    syncSlots();
   };
 
   const renderCheckout = () => {
@@ -492,18 +700,38 @@ export function initShop() {
     goto(1);
   };
 
+  const applyPromo = () => {
+    const code = field('promo').value.trim().toUpperCase();
+    if (!code) return setError('promo', 'Введите промокод');
+    if (code !== PROMO) {
+      promoOn = false;
+      setError('promo', 'Такого промокода нет');
+    } else if (!saleSum()) {
+      promoOn = false;
+      setError('promo', 'Код действует на букеты с отметкой «−15% по МЯТА», в корзине их нет');
+    } else {
+      promoOn = true;
+      setError('promo', '');
+      say(`Промокод применён, скидка ${rub(discount())}`);
+    }
+    renderSummary();
+  };
+
   form.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
     if (!t) return;
     if (t.dataset.day) {
       $$('[data-day]', form).forEach((b) => b.setAttribute('aria-pressed', String(b === t)));
-      order_.day = t.dataset.day;
+      delivery.day = t.dataset.day;
+      delivery.today = t.dataset.today === 'true';
+      syncSlots();
     }
     if (t.dataset.slot) {
       $$('[data-slot]', form).forEach((b) => b.setAttribute('aria-pressed', String(b === t)));
-      order_.slot = t.dataset.slot;
+      delivery.slot = t.dataset.slot;
       $('#slotErr')!.textContent = '';
     }
+    if ('promo' in t.dataset) return applyPromo();
     if (t === prevBtn) goto(step - 1);
     if (t === nextBtn) {
       const bad = validate();
@@ -513,16 +741,24 @@ export function initShop() {
       }
       if (step < 4) return goto(step + 1);
       const n = 1000 + Math.floor(Math.random() * 9000);
-      $('#coDoneText')!.textContent = `Заказ № ${n} на ${rub(total())}. Привезём ${order_.day.toLowerCase()}, ${order_.slot}, получатель ${field('name').value.trim()}.`;
+      $('#coDoneText')!.textContent = `Заказ № ${n} на ${rub(total())}, оплата ${payMethod()}. Привезём ${delivery.day.toLowerCase()}, ${delivery.slot}, получатель ${field('name').value.trim()}.`;
       form.hidden = true;
       done.hidden = false;
       stepDots.forEach((li) => (li.dataset.done = ''));
       cart.length = 0;
+      promoOn = false;
       syncCart();
+      syncBuy();
       window.scrollTo(0, 0);
     }
   });
 
+  form.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.target as HTMLInputElement).name === 'promo') {
+      e.preventDefault();
+      applyPromo();
+    }
+  });
   form.addEventListener('input', (e) => {
     const t = e.target as HTMLInputElement;
     if (t.name === 'card') $('#coCardLen')!.textContent = String(t.value.length);
@@ -536,11 +772,16 @@ export function initShop() {
     }
     if (t.name === 'exact') $('#exactFld')!.hidden = !t.checked;
     if (t.name === 'noCard') $('#coCardField')!.hidden = t.checked;
-    if (t.name === 'pay' || t.name === 'exact') nextBtn.textContent = step === 4 ? `Оплатить ${rub(total())}` : 'Дальше';
+    if (t.name === 'pay' || t.name === 'exact') {
+      if (step === 4) renderSummary();
+      else nextBtn.textContent = 'Дальше';
+    }
   });
+  // «Назад» в шапке оформления: на шаг назад, а с первого шага на экран,
+  // с которого пришли. history.back() во фрейме увёл бы со страницы кейса.
   $('[data-co-back]')!.addEventListener('click', () => {
-    if (step > 1 && !form.hidden) goto(step - 1);
-    else history.length > 1 ? history.back() : (location.hash = '#catalog');
+    if (step > 1 && !form.hidden) return goto(step - 1);
+    go(`#${previous && previous !== 'checkout' ? previous : 'catalog'}`);
   });
 
   show();

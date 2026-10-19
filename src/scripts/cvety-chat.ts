@@ -17,6 +17,16 @@ export interface ChatHooks {
   onFlorist: () => void;
 }
 
+export interface ChatHandle {
+  ask: (text: string) => Promise<void>;
+  /** Прервать ответ и отпустить шторку: вызывается при закрытии */
+  dispose: () => void;
+}
+
+// Ошибка, текст которой прислал сервер консультанта и его можно показать
+// покупателю. Остальные ошибки (сеть, разбор ответа) показываются общим текстом.
+class ShownError extends Error {}
+
 function load(): Msg[] {
   try {
     const raw = sessionStorage.getItem(STORE);
@@ -35,7 +45,7 @@ function save(list: Msg[]) {
   }
 }
 
-export function renderChat(body: HTMLElement, hooks: ChatHooks) {
+export function renderChat(body: HTMLElement, hooks: ChatHooks): ChatHandle {
   body.innerHTML = `
     <div class="chat" data-chat>
       <div class="chat__log" data-log aria-live="polite"></div>
@@ -54,6 +64,8 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks) {
   const send = form.querySelector<HTMLButtonElement>('button')!;
   let history = load();
   let busy = false;
+  let controller: AbortController | null = null;
+  let disposed = false;
 
   const bubble = (role: Msg['role'] | 'note', text: string) => {
     const el = document.createElement('div');
@@ -79,12 +91,17 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks) {
     bubble('user', q);
     const answer = bubble('assistant', '');
     answer.classList.add('is-typing');
+    // Скринридер прочитает ответ целиком, когда он допишется, а не по словам
+    log.setAttribute('aria-busy', 'true');
     let full = '';
+    controller = new AbortController();
+    const timeout = setTimeout(() => controller?.abort(), 45000);
     try {
       const res = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history }),
+        signal: controller.signal,
       });
       if (!res.ok || !res.body) {
         let msg = OFFLINE;
@@ -94,7 +111,7 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks) {
         } catch {
           // тело не JSON, оставляем общий текст
         }
-        throw new Error(msg);
+        throw new ShownError(msg);
       }
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -114,22 +131,27 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks) {
             answer.textContent = full;
             log.scrollTop = log.scrollHeight;
           }
-          if (evt.error) throw new Error(evt.error);
+          if (evt.error) throw new ShownError(evt.error);
         }
       }
-      if (!full) throw new Error(OFFLINE);
+      if (!full) throw new ShownError(OFFLINE);
       history = [...history, { role: 'assistant', content: full }];
       save(history);
     } catch (err) {
+      // Шторку закрыли посреди ответа: вопрос не сохраняем, писать некуда
+      if (disposed) return;
       answer.remove();
-      bubble('note', err instanceof Error && err.message ? err.message : OFFLINE);
+      bubble('note', err instanceof ShownError && err.message ? err.message : OFFLINE);
       history = history.slice(0, -1);
       save(history);
     } finally {
+      clearTimeout(timeout);
+      controller = null;
+      log.removeAttribute('aria-busy');
       answer.classList.remove('is-typing');
       busy = false;
       send.disabled = false;
-      input.focus({ preventScroll: true });
+      if (!disposed) input.focus({ preventScroll: true });
     }
   };
 
@@ -143,5 +165,11 @@ export function renderChat(body: HTMLElement, hooks: ChatHooks) {
   });
   body.querySelector('[data-florist]')!.addEventListener('click', hooks.onFlorist);
 
-  return { ask };
+  return {
+    ask,
+    dispose: () => {
+      disposed = true;
+      controller?.abort();
+    },
+  };
 }

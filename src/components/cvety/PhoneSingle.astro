@@ -1,0 +1,26 @@
+---
+interface Props {
+  src: string;
+  title: string;
+  caption?: string;
+}
+
+const { src, title, caption } = Astro.props;
+---
+
+<div class="phones phones--single" data-phones>
+  <div class="phones__strip" data-strip>
+    <figure class="phone" data-phone="0">
+      <div class="phone__frame" data-frame>
+        <iframe data-src={src} title={title} loading="lazy" />
+      </div>
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
+  </div>
+</div>
+
+<script>
+  import { initPhoneStrip } from '../../scripts/phone-strip';
+
+  initPhoneStrip();
+</script>

@@ -1,11 +1,12 @@
 // Магазин «Пион и мята»: экраны по адресу, слайдер, шторки, корзина,
 // фильтр и сортировка каталога, оформление заказа в четыре шага.
 import { products, featured, rub } from '../data/cvety';
+import { renderChat } from './cvety-chat';
 
 const $ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel);
 const $$ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
 
-type SheetKind = 'filter' | 'sort' | 'card' | 'ribbon' | 'search' | 'chat' | 'cart';
+type SheetKind = 'filter' | 'sort' | 'card' | 'ribbon' | 'search' | 'chat' | 'cart' | 'florist';
 
 const TITLES: Record<SheetKind, string> = {
   filter: 'Фильтр',
@@ -13,8 +14,9 @@ const TITLES: Record<SheetKind, string> = {
   card: 'Открытка',
   ribbon: 'Лента',
   search: 'Поиск',
-  chat: 'Написать нам',
+  chat: 'Консультант',
   cart: 'Корзина',
+  florist: 'Флорист на связи',
 };
 
 const DELIVERY = 400;
@@ -149,8 +151,11 @@ export function initShop() {
     lastFocus = document.activeElement as HTMLElement;
     $('#sheetTitle')!.textContent = TITLES[kind];
     body.innerHTML = '';
+    sheet.classList.toggle('sheet--chat', kind === 'chat');
     if (kind === 'cart') {
       renderCart();
+    } else if (kind === 'chat') {
+      renderChat(body, { onFlorist: () => openSheet('florist') });
     } else {
       body.append(($('#t-' + kind) as HTMLTemplateElement).content.cloneNode(true));
     }
@@ -176,7 +181,9 @@ export function initShop() {
       scrim.classList.add('show');
     });
     const field = $<HTMLElement>('input, textarea', body);
-    setTimeout(() => (field && kind !== 'filter' ? field : $('[data-close]', sheet)!).focus({ preventScroll: true }), 50);
+    if (!(kind === 'chat' && initial)) {
+      setTimeout(() => (field && kind !== 'filter' ? field : $('[data-close]', sheet)!).focus({ preventScroll: true }), 50);
+    }
     document.documentElement.style.overflow = 'hidden';
   };
 
@@ -537,6 +544,9 @@ export function initShop() {
   });
 
   show();
+
+  // ?chat=1 открывает консультанта сразу: так кейс показывает виджет во фрейме.
+  if (new URLSearchParams(location.search).get('chat') === '1') setTimeout(() => openSheet('chat'), 400);
 }
 
 function plural(n: number, forms: [string, string, string]) {

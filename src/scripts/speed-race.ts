@@ -19,13 +19,13 @@ const HEAVY_SCRIPT: Step[] = [
   { at: 3.8, mb: 3.1, requests: 58, status: 'Фото 4000×3000 без сжатия…', action: 'content' },
   { at: 4.6, mb: 3.6, requests: 66, status: 'Счётчики, метрики, чат-виджет…', action: 'banner' },
   { at: 5.6, mb: 4.1, requests: 74, status: 'Куки-плашка…', action: 'cookie' },
-  { at: 6.4, mb: 4.2, requests: 78, status: 'Готово за 6.4 с', action: 'done' },
+  { at: 6.4, mb: 4.2, requests: 78, status: 'Готово за 6,4 с', action: 'done' },
 ];
 
 const LIGHT_SCRIPT: Step[] = [
   { at: 0.3, mb: 0.05, requests: 3, status: 'HTML + один CSS…', action: null },
   { at: 0.7, mb: 0.09, requests: 6, status: 'Один шрифт, картинки по размеру…', action: 'content' },
-  { at: 0.9, mb: 0.09, requests: 7, status: 'Готово за 0.9 с', action: 'done' },
+  { at: 0.9, mb: 0.09, requests: 7, status: 'Готово за 0,9 с', action: 'done' },
 ];
 
 const VERDICT_HTML =
@@ -83,7 +83,7 @@ class Lane {
     const tick = (now: number): void => {
       if (start === null) start = now;
       const elapsed = (now - start) / 1000;
-      this.timeEl.textContent = `${elapsed.toFixed(1)} с`;
+      this.timeEl.textContent = `${elapsed.toFixed(1).replace('.', ',')} с`;
 
       while (index < this.script.length && elapsed >= this.script[index].at) {
         this.applyStep(this.script[index]);
@@ -135,7 +135,7 @@ class Lane {
       case 'done': {
         this.statusEl.classList.add('done');
         const finishedAt = this.script[this.script.length - 1].at;
-        this.timeEl.textContent = `${finishedAt.toFixed(1)} с`;
+        this.timeEl.textContent = `${finishedAt.toFixed(1).replace('.', ',')} с`;
         break;
       }
     }

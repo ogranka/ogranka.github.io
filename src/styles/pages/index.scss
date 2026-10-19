@@ -1,25 +1,112 @@
-@use '../global';
-@use '../components/page-header';
+@use '../abstracts/variables' as *;
 @use '../components/case-card';
-@use '../components/site-footer';
 
-:root {
-  --wrap-max: 980px;
-  --header-pad: 72px 0 30px;
+.hero {
+  padding: 56px 0 8px;
+
+  h1 {
+    font-size: clamp(2.3rem, 1.3rem + 4.6vw, 4.2rem);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.02;
+    max-width: 14ch;
+  }
+
+  .lede {
+    margin-top: 22px;
+    max-width: 58ch;
+    color: var(--dim);
+    font-size: 1.1rem;
+    text-wrap: pretty;
+  }
 }
 
-.services {
-  margin-top: 22px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.process {
+  margin-top: 96px;
 
-  span {
-    font-size: 13.5px;
-    border: 1px solid var(--line);
-    background: #fff;
-    border-radius: 999px;
-    padding: 7px 14px;
+  h2 {
+    font-size: clamp(1.6rem, 1.1rem + 2vw, 2.3rem);
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin-bottom: 28px;
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    counter-reset: step;
+  }
+
+  li {
+    padding-top: 18px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .num {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  b {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    line-height: 1.25;
+  }
+
+  p {
+    margin-top: 8px;
     color: var(--dim);
+    font-size: 15.5px;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: $bp-wide) {
+    ol {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    margin-top: 72px;
+
+    ol {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+  }
+}
+
+.contact {
+  margin-top: 88px;
+  padding: 32px;
+  border-radius: var(--r-l);
+  background: var(--accent-soft);
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+
+  p {
+    margin-top: 10px;
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 64px;
+    padding: 24px 20px;
   }
 }

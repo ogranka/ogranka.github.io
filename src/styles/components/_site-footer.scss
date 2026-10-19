@@ -1,12 +1,24 @@
 .site-footer {
   border-top: 1px solid var(--line);
-  padding: 26px 0 60px;
+  margin-top: 40px;
+  padding: 28px 0 56px;
   color: var(--dim);
   font-size: 14px;
 
   .wrap {
+    display: grid;
+    gap: 10px;
+  }
+
+  .row {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 30px;
+    gap: 8px 28px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 3px;
   }
 }

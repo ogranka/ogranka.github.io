@@ -1,19 +1,35 @@
 .cta-box {
-  margin: 0 auto 90px;
-  padding: 34px;
-  border-radius: 16px;
-  background: var(--accent-soft);
-  border: 1px solid #f0d9cd;
+  margin: 56px auto 0;
+
+  .box {
+    padding: 32px;
+    border-radius: var(--r-l);
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
 
   b {
-    font-size: 1.25rem;
-    font-weight: 800;
-    letter-spacing: -.01em;
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -.015em;
+    line-height: 1.2;
   }
 
   p {
-    margin-top: 8px;
-    color: #7c4a34;
-    max-width: 60ch;
+    margin-top: 10px;
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  .how {
+    font-size: 15px;
+    color: var(--dim);
+  }
+
+  @media (max-width: 480px) {
+    .box {
+      padding: 24px 20px;
+    }
   }
 }

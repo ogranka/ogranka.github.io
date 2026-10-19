@@ -1,19 +1,13 @@
 ---
 interface Props {
-  crumb?: string;
+  kind?: string;
 }
 
-const { crumb } = Astro.props;
+const { kind } = Astro.props;
 ---
 
 <header class="page-header wrap">
-  {
-    crumb && (
-      <div class="crumb">
-        <a href="/">Портфолио</a> · {crumb}
-      </div>
-    )
-  }
+  {kind && <p class="kind">{kind}</p>}
   <h1><slot name="title" /></h1>
   <p class="lede"><slot name="lede" /></p>
   <slot />

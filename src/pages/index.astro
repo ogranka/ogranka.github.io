@@ -1,63 +1,113 @@
 ---
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHeader from '../components/PageHeader.astro';
 import CaseCard from '../components/CaseCard.astro';
-import SiteFooter from '../components/SiteFooter.astro';
 import '../styles/pages/index.scss';
 
-const services = [
-  'доработка сайтов',
-  'анимация и интерактив',
-  'ускорение загрузки',
-  'интеграции и формы',
-  'сопровождение',
-];
+const previews = import.meta.glob<{ default: ImageMetadata }>('../assets/previews/*.webp', { eager: true });
+const preview = (name: string) => previews[`../assets/previews/${name}.webp`]?.default;
 
 const cases = [
   {
-    href: '/before-after/',
-    kicker: 'Интерактивный кейс',
-    title: 'Было → стало',
+    href: '/cvety/',
+    kind: 'Интернет-магазин',
+    title: 'Магазин букетов с доставкой',
     description:
-      'Сайт из 2012 года и его сегодняшняя версия под одной шторкой. Контент тот же — впечатление другое. Шесть конкретных причин, почему.',
-    cta: 'Подвигать шторку',
+      'Мобильная витрина с каталогом, фильтром-шторкой, сборкой букета и оформлением заказа в четыре шага. Каждый экран живой.',
+    preview: preview('cvety'),
+    previewAlt: 'Экраны мобильного магазина букетов: главная, каталог, карточка, оформление заказа',
+    size: 'wide' as const,
+  },
+  {
+    href: '/before-after/',
+    kind: 'Переработка сайта',
+    title: 'Сайт клиники: было и стало',
+    description: 'Тот же контент под одной шторкой: страница 2012 года и её сегодняшняя версия.',
+    preview: preview('before-after'),
+    previewAlt: 'Шторка сравнения: старый и новый сайт клиники',
+    size: 'third' as const,
   },
   {
     href: '/speed-race/',
-    kicker: 'Интерактивный кейс',
+    kind: 'Ускорение загрузки',
     title: 'Гонка скорости',
-    description:
-      'Два одинаковых сайта грузятся наперегонки: сборка «всё включено» против аккуратной вёрстки. Живые счётчики мегабайт, запросов и секунд.',
-    cta: 'Запустить гонку',
+    description: 'Две одинаковые страницы грузятся наперегонки: конструктор против аккуратной сборки.',
+    preview: preview('speed-race'),
+    previewAlt: 'Две дорожки гонки загрузки со счётчиками',
+    size: 'half' as const,
   },
   {
     href: '/forum-hero/',
-    kicker: 'Концепт под задачу клиента',
-    title: 'Оживший первый экран',
-    description:
-      'Анимация уровня «дорогой студийный сайт» без тяжёлых библиотек: рельеф из частиц на canvas, 17 КБ, 60+ кадров в секунду.',
-    cta: 'Посмотреть',
+    kind: 'Первый экран сайта',
+    title: 'Сайт отраслевого форума',
+    description: 'Анимированный первый экран уровня студийного сайта: частицы на canvas, 17 КБ кода.',
+    preview: preview('forum-hero'),
+    previewAlt: 'Тёмный первый экран сайта форума с анимацией частиц',
+    size: 'half' as const,
+  },
+];
+
+const steps = [
+  {
+    title: 'Смета по пунктам',
+    text: 'Разбираю задачу на разделы и называю цену и срок каждого. Видно, что входит и за что платите.',
+  },
+  {
+    title: 'Этапы с оплатой после приёмки',
+    text: 'Каждый этап показываю, вы проверяете, потом оплата. Аванс только за первый этап.',
+  },
+  {
+    title: 'Тестовая копия',
+    text: 'Работа идёт на тестовом адресе. Рабочий сайт не трогаю, пока новая версия не принята.',
+  },
+  {
+    title: 'Срок в днях',
+    text: 'Называю реальные дни, а не «около трёх недель». Если срок сдвигается, предупреждаю заранее.',
   },
 ];
 ---
 
-<BaseLayout title="Сергей Д. — оживляю, ускоряю и дорабатываю сайты">
-  <PageHeader>
-    <Fragment slot="title">
-      Оживляю, ускоряю и дорабатываю сайты — <em>не&nbsp;ломая то, что&nbsp;работает.</em>
-    </Fragment>
-    <Fragment slot="lede">
-      Сергей Д., разработчик. 8+ лет коммерческой разработки. Вместо списка технологий —
-      интерактивные кейсы: каждый можно потрогать руками.
-    </Fragment>
-    <div class="services">
-      {services.map((service) => <span>{service}</span>)}
-    </div>
-  </PageHeader>
+<BaseLayout
+  title="Сергей Д. Сайты и веб-сервисы под ключ"
+  description="Интернет-магазины, лендинги и личные кабинеты под ключ: смета по пунктам, этапы с оплатой после приёмки, срок в днях. Живые кейсы, которые можно потрогать."
+>
+  <main>
+    <section class="hero wrap">
+      <h1>Сайты и веб-сервисы под&nbsp;ключ</h1>
+      <p class="lede">
+        Интернет-магазины, лендинги, личные кабинеты и интеграции: от сметы до запуска одним
+        исполнителем. Ниже не список технологий, а проекты, которые можно открыть и потрогать.
+      </p>
+    </section>
 
-  <main class="cases wrap">
-    {cases.map((item) => <CaseCard {...item} />)}
+    <section class="wrap" aria-labelledby="cases-h">
+      <h2 id="cases-h" class="visually-hidden">Кейсы</h2>
+      <div class="cases">
+        {cases.map((item, index) => <CaseCard {...item} index={index} />)}
+      </div>
+    </section>
+
+    <section class="process wrap" id="process" aria-labelledby="process-h">
+      <h2 id="process-h">Как работаю</h2>
+      <ol>
+        {
+          steps.map((step, index) => (
+            <li data-reveal style={`--i:${index}`}>
+              <span class="num" aria-hidden="true">{index + 1}</span>
+              <b>{step.title}</b>
+              <p>{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="contact wrap" id="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h">Обсудить проект</h2>
+      <p>
+        Напишите в чате на Профи.ру, где опубликовано это портфолио: опишите задачу своими
+        словами, в ответ пришлю смету по пунктам и срок в днях. Если удобнее почта, адрес в подвале.
+      </p>
+    </section>
   </main>
-
-  <SiteFooter />
 </BaseLayout>

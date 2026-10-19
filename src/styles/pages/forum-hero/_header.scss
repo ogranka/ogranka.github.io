@@ -87,4 +87,38 @@ nav a.lnk {
   .menu-btn {
     display: block;
   }
+
+  // Открытое меню: ссылки столбиком под логотипом и кнопкой
+  .site-head.menu-open {
+    background: rgba(5, 11, 28, .96);
+    backdrop-filter: blur(14px);
+
+    nav {
+      flex-wrap: wrap;
+      height: auto;
+      min-height: 74px;
+      row-gap: 6px;
+      padding-bottom: 18px;
+    }
+
+    .brand {
+      order: -2;
+      min-height: 74px;
+    }
+
+    .menu-btn {
+      order: -1;
+    }
+
+    nav a.lnk,
+    nav .btn {
+      display: block;
+      flex-basis: 100%;
+    }
+
+    nav .btn {
+      margin-top: 8px;
+      text-align: center;
+    }
+  }
 }

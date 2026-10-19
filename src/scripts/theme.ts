@@ -6,10 +6,16 @@ export function initTheme() {
 
   const current = () => root.dataset.theme || (media.matches ? 'dark' : 'light');
 
+  // Кнопка сообщает скринридеру, включена ли тёмная тема
+  const sync = (button: HTMLButtonElement) => button.setAttribute('aria-pressed', String(current() === 'dark'));
+
   document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+    sync(button);
+    media.addEventListener('change', () => sync(button));
     button.addEventListener('click', () => {
       const next = current() === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
+      sync(button);
       try {
         localStorage.setItem('theme', next);
       } catch {

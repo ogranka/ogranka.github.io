@@ -7,7 +7,6 @@ export interface CaseItem {
   description: string;
   /** Имя файла превью в src/assets/previews без расширения */
   preview: string;
-  previewAlt: string;
   size: 'wide' | 'half';
 }
 
@@ -19,7 +18,6 @@ export const cases: CaseItem[] = [
     description:
       'Мобильная витрина с каталогом, фильтром-шторкой, сборкой букета и оформлением заказа в четыре шага. Все экраны рабочие.',
     preview: 'cvety',
-    previewAlt: 'Экраны мобильного магазина букетов: главная, каталог, карточка, оформление заказа',
     size: 'wide',
   },
   {
@@ -28,7 +26,6 @@ export const cases: CaseItem[] = [
     title: 'Консультант в чате магазина',
     description: 'Чат на витрине отвечает по каталогу и правилам доставки, ведёт к корзине и передаёт сложные вопросы флористу.',
     preview: 'assistant',
-    previewAlt: 'Чат консультанта в мобильном магазине букетов',
     size: 'half',
   },
   {
@@ -37,7 +34,6 @@ export const cases: CaseItem[] = [
     title: 'Городской журнал',
     description: 'Издание о жизни города с двумя городами в одной редакции: лента, рубрики, статьи, авторы, поиск и разметка для поисковиков.',
     preview: 'zhurnal',
-    previewAlt: 'Главная страница городского журнала с материалом дня и лентой',
     size: 'half',
   },
   {
@@ -46,7 +42,6 @@ export const cases: CaseItem[] = [
     title: 'Сайт клиники: было и стало',
     description: 'Тот же контент под одной шторкой: страница 2012 года и её сегодняшняя версия.',
     preview: 'before-after',
-    previewAlt: 'Шторка сравнения: старый и новый сайт клиники',
     size: 'half',
   },
   {
@@ -55,7 +50,6 @@ export const cases: CaseItem[] = [
     title: 'Гонка скорости',
     description: 'Две одинаковые страницы грузятся наперегонки: конструктор против аккуратной сборки.',
     preview: 'speed-race',
-    previewAlt: 'Финиш гонки загрузки: 6,4 секунды против 0,9',
     size: 'half',
   },
   {
@@ -64,7 +58,6 @@ export const cases: CaseItem[] = [
     title: 'Сайт отраслевого форума',
     description: 'Анимированный первый экран с рельефом из частиц, который весит меньше одной фотографии.',
     preview: 'forum-hero',
-    previewAlt: 'Тёмный первый экран сайта форума с анимацией частиц',
     size: 'wide',
   },
 ];

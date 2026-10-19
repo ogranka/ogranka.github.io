@@ -15,10 +15,10 @@ const { base, screens } = Astro.props;
 
 <div class="phones" data-phones>
   <div class="phones__head">
-    <div class="phones__tabs" role="tablist" aria-label="Экраны магазина">
+    <div class="phones__tabs" role="group" aria-label="Экраны магазина">
       {
         screens.map((s, i) => (
-          <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-tab={i}>
+          <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-tab={i}>
             {s.label}
           </button>
         ))

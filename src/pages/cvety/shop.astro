@@ -118,7 +118,7 @@ const phoneHref = 'tel:+79990000000';
                   </a>
                   <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
                   <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
-                  <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
+                  <button class="price-btn" type="button" data-add={p.id} aria-label={`В корзину: ${p.name}, ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
                 </article>
               ))
             }
@@ -162,7 +162,7 @@ const phoneHref = 'tel:+79990000000';
                 </a>
                 <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
                 <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
-                <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
+                <button class="price-btn" type="button" data-add={p.id} aria-label={`В корзину: ${p.name}, ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
               </article>
             ))
           }
@@ -233,7 +233,7 @@ const phoneHref = 'tel:+79990000000';
                   </a>
                   <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
                   <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
-                  <button class="price-btn" type="button" data-add={p.id} aria-label={`Добавить в корзину за ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
+                  <button class="price-btn" type="button" data-add={p.id} aria-label={`В корзину: ${p.name}, ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
                 </article>
               ))
             }
@@ -264,7 +264,7 @@ const phoneHref = 'tel:+79990000000';
 
         <form class="co" id="coForm" novalidate>
           <fieldset class="co__step" data-step="1">
-            <legend class="display">Кому и куда</legend>
+            <legend class="display" tabindex="-1">Кому и куда</legend>
             <label class="fld" data-fld>
               <span class="fld__label">Имя получателя</span>
               <input name="name" type="text" autocomplete="name" required minlength="2" placeholder="Анна" />
@@ -289,7 +289,7 @@ const phoneHref = 'tel:+79990000000';
           </fieldset>
 
           <fieldset class="co__step" data-step="2" hidden>
-            <legend class="display">Когда привезти</legend>
+            <legend class="display" tabindex="-1">Когда привезти</legend>
             <div class="fgroup">
               <h3>День</h3>
               <div class="opts" id="dayOpts" role="group" aria-label="День доставки"></div>
@@ -316,7 +316,7 @@ const phoneHref = 'tel:+79990000000';
           </fieldset>
 
           <fieldset class="co__step" data-step="3" hidden>
-            <legend class="display">Открытка</legend>
+            <legend class="display" tabindex="-1">Открытка</legend>
             <p class="muted">Напечатаем текст на открытке и вложим в конверт. Это бесплатно.</p>
             <label class="switch"><span>Без открытки</span><input type="checkbox" name="noCard" /><i></i></label>
             <label class="field" id="coCardField"><span class="sr">Текст открытки</span><textarea name="card" id="coCardText" maxlength="200" rows="4" placeholder="Например: С днём рождения, мама! Люблю тебя"></textarea></label>
@@ -324,7 +324,7 @@ const phoneHref = 'tel:+79990000000';
           </fieldset>
 
           <fieldset class="co__step" data-step="4" hidden>
-            <legend class="display">Оплата</legend>
+            <legend class="display" tabindex="-1">Оплата</legend>
             <div class="pay" role="radiogroup" aria-label="Способ оплаты">
               <label class="pay__opt"><input type="radio" name="pay" value="Картой онлайн" checked /><span>Картой онлайн</span><small>Visa, Mir, Mastercard</small></label>
               <label class="pay__opt"><input type="radio" name="pay" value="СБП" /><span>СБП</span><small>По QR-коду в приложении банка</small></label>

@@ -142,7 +142,7 @@ const phoneHref = 'tel:+79990000000';
 
         <div class="toolbar">
           <button class="pill pill--line" type="button" data-sheet="filter"><svg><use href="#i-filter"></use></svg>Фильтр<b class="count" id="filterCount">2</b></button>
-          <button class="pill pill--ghost" type="button" data-sheet="sort" id="sortBtn">Сначала популярные<svg><use href="#i-down"></use></svg></button>
+          <button class="pill pill--ghost" type="button" data-sheet="sort" id="sortBtn">Популярные<svg><use href="#i-down"></use></svg></button>
         </div>
 
         <div class="grid" id="catalogGrid">
@@ -348,7 +348,7 @@ const phoneHref = 'tel:+79990000000';
 
       <!-- Плавающий блок действий, общий для всех экранов -->
       <div class="dock" id="dock">
-        <button class="dock__buy" type="button" id="buyBtn" hidden>В корзину за&nbsp;{rub(featured.price)}</button>
+        <button class="dock__buy" type="button" id="buyBtn" hidden>В корзину · {rub(featured.price)}</button>
         <button class="round round--ink" type="button" data-sheet="search" aria-label="Поиск" id="searchBtn"><svg><use href="#i-search"></use></svg></button>
         <button class="round round--ink" type="button" data-sheet="cart" aria-label="Корзина"><svg><use href="#i-bag"></use></svg><b class="count" id="cartCount" hidden>0</b></button>
         <button class="round round--soft" type="button" data-sheet="chat" aria-label="Чат с консультантом"><svg><use href="#i-chat"></use></svg></button>

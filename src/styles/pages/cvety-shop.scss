@@ -153,7 +153,7 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   color: #fff;
   font: 600 var(--fs-xs)/1 var(--f-text);
 }
-.round .count { position: absolute; top: -2px; right: -2px; box-shadow: 0 0 0 2px var(--ink); }
+.round .count { position: absolute; top: 0; right: 0; box-shadow: 0 0 0 2px var(--ink); }
 
 /* Верхняя панель */
 .topbar {
@@ -342,7 +342,8 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 }
 .chips a[aria-current] { background: var(--ink); color: #fff; }
 
-.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px var(--gut) 18px; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px var(--gut) 18px; min-width: 0; }
+.toolbar .pill { flex: 0 1 auto; min-width: 0; }
 
 .pill {
   display: inline-flex;
@@ -422,41 +423,55 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .spec dd { font-weight: 500; }
 .spec dd svg { width: 20px; height: 20px; stroke-width: 2; color: var(--brand); }
 
-/* Плавающий блок действий вместо бургера */
+/* Плавающий блок действий вместо бургера. Всегда внутри безопасной зоны
+   с отступами 12 px: иконки 48×48 не сжимаются, главная кнопка берет остаток. */
 .dock {
   position: fixed;
   z-index: 30;
-  left: 50%;
-  bottom: max(14px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  width: fit-content;
+  max-width: min(420px, 100% - 24px);
+  margin-inline: auto;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, .78);
+  background: rgba(255, 255, 255, .82);
   box-shadow: 0 10px 30px rgba(31, 35, 38, .16), inset 0 0 0 1px rgba(31, 35, 38, .06);
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  overflow: hidden;
+  contain: layout paint;
 }
+.dock .round { flex: 0 0 48px; width: 48px; height: 48px; }
 .dock__buy {
-  height: 52px;
-  padding: 0 22px;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  padding: 0 16px;
   border-radius: var(--r-pill);
   background: var(--peony);
   color: #fff;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 .dock__buy[data-added] { background: var(--ink); color: #fff; }
-.dock.is-product { width: calc(100% - 2 * var(--gut)); max-width: 420px; }
-.dock.is-product .dock__buy { flex: 1; }
+.dock.is-product { width: 100%; }
 
 .toast {
   position: fixed;
   z-index: 40;
   left: 50%;
   bottom: calc(var(--dock-h) + 36px);
+  max-width: calc(100% - 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
   transform: translate(-50%, 12px);
   padding: 12px 18px;
   border-radius: var(--r-pill);

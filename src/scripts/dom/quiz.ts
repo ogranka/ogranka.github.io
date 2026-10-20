@@ -24,7 +24,8 @@ export function initQuiz() {
 
   const render = () => {
     const e = estimate(answers());
-    form.querySelector('[data-sum]')!.textContent = `${rub(e.low)} — ${rub(e.high)}`;
+    // Диапазон переносится только по тире, внутри суммы разрыва нет
+    form.querySelector('[data-sum]')!.innerHTML = `<span class="nowrap">${rub(e.low)}</span> — <span class="nowrap">${rub(e.high)}</span>`;
     form.querySelector('[data-weeks]')!.textContent = `Срок стройки около ${e.weeks} недель`;
     form.querySelector('[data-lines]')!.innerHTML = e.lines.map((l) => `<li><span>${l.label}</span><span>${rub(l.value)}</span></li>`).join('');
   };

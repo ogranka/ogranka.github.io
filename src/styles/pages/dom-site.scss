@@ -880,6 +880,10 @@ html:not(.dom-anim) .step__dot {
   font-variant-numeric: tabular-nums;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .result__weeks {
   margin-top: 8px;
   font-weight: 700;

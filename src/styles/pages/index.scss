@@ -112,8 +112,17 @@ html.js .hero .hero__actions {
   border: 1px solid var(--line);
   background: var(--surface);
   box-shadow: var(--shadow);
-  // translate ставит скрипт: окна смещаются за курсором на разную глубину
-  transition: transform .45s var(--spring), translate .3s ease-out, scale .45s var(--spring);
+  // Наведение: окно плавно поднимается и выходит вперёд, соседние чуть
+  // отступают. Слой меняется сразу при наведении, а обратно только через
+  // 0,5 с, когда окно уже опустилось: иначе оно резко пряталось бы за соседа.
+  // translate ставит скрипт плавным догоняющим движением, поэтому его в
+  // transition нет.
+  transition:
+    transform .7s var(--ease),
+    box-shadow .7s var(--ease),
+    opacity .6s var(--ease),
+    scale .45s var(--spring),
+    z-index 0s linear .5s;
 
   img {
     display: block;
@@ -124,8 +133,16 @@ html.js .hero .hero__actions {
   &:hover,
   &:focus-visible {
     z-index: 4;
-    transform: translateY(-4px);
+    transform: translateY(-8px) scale(1.025);
+    box-shadow: 0 40px 80px -34px rgba(22, 24, 29, .55);
+    transition-delay: 0s;
   }
+}
+
+.collage:has(.collage__item:hover) .collage__item:not(:hover),
+.collage:has(:focus-visible) .collage__item:not(:focus-visible) {
+  transform: scale(.985);
+  opacity: .88;
 }
 
 .collage__item--1 {

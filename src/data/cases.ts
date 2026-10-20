@@ -29,6 +29,14 @@ export const cases: CaseItem[] = [
     size: 'half',
   },
   {
+    href: '/dom/',
+    kind: 'Лендинг',
+    title: 'Лендинг строительной компании',
+    description: 'Чертёж на первом экране собирается в дом по прокрутке, дальше проекты, этапы и квиз, который считает стоимость дома.',
+    preview: 'dom',
+    size: 'half',
+  },
+  {
     href: '/assistant/',
     kind: 'ИИ-консультант',
     title: 'Консультант в чате магазина',
@@ -42,7 +50,7 @@ export const cases: CaseItem[] = [
     title: 'Городской журнал',
     description: 'Издание о жизни города с двумя городами в одной редакции: лента, рубрики, статьи, авторы, поиск и разметка для поисковиков.',
     preview: 'zhurnal',
-    size: 'wide',
+    size: 'half',
   },
   {
     href: '/before-after/',

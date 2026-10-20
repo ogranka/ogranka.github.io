@@ -24,6 +24,7 @@ export function initMotion() {
 function buildHouse(track: HTMLElement, house: Element) {
   const layer = (name: string) => house.querySelector(`[data-layer="${name}"]`);
   const stages = [...track.querySelectorAll<HTMLElement>('[data-stage]')];
+  const hint = track.querySelector<HTMLElement>('.hero__hint');
   let current = -1;
   const setStage = (p: number) => {
     const i = STAGES.filter((s) => p >= s).length;
@@ -47,7 +48,11 @@ function buildHouse(track: HTMLElement, house: Element) {
       start: 'top top',
       end: 'bottom bottom',
       scrub: 0.8,
-      onUpdate: (self) => setStage(self.progress),
+      onUpdate: (self) => {
+        setStage(self.progress);
+        // Человек начал листать: подсказка больше не нужна
+        if (self.progress > 0.02) hint?.classList.add('is-gone');
+      },
     },
   });
   tl.to(layer('fill-base'), { opacity: 1, duration: 0.4 }, 0.1)
@@ -59,6 +64,40 @@ function buildHouse(track: HTMLElement, house: Element) {
     .to(layer('glow'), { opacity: 1, duration: 0.55 }, 2.25)
     .to(layer('pines'), { opacity: 1, duration: 0.6 }, 2.3)
     .to({}, { duration: 0.35 });
+
+  if (new URLSearchParams(location.search).has('autoplay')) autoplay(track);
+}
+
+// Во фрейме на странице кейса посетитель листает страницу кейса, а не
+// лендинг, и сборку легко пропустить. С ?autoplay дом один раз собирается
+// сам, когда фрейм показался на экране: лендинг плавно прокручивается до
+// конца первого экрана. Любая прокрутка человеком останавливает автосборку.
+function autoplay(track: HTMLElement) {
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.intersectionRatio >= 0.6)) return;
+      io.disconnect();
+      const end = track.offsetHeight - innerHeight;
+      const pos = { y: scrollY };
+      const tween = gsap.to(pos, {
+        y: end,
+        duration: 3.6,
+        delay: 1.6,
+        ease: 'power1.inOut',
+        // instant: у страницы плавная прокрутка, она тормозила бы каждый шаг
+        onUpdate: () => scrollTo({ top: pos.y, behavior: 'instant' }),
+      });
+      const stop = () => {
+        tween.kill();
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((t) => removeEventListener(t, stop));
+      };
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((t) => addEventListener(t, stop, { passive: true }));
+    },
+    { threshold: [0, 0.6, 1] },
+  );
+  // Без явного корня наблюдатель во фрейме меряет видимость в окне браузера,
+  // то есть на странице кейса, а не внутри фрейма
+  io.observe(track.querySelector('.hero')!);
 }
 
 function fillSteps() {

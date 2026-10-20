@@ -34,6 +34,8 @@ const next = nextCase(Astro.props.current);
     border-bottom: 1px solid var(--line-strong);
     color: var(--ink);
     text-decoration: none;
+    // Строка во всю ширину: проседает едва заметно, иначе сжатие бросается в глаза
+    --press: .985;
   }
 
   .label {

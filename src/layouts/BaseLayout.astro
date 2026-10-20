@@ -66,9 +66,11 @@ const ogImage = new URL(`/og/${ogSlug}.jpg`, Astro.site);
     <script>
       import { initTheme } from '../scripts/theme';
       import { initReveal } from '../scripts/reveal';
+      import { initMotion } from '../scripts/motion';
 
       initTheme();
       initReveal();
+      initMotion();
     </script>
   </body>
 </html>

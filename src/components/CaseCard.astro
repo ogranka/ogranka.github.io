@@ -11,12 +11,14 @@ interface Props {
   preview?: ImageMetadata;
   size?: 'wide' | 'half';
   index?: number;
+  /** Колонка в ряду сетки: 0 левая или широкая, 1 правая */
+  col?: number;
 }
 
-const { href, kind, title, description, preview, size = 'half', index = 0 } = Astro.props;
+const { href, kind, title, description, preview, size = 'half', index = 0, col = 0 } = Astro.props;
 ---
 
-<a class:list={['case-card', 'pressable', size]} href={href} data-reveal style={`--i:${index}`}>
+<a class:list={['case-card', 'pressable', size]} href={href} data-reveal style={`--col:${col}`}>
   <span class="preview">
     <span class="chrome" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="shot">

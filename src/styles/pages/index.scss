@@ -44,6 +44,21 @@
   }
 }
 
+// Первый экран собирается при загрузке одним коротким движением: кнопки
+// поднимаются, окна коллажа влетают слоями. Текст стоит сразу: на телефоне
+// самый крупный элемент экрана это абзац про опыт, и его проявление
+// задерживало бы загрузку в замере скорости.
+html.js .hero .hero__actions {
+  animation: hero-rise .7s var(--ease) .15s backwards;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -61,7 +76,7 @@
   font-weight: 600;
   font-size: var(--fs-m);
   text-decoration: none;
-  transition: background .2s var(--ease), box-shadow .2s var(--ease);
+  transition: background .2s var(--ease), box-shadow .2s var(--ease), scale .45s var(--spring);
 }
 
 .btn--ink {
@@ -97,7 +112,8 @@
   border: 1px solid var(--line);
   background: var(--surface);
   box-shadow: var(--shadow);
-  transition: transform .25s var(--ease);
+  // translate ставит скрипт: окна смещаются за курсором на разную глубину
+  transition: transform .45s var(--spring), translate .3s ease-out, scale .45s var(--spring);
 
   img {
     display: block;
@@ -117,6 +133,9 @@
   left: 0;
   width: 80%;
   z-index: 1;
+  --fx: -48px;
+  --fy: -28px;
+  --fr: -3deg;
 }
 
 .collage__item--2 {
@@ -124,6 +143,10 @@
   right: 0;
   width: 62%;
   z-index: 2;
+  --fx: 56px;
+  --fy: 0px;
+  --fr: 3deg;
+  --d: .1s;
 }
 
 .collage__item--3 {
@@ -131,6 +154,85 @@
   left: 8%;
   width: 60%;
   z-index: 3;
+  --fx: -20px;
+  --fy: 52px;
+  --fr: -2deg;
+  --d: .2s;
+}
+
+// backwards, а не both: после влёта transform свободен для наведения
+html.js .collage__item {
+  animation: collage-in .9s var(--spring) var(--d, 0s) backwards;
+}
+
+@keyframes collage-in {
+  from {
+    transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(.94);
+  }
+}
+
+// Цифры: одна строка под первым экраном, отделена линиями, как строка
+// показателей в отчёте. Ширина числа задана заранее по числу цифр, поэтому
+// отсчёт не двигает вёрстку.
+.stats ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 48px 0 0;
+  padding: 22px 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+
+  li {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+  }
+
+  b {
+    font-size: clamp(2.2rem, 1.6rem + 2.4vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+
+  li > span {
+    color: var(--dim);
+    font-size: var(--fs-sm);
+    max-width: 24ch;
+  }
+}
+
+.stats__num {
+  display: inline-block;
+  min-width: calc(var(--digits) * 1ch);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: $bp-small) {
+  .stats ul {
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    li {
+      // Колонка числа по ширине «100» крупным кеглем, подписи ровно в строку
+      grid-template-columns: 5rem 1fr;
+      align-items: center;
+      gap: 14px;
+    }
+
+    b {
+      font-size: 2.1rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .hero .hero__actions,
+  html.js .collage__item {
+    animation: none;
+  }
 }
 
 .collage__chrome {

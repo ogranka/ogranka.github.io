@@ -21,6 +21,14 @@ export const cases: CaseItem[] = [
     size: 'wide',
   },
   {
+    href: '/kabinet/',
+    kind: 'Личный кабинет',
+    title: 'Кабинет репетитора',
+    description: 'Неделя занятий, абонементы, оплаты и отчёты родителям. Остаток занятий кабинет считает сам.',
+    preview: 'kabinet',
+    size: 'half',
+  },
+  {
     href: '/assistant/',
     kind: 'ИИ-консультант',
     title: 'Консультант в чате магазина',
@@ -34,7 +42,7 @@ export const cases: CaseItem[] = [
     title: 'Городской журнал',
     description: 'Издание о жизни города с двумя городами в одной редакции: лента, рубрики, статьи, авторы, поиск и разметка для поисковиков.',
     preview: 'zhurnal',
-    size: 'half',
+    size: 'wide',
   },
   {
     href: '/before-after/',

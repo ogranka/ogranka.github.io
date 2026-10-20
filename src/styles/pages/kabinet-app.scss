@@ -1,0 +1,1466 @@
+// Кабинет репетитора: школьная тетрадь в клетку. Красное поле слева,
+// синяя шариковая ручка как акцент, отменённое зачёркнуто, у каждого
+// ученика свой цвет маркера. Отдельно от стилей хаба.
+
+@font-face {
+  font-family: 'Golos Text';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../../assets/fonts/golos-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Golos Text';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../../assets/fonts/golos-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Golos Text';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../../assets/fonts/golos-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #fdfdfb;
+  --paper-2: #f3f5f8;
+  --cell: #e3eaf3;
+  --margin: #e6a1a1;
+  --ink: #1c2230;
+  --ink-2: #4f586b;
+  --pen: #2348b8;
+  --pen-soft: #e4eafb;
+  --bad: #b3261e;
+  --bad-soft: #fbe7e5;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d6;
+  --ok: #1d6b3a;
+  --ok-soft: #e2f3e8;
+  --line: #d3dae5;
+  --sheet: #ffffff;
+  --shadow: 0 1px 0 #d3dae5, 0 6px 18px -12px rgb(28 34 48 / 0.35);
+  --t-blue: #3a6fd8;
+  --t-green: #2f8a57;
+  --t-amber: #c58a12;
+  --t-violet: #7a55c7;
+  --t-rose: #c94f72;
+  --cellsize: 24px;
+  --top-h: 64px;
+}
+
+@mixin dark {
+  color-scheme: dark;
+  --paper: #141923;
+  --paper-2: #1b2130;
+  --cell: #1f2635;
+  --margin: #6d3540;
+  --ink: #e8ecf3;
+  --ink-2: #a7b0c2;
+  --pen: #9db7ff;
+  --pen-soft: #23304f;
+  --bad: #ff8f86;
+  --bad-soft: #3a1f22;
+  --warn: #f0c060;
+  --warn-soft: #382c13;
+  --ok: #7fd49c;
+  --ok-soft: #173025;
+  --line: #2c3446;
+  --sheet: #1a2030;
+  --shadow: 0 1px 0 #2c3446, 0 8px 22px -14px rgb(0 0 0 / 0.8);
+  --t-blue: #7ea3ff;
+  --t-green: #6fcf97;
+  --t-amber: #f0b54a;
+  --t-violet: #b49cff;
+  --t-rose: #ff8fb0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark;
+  }
+}
+:root[data-theme='dark'] {
+  @include dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font: 400 15px/1.5 'Golos Text', system-ui, sans-serif;
+  color: var(--ink);
+  background-color: var(--paper);
+  // Клетка тетради
+  background-image: linear-gradient(var(--cell) 1px, transparent 1px), linear-gradient(90deg, var(--cell) 1px, transparent 1px);
+  background-size: var(--cellsize) var(--cellsize);
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--pen);
+  outline-offset: 2px;
+}
+
+.kb-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.kb-muted {
+  color: var(--ink-2);
+}
+
+.kb-text-bad {
+  color: var(--bad);
+}
+
+.kb-text-warn {
+  color: var(--warn);
+}
+
+.kb-loading {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  color: var(--ink-2);
+}
+
+// Каркас
+
+.kb-app {
+  display: grid;
+  grid-template-columns: 208px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'top top'
+    'nav main';
+  min-height: 100dvh;
+
+  &.is-parent {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'top'
+      'main';
+  }
+}
+
+.kb-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 3px;
+  z-index: 50;
+  background: var(--pen);
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  &.is-on {
+    opacity: 1;
+    animation: kb-progress 0.9s ease-out infinite;
+  }
+}
+
+@keyframes kb-progress {
+  from {
+    transform: scaleX(0.05);
+  }
+  to {
+    transform: scaleX(0.9);
+  }
+}
+
+.kb-top {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--top-h);
+  padding: 0 24px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.kb-brand {
+  display: grid;
+  line-height: 1.25;
+  margin-right: auto;
+  min-width: 0;
+
+  b {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  span {
+    font-size: 13px;
+  }
+}
+
+.kb-role {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+
+  button {
+    border: 0;
+    background: none;
+    padding: 6px 12px;
+    min-height: 34px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+
+    &[aria-pressed='true'] {
+      background: var(--sheet);
+      color: var(--pen);
+      box-shadow: var(--shadow);
+    }
+  }
+}
+
+.kb-top__tools {
+  display: flex;
+  gap: 4px;
+}
+
+.kb-iconbtn {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink-2);
+
+  &:hover {
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+}
+
+.kb-nav {
+  grid-area: nav;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 20px 12px;
+  border-right: 1px solid var(--line);
+  background: var(--paper);
+  position: sticky;
+  top: var(--top-h);
+  align-self: start;
+  height: calc(100dvh - var(--top-h));
+
+  button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink-2);
+
+    &:hover {
+      background: var(--paper-2);
+      color: var(--ink);
+    }
+
+    &[aria-current='page'] {
+      background: var(--pen-soft);
+      color: var(--pen);
+    }
+  }
+}
+
+.kb-dot {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--bad);
+  color: var(--paper);
+  font: 600 12px/20px 'Golos Text', sans-serif;
+  text-align: center;
+}
+
+// Рабочее поле с красной линией полей тетради
+.kb-main {
+  grid-area: main;
+  position: relative;
+  padding: 28px 32px 48px 64px;
+  min-width: 0;
+  outline: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 40px;
+    width: 2px;
+    background: var(--margin);
+  }
+}
+
+.kb-view-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 30px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin-top: 4px;
+    max-width: 60ch;
+  }
+}
+
+.kb-subhead {
+  margin: 28px 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+// Кнопки и формы
+
+.kb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--pen);
+  border-radius: 10px;
+  background: var(--pen);
+  color: var(--paper);
+  font-weight: 600;
+  transition: transform 0.12s, background-color 0.15s;
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--ghost {
+    background: var(--sheet);
+    color: var(--pen);
+    border-color: var(--line);
+
+    &:hover:not(:disabled) {
+      border-color: var(--pen);
+    }
+  }
+
+  &--bad {
+    background: var(--bad);
+    border-color: var(--bad);
+  }
+
+  &--small {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
+
+.kb-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+
+  > .kb-btn {
+    justify-self: start;
+  }
+}
+
+.kb-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+
+  &--fields > .kb-field {
+    flex: 1 1 140px;
+  }
+}
+
+.kb-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  > span,
+  > legend {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+    padding: 0;
+    margin-bottom: 6px;
+  }
+
+  > span {
+    margin-bottom: 0;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--sheet);
+    font-size: 16px;
+
+    &:focus-visible {
+      outline: 2px solid var(--pen);
+      outline-offset: 0;
+      border-color: var(--pen);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.kb-hint {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.kb-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  button {
+    display: grid;
+    justify-items: center;
+    flex: 1 0 auto;
+    gap: 0;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--sheet);
+    color: var(--ink-2);
+    font-size: 14px;
+    line-height: 1.2;
+
+    b {
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    &[aria-pressed='true'] {
+      border-color: var(--pen);
+      background: var(--pen-soft);
+      color: var(--pen);
+
+      b {
+        color: var(--pen);
+      }
+    }
+  }
+}
+
+.kb-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--paper-2);
+
+  button {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+
+    &[aria-pressed='true'] {
+      background: var(--sheet);
+      color: var(--pen);
+      box-shadow: var(--shadow);
+    }
+  }
+}
+
+.kb-callout {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--pen);
+  border-radius: 0 10px 10px 0;
+  background: var(--pen-soft);
+
+  p {
+    margin-top: 2px;
+    font-size: 14px;
+  }
+
+  &--bad {
+    border-color: var(--bad);
+    background: var(--bad-soft);
+
+    b {
+      color: var(--bad);
+    }
+  }
+
+  &--ok {
+    border-color: var(--ok);
+    background: var(--ok-soft);
+
+    b {
+      color: var(--ok);
+    }
+  }
+}
+
+.kb-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--paper-2);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  &--warn {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+
+  &--bad {
+    background: var(--bad-soft);
+    color: var(--bad);
+  }
+
+  &--accent {
+    background: var(--pen-soft);
+    color: var(--pen);
+  }
+}
+
+.kb-empty {
+  padding: 16px 0;
+  color: var(--ink-2);
+}
+
+// Цвета учеников: маркер слева у занятия и у карточки
+.kb-tone-blue {
+  --tone: var(--t-blue);
+}
+.kb-tone-green {
+  --tone: var(--t-green);
+}
+.kb-tone-amber {
+  --tone: var(--t-amber);
+}
+.kb-tone-violet {
+  --tone: var(--t-violet);
+}
+.kb-tone-rose {
+  --tone: var(--t-rose);
+}
+
+// Неделя
+
+.kb-week__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kb-attention {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.kb-attention__item {
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px dashed var(--bad);
+  border-radius: 10px;
+  background: var(--sheet);
+  text-align: left;
+
+  b {
+    color: var(--bad);
+    font-size: 14px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: var(--bad-soft);
+  }
+}
+
+.kb-grid {
+  display: grid;
+  grid-template-columns: 52px repeat(7, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--sheet);
+  // clip, а не hidden: иначе шапка дней перестанет прилипать
+  overflow: clip;
+}
+
+.kb-grid__hours {
+  border-right: 1px solid var(--line);
+
+  // Пустой угол над часами прилипает вместе с шапкой дней
+  &::before {
+    content: '';
+    display: block;
+    height: 52px;
+    position: sticky;
+    top: var(--top-h);
+    z-index: 2;
+    background: var(--sheet);
+    border-bottom: 1px solid var(--line);
+  }
+
+  span {
+    display: block;
+    height: var(--row);
+    padding: 2px 6px 0 0;
+    text-align: right;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+}
+
+.kb-grid__day {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  &.is-today .kb-grid__dayhead {
+    color: var(--pen);
+
+    b {
+      background: var(--pen);
+      color: var(--sheet);
+    }
+  }
+}
+
+.kb-grid__dayhead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 52px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-2);
+  // Дни видны при прокрутке вечерних часов
+  position: sticky;
+  top: var(--top-h);
+  z-index: 2;
+  background: var(--sheet);
+
+  b {
+    display: inline-grid;
+    place-items: center;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+}
+
+.kb-grid__col {
+  position: relative;
+  height: calc(var(--rows) * var(--row));
+  background-image: linear-gradient(var(--line) 1px, transparent 1px);
+  background-size: 100% var(--row);
+}
+
+.kb-grid__slot {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  margin-top: 2px;
+}
+
+.kb-lesson {
+  display: grid;
+  align-content: start;
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  padding: 3px 6px 3px 9px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--tone);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--tone) 12%, var(--sheet));
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.25;
+  overflow: hidden;
+
+  &:hover {
+    background: color-mix(in srgb, var(--tone) 20%, var(--sheet));
+  }
+
+  // Время, имя и тема строками: так влезает и 45-минутное занятие
+  .kb-lesson__head {
+    display: contents;
+  }
+
+  .kb-lesson__time {
+    flex: none;
+    font-weight: 600;
+  }
+
+  .kb-lesson__name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .kb-lesson__topic {
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .kb-lesson__status {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // Проведённое: галочка ручкой
+  &.is-done .kb-lesson__time::after {
+    content: ' ✓';
+    color: var(--ok);
+  }
+
+  &.is-done .kb-lesson__status {
+    color: var(--ok);
+  }
+
+  // Отменённое зачёркнуто, как в тетради
+  &.is-cancelled {
+    background: var(--sheet);
+    border-left-style: dashed;
+
+    .kb-lesson__name,
+    .kb-lesson__time,
+    .kb-lesson__topic {
+      text-decoration: line-through;
+      text-decoration-color: var(--bad);
+      text-decoration-thickness: 1.5px;
+      color: var(--ink-2);
+    }
+
+    .kb-lesson__status {
+      color: var(--bad);
+    }
+  }
+
+  &.is-due {
+    outline: 2px dashed var(--bad);
+    outline-offset: -2px;
+
+    .kb-lesson__status {
+      color: var(--bad);
+    }
+  }
+}
+
+.kb-daylist {
+  display: none;
+}
+
+.kb-daylist .kb-chips button {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 6px 0;
+}
+
+.kb-daylist__items {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+
+  .kb-lesson {
+    min-height: 64px;
+    padding: 10px 12px 10px 14px;
+    font-size: 15px;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+
+    .kb-lesson__head {
+      display: contents;
+    }
+
+    .kb-lesson__time {
+      grid-row: span 2;
+      font-size: 16px;
+    }
+  }
+}
+
+// Ученики и пробные
+
+.kb-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.kb-card {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--tone, var(--line));
+  border-radius: 12px;
+  background: var(--sheet);
+  text-align: left;
+  font-size: 14px;
+
+  b {
+    font-size: 16px;
+  }
+
+  &.is-declined {
+    opacity: 0.7;
+  }
+
+  .kb-form__row {
+    margin-top: 6px;
+  }
+}
+
+button.kb-card:hover {
+  border-color: var(--tone);
+}
+
+.kb-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kb-card__meta {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.kb-rows {
+  display: grid;
+  border-top: 1px solid var(--line);
+
+  > li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    min-height: 44px;
+    padding: 8px 2px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  // Строка целиком кнопка: открывает занятие
+  > li:has(> .kb-row-btn) {
+    padding: 0;
+  }
+}
+
+.kb-row-btn {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 2px;
+  border: 0;
+  background: none;
+  text-align: left;
+
+  &:hover {
+    color: var(--pen);
+  }
+}
+
+.kb-status {
+  text-align: right;
+  color: var(--ink-2);
+
+  &.is-cancelled {
+    text-decoration: line-through;
+    text-decoration-color: var(--bad);
+  }
+
+  &.is-planned {
+    color: var(--bad);
+  }
+}
+
+.kb-student h3 {
+  margin: 22px 0 8px;
+  font-size: 16px;
+}
+
+.kb-student > .kb-form__row {
+  margin-top: 16px;
+}
+
+// Факты и итоги
+
+.kb-facts {
+  display: grid;
+  gap: 10px;
+
+  > div {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+  }
+
+  dt {
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+}
+
+.kb-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+
+  > div {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--sheet);
+  }
+
+  dt {
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  dd {
+    margin-top: 4px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+
+    .kb-badge {
+      font-size: 15px;
+      padding: 4px 10px;
+    }
+
+    small {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+    }
+  }
+
+  &--sheet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 20px 0 8px;
+
+    > div {
+      background: none;
+    }
+  }
+}
+
+.kb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th,
+  td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+
+  th {
+    font-weight: 500;
+    color: var(--ink-2);
+    font-size: 13px;
+  }
+
+  .kb-num {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+// Отчёт: лист из тетради
+
+.kb-report-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 20px;
+  margin-bottom: 18px;
+
+  .kb-field {
+    width: min(100%, 260px);
+  }
+
+  .kb-chips button {
+    flex: 0 0 auto;
+  }
+}
+
+.kb-sheet {
+  max-width: 760px;
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--sheet);
+  box-shadow: var(--shadow);
+
+  h3 {
+    margin: 22px 0 8px;
+    font-size: 16px;
+  }
+
+  p {
+    max-width: 68ch;
+  }
+}
+
+.kb-sheet__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--margin);
+  font-size: 14px;
+
+  h2 {
+    margin-top: 2px;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+}
+
+.kb-sheet__topics {
+  display: grid;
+  gap: 4px;
+  list-style: decimal;
+  padding-left: 22px;
+}
+
+.kb-sheet__notes {
+  display: grid;
+  gap: 6px;
+
+  li {
+    padding-left: 14px;
+    border-left: 2px solid var(--pen);
+  }
+}
+
+.kb-parent {
+  max-width: 820px;
+
+  > section {
+    margin-top: 8px;
+  }
+
+  .kb-view-head .kb-subhead {
+    margin: 0;
+  }
+
+  > section + section {
+    margin-top: 32px;
+  }
+}
+
+// Окна
+
+.kb-dialog {
+  width: min(520px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--sheet);
+  color: var(--ink);
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.45);
+
+  &--wide {
+    width: min(680px, calc(100vw - 24px));
+  }
+
+  &::backdrop {
+    background: rgb(20 25 35 / 0.45);
+  }
+
+  &[open] {
+    animation: kb-pop 0.18s ease-out;
+  }
+}
+
+@keyframes kb-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.kb-dialog__inner {
+  padding: 18px 22px 22px;
+}
+
+.kb-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -4px -8px 14px 0;
+
+  h2 {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+}
+
+.kb-dialog__foot {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+// Уведомления
+
+.kb-toast-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 60;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+
+.kb-toast {
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 12px 30px -12px rgb(0 0 0 / 0.5);
+  animation: kb-pop 0.2s ease-out;
+
+  &.is-error {
+    background: var(--bad);
+    color: #fff;
+  }
+}
+
+// Планшет и телефон: неделя списком, разделы снизу
+
+@media (max-width: 900px) {
+  .kb-app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'top'
+      'main';
+    padding-bottom: 72px;
+
+    &.is-parent {
+      padding-bottom: 0;
+    }
+  }
+
+  .kb-nav {
+    position: fixed;
+    inset: auto 0 0;
+    top: auto;
+    z-index: 20;
+    height: auto;
+    flex-direction: row;
+    gap: 0;
+    padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+    border-right: 0;
+    border-top: 1px solid var(--line);
+
+    button {
+      flex: 1;
+      flex-direction: column;
+      gap: 2px;
+      min-height: 56px;
+      padding: 6px 2px;
+      font-size: 12px;
+      text-align: center;
+      justify-content: center;
+    }
+  }
+
+  .kb-dot {
+    position: absolute;
+    top: 4px;
+    left: calc(50% + 6px);
+    margin: 0;
+    min-width: 18px;
+    height: 18px;
+    font-size: 11px;
+    line-height: 18px;
+  }
+
+  .kb-grid {
+    display: none;
+  }
+
+  .kb-daylist {
+    display: block;
+  }
+
+  .kb-main {
+    padding: 20px 16px 32px 30px;
+
+    &::before {
+      left: 16px;
+    }
+  }
+
+  .kb-top {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    height: auto;
+    padding: 10px 16px;
+  }
+
+  .kb-toast-wrap {
+    bottom: 84px;
+  }
+}
+
+@media (max-width: 520px) {
+  .kb-brand span {
+    display: none;
+  }
+
+  .kb-role {
+    order: 3;
+    width: 100%;
+
+    button {
+      flex: 1;
+    }
+  }
+
+  .kb-view-head h1 {
+    font-size: 25px;
+  }
+
+  .kb-sheet {
+    padding: 20px 16px;
+  }
+
+  .kb-facts > div {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .kb-totals {
+    grid-template-columns: 1fr 1fr;
+
+    > div:last-child:nth-child(odd) {
+      grid-column: span 2;
+    }
+
+    dd {
+      font-size: 18px;
+    }
+  }
+
+  .kb-dialog__inner {
+    padding: 16px 16px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Печать отчёта: только лист, без клетки и интерфейса
+
+@media print {
+  :root {
+    --sheet: #fff;
+    --ink: #000;
+    --ink-2: #444;
+    --line: #bbb;
+    --margin: #d88;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .kb-top,
+  .kb-nav,
+  .kb-progress,
+  .kb-toast-wrap,
+  .kb-noprint,
+  .kb-dialog {
+    display: none !important;
+  }
+
+  .kb-app {
+    display: block;
+    padding: 0;
+  }
+
+  .kb-main {
+    padding: 0;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .kb-sheet {
+    max-width: none;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .kb-totals > div {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}

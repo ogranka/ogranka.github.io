@@ -1,0 +1,23 @@
+---
+import App from '../../components/kabinet/App';
+import ThemeBoot from '../../components/ThemeBoot.astro';
+import golosCyr from '../../assets/fonts/golos-cyrillic.woff2?url';
+import '../../styles/pages/kabinet-app.scss';
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Тетрадь репетитора, демо кабинета</title>
+    <meta name="description" content="Демонстрационный кабинет репетитора: неделя занятий, ученики, абонементы, оплаты, пробные и отчёты родителям." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={golosCyr} as="font" type="font/woff2" crossorigin />
+    <ThemeBoot />
+  </head>
+  <body>
+    <App client:load />
+  </body>
+</html>

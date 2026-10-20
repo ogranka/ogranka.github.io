@@ -505,6 +505,11 @@ button {
 .kb-hint {
   font-size: 14px;
   color: var(--ink-2);
+
+  // Пересечение при переносе и в форме абонемента видно сразу
+  &.kb-text-bad {
+    color: var(--bad);
+  }
 }
 
 .kb-chips {
@@ -516,6 +521,7 @@ button {
   button {
     display: grid;
     justify-items: center;
+    align-content: center;
     flex: 1 0 auto;
     gap: 0;
     min-width: 44px;
@@ -559,6 +565,7 @@ button {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    min-width: 0;
     min-height: 40px;
     border: 0;
     border-radius: 9px;
@@ -1208,6 +1215,8 @@ button.kb-card:hover {
     width: min(680px, calc(100vw - 24px));
   }
 
+  overflow-x: hidden;
+
   &::backdrop {
     background: rgb(20 25 35 / 0.45);
   }
@@ -1398,6 +1407,19 @@ button.kb-card:hover {
 
   .kb-dialog__inner {
     padding: 16px 16px 20px;
+  }
+
+  // Три действия занятия в одну строку на узком экране: без иконок
+  .kb-tabs {
+    gap: 2px;
+
+    button {
+      padding: 0 4px;
+
+      .kb-icon {
+        display: none;
+      }
+    }
   }
 }
 

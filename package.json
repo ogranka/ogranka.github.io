@@ -20,6 +20,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@astrojs/react": "^7.1.0",
+    "gsap": "^3.15.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   }

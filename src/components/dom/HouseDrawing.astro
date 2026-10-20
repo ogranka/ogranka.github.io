@@ -1,0 +1,88 @@
+---
+// Чертёж дома на первом экране: фасад в линиях, размеры, потом заполнение
+// деревом, крыша, окна и свет. Слои подписаны data-layer, порядок сборки
+// задаёт скрипт по прокрутке. pathLength="1" у линий: вычерчивание делается
+// одним stroke-dashoffset без замера длины.
+---
+
+<svg class="house" viewBox="0 0 1200 700" role="img" aria-labelledby="house-title" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="house-title">Фасад каркасного дома: от чертежа до готового дома со светом в окнах</title>
+  <defs>
+    <pattern id="boards" width="18" height="40" patternUnits="userSpaceOnUse">
+      <rect width="18" height="40" fill="var(--wood)"></rect>
+      <path d="M17.5 0V40" stroke="var(--wood-line)" stroke-width="1.2"></path>
+      <path d="M4 12h3M11 31h2" stroke="var(--wood-line)" stroke-width=".8" opacity=".6"></path>
+    </pattern>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffcf7a" stop-opacity=".75"></stop>
+      <stop offset="1" stop-color="#ffcf7a" stop-opacity="0"></stop>
+    </radialGradient>
+    <clipPath id="wall-clip">
+      <path d="M360 560V330L600 195L840 330V560Z"></path>
+    </clipPath>
+  </defs>
+
+  <g class="grid" stroke="var(--grid)" stroke-width="1">
+    <path d="M0 100H1200M0 200H1200M0 300H1200M0 400H1200M0 500H1200M0 600H1200M100 0V700M200 0V700M300 0V700M400 0V700M500 0V700M600 0V700M700 0V700M800 0V700M900 0V700M1000 0V700M1100 0V700"></path>
+  </g>
+
+  <g data-layer="pines" class="pines">
+    <path d="M150 600L210 470L190 470L240 380L220 380L265 300L310 380L290 380L340 470L320 470L380 600Z" fill="var(--pine-dark)"></path>
+    <path d="M930 600L975 500L960 500L1000 420L985 420L1020 350L1055 420L1040 420L1080 500L1065 500L1110 600Z" fill="var(--pine-dark)"></path>
+  </g>
+
+
+
+  <g data-layer="fill-base" class="fill">
+    <path d="M384 560h14v40h-14zM480 560h14v40h-14zM576 560h14v40h-14zM672 560h14v40h-14zM768 560h14v40h-14zM810 560h14v40h-14z" fill="var(--concrete)"></path>
+    <path d="M352 552H848V566H352Z" fill="var(--concrete)"></path>
+  </g>
+  <g data-layer="fill-walls" class="fill">
+    <path d="M360 560V330L600 195L840 330V560Z" fill="url(#boards)"></path>
+  </g>
+  <g data-layer="fill-roof" class="fill">
+    <path d="M330 345L600 170L870 345L852 352L600 190L348 352Z" fill="var(--roof)"></path>
+    <path d="M700 238V200H732V259Z" fill="var(--roof)"></path>
+  </g>
+  <g data-layer="fill-glass" class="fill">
+    <path d="M400 400H500V500H400ZM700 400H800V500H700ZM570 255H630V315H570Z" fill="var(--glass)"></path>
+    <path d="M560 430H640V560H560Z" fill="var(--door)"></path>
+    <path d="M545 560H655V574H545Z" fill="var(--concrete)"></path>
+  </g>
+  <g data-layer="light" class="fill">
+    <path d="M404 404H496V496H404ZM704 404H796V496H704ZM574 259H626V311H574Z" fill="var(--light)"></path>
+    <path d="M450 404V496M404 450H496M750 404V496M704 450H796" stroke="var(--frame)" stroke-width="4"></path>
+  </g>
+
+  <g data-layer="glow" class="glow" style="mix-blend-mode: screen">
+    <ellipse cx="450" cy="450" rx="78" ry="70" fill="url(#glow)"></ellipse>
+    <ellipse cx="750" cy="450" rx="78" ry="70" fill="url(#glow)"></ellipse>
+    <ellipse cx="600" cy="285" rx="52" ry="48" fill="url(#glow)"></ellipse>
+  </g>
+
+  <g data-layer="lines" class="lines" stroke="var(--line)" stroke-width="2.4">
+    <path pathLength="1" d="M120 600H1080"></path>
+    <path pathLength="1" d="M352 552H848V566H352Z"></path>
+    <path pathLength="1" d="M391 566V600M487 566V600M583 566V600M679 566V600M775 566V600M817 566V600"></path>
+    <path pathLength="1" d="M360 552V330L600 195L840 330V552"></path>
+    <path pathLength="1" d="M330 345L600 170L870 345"></path>
+    <path pathLength="1" d="M700 238V200H732V259"></path>
+    <path pathLength="1" d="M400 400H500V500H400Z"></path>
+    <path pathLength="1" d="M700 400H800V500H700Z"></path>
+    <path pathLength="1" d="M570 255H630V315H570Z"></path>
+    <path pathLength="1" d="M560 552V430H640V552"></path>
+    <path pathLength="1" d="M450 400V500M400 450H500M750 400V500M700 450H800"></path>
+  </g>
+
+  <g data-layer="dims" class="dims" stroke="var(--dim-line)" stroke-width="1.4">
+    <path d="M360 640H840M360 630V650M840 630V650M352 648l16-16M832 648l16-16"></path>
+    <path d="M920 195V600M910 195H930M910 600H930M912 203l16-16M912 608l16-16"></path>
+    <path d="M330 140H870M330 130V150M870 130V150"></path>
+    <g fill="var(--dim-line)" stroke="none" font-size="20" font-family="Manrope, sans-serif" font-weight="600" letter-spacing=".04em">
+      <text x="600" y="670" text-anchor="middle">9 600</text>
+      <text x="950" y="405" transform="rotate(-90 950 405)" text-anchor="middle">7 200</text>
+      <text x="600" y="128" text-anchor="middle">10 800</text>
+      <text x="128" y="590">±0.000</text>
+    </g>
+  </g>
+</svg>

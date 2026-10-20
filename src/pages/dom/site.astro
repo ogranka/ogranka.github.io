@@ -1,0 +1,270 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import ThemeBoot from '../../components/ThemeBoot.astro';
+import HouseDrawing from '../../components/dom/HouseDrawing.astro';
+import { projects, projectFrom, steps, priceTable, faq, FINISH, FOUNDATION, FLOORS, PACE, AREA, mln } from '../../data/dom';
+import unboundedSub from '../../assets/fonts/unbounded-sub.woff2?url';
+import manropeCyr from '../../assets/fonts/manrope-cyrillic.woff2?url';
+import '../../styles/pages/dom-site.scss';
+
+const photos = import.meta.glob<{ default: ImageMetadata }>('../../assets/dom/*.webp', { eager: true });
+const photo = (key: string) => photos[`../../assets/dom/${key}.webp`].default;
+const floorsLabel = { one: '1 этаж', attic: 'мансарда', two: '2 этажа' } as const;
+
+// Квиз: шаги в разметке, скрипт только переключает их и считает итог
+const choice = <K extends string>(map: Record<K, { label: string; hint: string }>) =>
+  (Object.entries(map) as [K, { label: string; hint: string }][]).map(([value, v]) => ({ value, label: v.label, hint: v.hint }));
+const quizSteps = [
+  { name: 'floors', title: 'Сколько этажей?', options: choice(FLOORS), initial: 'one' },
+  { name: 'foundation', title: 'Какой фундамент?', options: choice(FOUNDATION), initial: 'screw' },
+  { name: 'finish', title: 'В какой комплектации?', options: choice(FINISH), initial: 'prefinish' },
+  { name: 'pace', title: 'Как быстро нужен дом?', options: choice(PACE), initial: 'normal' },
+];
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Линия дома: каркасные дома под ключ</title>
+    <meta name="description" content="Демонстрационный лендинг мастерской каркасных домов: проекты, этапы стройки, состав цены и расчёт стоимости дома." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={unboundedSub} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={manropeCyr} as="font" type="font/woff2" crossorigin />
+    <ThemeBoot />
+    <script is:inline>
+      // Сборка дома по прокрутке: прячем слои до первого кадра, если движение
+      // разрешено. Если скрипт лендинга не загрузится за 4 с, показываем дом
+      // целиком, чтобы первый экран не остался пустым.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('dom-anim');
+        setTimeout(function () {
+          if (!document.documentElement.classList.contains('dom-ready')) document.documentElement.classList.remove('dom-anim');
+        }, 4000);
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">К содержимому</a>
+    <header class="top">
+      <a class="logo" href="#main" aria-label="Линия дома, наверх">
+        <svg viewBox="0 0 40 32" aria-hidden="true"><path d="M3 30H37M7 30V15L20 5L33 15V30M16 30V21H24V30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <span>Линия дома</span>
+      </a>
+      <nav aria-label="Разделы">
+        <a href="#projects">Проекты</a>
+        <a href="#steps">Как строим</a>
+        <a href="#price">Цена</a>
+        <a href="#faq">Вопросы</a>
+      </nav>
+      <a class="btn btn--amber btn--small" href="#quiz">Рассчитать</a>
+    </header>
+
+    <main id="main">
+      <div class="hero-track">
+      <section class="hero" aria-labelledby="hero-h">
+        <div class="hero__text">
+          <p class="hero__kicker">Каркасные дома под ключ в Подмосковье</p>
+          <h1 id="hero-h">Дом, который сначала рисуем, а потом строим</h1>
+          <p class="hero__lede">Проект под вашу семью, смета по пунктам с фиксированной ценой и стройка от 16 недель. Каждый вечер фото и отчёт.</p>
+          <div class="hero__actions">
+            <a class="btn btn--amber" href="#quiz">Рассчитать стоимость</a>
+            <a class="btn btn--ghost" href="#projects">Смотреть проекты</a>
+          </div>
+        </div>
+        <div class="hero__drawing">
+          <HouseDrawing />
+          <ol class="hero__stages" aria-hidden="true">
+            <li data-stage="0">Чертёж</li>
+            <li data-stage="1">Фундамент</li>
+            <li data-stage="2">Каркас</li>
+            <li data-stage="3">Крыша</li>
+            <li data-stage="4">Свет</li>
+          </ol>
+        </div>
+      </section>
+      </div>
+
+      <section class="projects wrap" id="projects" aria-labelledby="projects-h">
+        <div class="head">
+          <h2 id="projects-h">Проекты</h2>
+          <p>Любой меняем под участок: переносим стены, добавляем окна и террасу. Цена за тёплый контур в обычный срок.</p>
+          <div class="projects__nav">
+            <button class="round" type="button" data-scroll="-1" aria-label="Предыдущий проект">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+            </button>
+            <button class="round" type="button" data-scroll="1" aria-label="Следующий проект">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+        <ul class="projects__row" tabindex="0" aria-label="Проекты домов, листаются в сторону">
+          {
+            projects.map((p) => {
+              const e = projectFrom(p);
+              return (
+                <li class="project">
+                  <Image src={photo(p.photo)} alt={p.alt} widths={[420, 640, 900]} sizes="(max-width: 700px) 82vw, 420px" loading="lazy" />
+                  <div class="project__body">
+                    <h3>{p.name}</h3>
+                    <p>{p.note}</p>
+                    <dl>
+                      <div><dt>Площадь</dt><dd>{p.area} м²</dd></div>
+                      <div><dt>Этажность</dt><dd>{floorsLabel[p.floors]}</dd></div>
+                      <div><dt>Срок</dt><dd>{e.weeks} недель</dd></div>
+                    </dl>
+                    <p class="project__price">от {mln(e.low)}</p>
+                  </div>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </section>
+
+      <section class="steps wrap" id="steps" aria-labelledby="steps-h">
+        <h2 id="steps-h">Как строим</h2>
+        <p class="lead">Шесть этапов от выезда на участок до ключей. Оплата по этапам, после приёмки каждого.</p>
+        <div class="steps__wrap">
+        <span class="steps__track" aria-hidden="true"><span class="steps__fill"></span></span>
+        <ol class="steps__list">
+          {
+            steps.map((s, i) => (
+              <li class="step">
+                <span class="step__dot" aria-hidden="true">{i + 1}</span>
+                <div>
+                  <h3>{s.title}</h3>
+                  <p class="step__time">{s.time}</p>
+                  <p>{s.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        </div>
+      </section>
+
+      <section class="price wrap" id="price" aria-labelledby="price-h">
+        <h2 id="price-h">Что входит в цену</h2>
+        <div class="price__grid">
+          <div class="price__col">
+            <h3>Входит</h3>
+            <ul>{priceTable.included.map((t) => <li>{t}</li>)}</ul>
+          </div>
+          <div class="price__col price__col--extra">
+            <h3>Считаем отдельно</h3>
+            <ul>{priceTable.extra.map((t) => <li>{t}</li>)}</ul>
+            <p>Цены на эти работы называем в смете заранее, чтобы не было сюрпризов после договора.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="quiz wrap" id="quiz" aria-labelledby="quiz-h">
+        <div class="quiz__card">
+          <div class="quiz__head">
+            <h2 id="quiz-h">Рассчитайте стоимость дома</h2>
+            <p class="quiz__progress" aria-live="polite"><span data-step-label>Шаг 1 из 5</span></p>
+            <span class="quiz__bar" aria-hidden="true"><span data-bar></span></span>
+          </div>
+          <form class="quiz__form" novalidate data-quiz>
+            <fieldset class="quiz__step is-active" data-step="0">
+              <legend>Какая площадь нужна?</legend>
+              <div class="area">
+                <output data-area-out>{AREA.initial} м²</output>
+                <input type="range" name="area" min={AREA.min} max={AREA.max} step={AREA.step} value={AREA.initial} aria-label="Площадь дома, квадратные метры" />
+                <div class="area__scale" aria-hidden="true"><span>{AREA.min} м²</span><span>{AREA.max} м²</span></div>
+              </div>
+            </fieldset>
+            {
+              quizSteps.map((s, i) => (
+                <fieldset class="quiz__step" data-step={i + 1}>
+                  <legend>{s.title}</legend>
+                  <div class="options">
+                    {s.options.map((o) => (
+                      <label class="option">
+                        <input type="radio" name={s.name} value={o.value} checked={o.value === s.initial} />
+                        <span class="option__body">
+                          <b>{o.label}</b>
+                          <span>{o.hint}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ))
+            }
+            <div class="quiz__step quiz__result" data-step="5">
+              <p class="result__label">Примерная стоимость</p>
+              <p class="result__sum" data-sum>—</p>
+              <p class="result__weeks" data-weeks></p>
+              <ul class="result__lines" data-lines></ul>
+              <p class="result__note">Точную цену назовём после выезда на участок, она войдёт в договор и не вырастет.</p>
+            </div>
+            <div class="quiz__nav">
+              <button class="btn btn--ghost" type="button" data-back hidden>Назад</button>
+              <button class="btn btn--amber" type="button" data-next>Дальше</button>
+            </div>
+          </form>
+
+          <form class="lead-form" novalidate data-lead hidden>
+            <h3>Пришлём смету с этим расчётом</h3>
+            <label class="field">
+              <span>Как к вам обращаться</span>
+              <input name="name" autocomplete="name" placeholder="Например, Анна" />
+            </label>
+            <label class="field">
+              <span>Телефон</span>
+              <input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" aria-describedby="phone-error" required />
+              <span class="field__error" id="phone-error" role="alert"></span>
+            </label>
+            <label class="check">
+              <input type="checkbox" name="consent" required />
+              <span>Согласен на обработку персональных данных по 152-ФЗ</span>
+            </label>
+            <span class="field__error" data-consent-error role="alert"></span>
+            <button class="btn btn--amber" type="submit">Получить смету</button>
+            <p class="lead-form__demo">Это демо: заявка никуда не отправляется.</p>
+          </form>
+          <div class="lead-done" data-done hidden tabindex="-1">
+            <h3>Заявка принята</h3>
+            <p>Позвоним в рабочее время, уточним участок и пришлём смету по пунктам. В демо заявка никуда не ушла.</p>
+            <button class="btn btn--ghost" type="button" data-restart>Посчитать другой дом</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq wrap" id="faq" aria-labelledby="faq-h">
+        <h2 id="faq-h">Частые вопросы</h2>
+        <div class="faq__list">
+          {
+            faq.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap foot__inner">
+        <div>
+          <p class="foot__logo">Линия дома</p>
+          <p>Проектируем и строим каркасные дома в Москве и области. Офис и шоурум открыты по будням с 10 до 19.</p>
+        </div>
+        <a class="btn btn--amber" href="#quiz">Рассчитать стоимость</a>
+      </div>
+      <p class="wrap foot__note">Демонстрационный сайт: мастерская, проекты и цены вымышленные, фото с Unsplash.</p>
+    </footer>
+
+    <script>
+      import { initDom } from '../../scripts/dom/main';
+      initDom();
+    </script>
+  </body>
+</html>

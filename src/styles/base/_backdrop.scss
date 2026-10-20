@@ -85,7 +85,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .backdrop span {
+  // По классам, а не по span: правила .backdrop .b1 и соседние сильнее
+  .backdrop .b1,
+  .backdrop .b2,
+  .backdrop .b3 {
     animation: none;
   }
 }

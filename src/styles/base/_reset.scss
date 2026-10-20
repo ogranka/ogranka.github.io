@@ -21,11 +21,18 @@ summary {
   touch-action: manipulation;
 }
 
-// Своё состояние нажатия вместо системной подсветки
+// Своё состояние нажатия вместо системной подсветки: элемент проседает и
+// возвращается с лёгким перелётом. Свойство scale отдельно от transform,
+// поэтому нажатие складывается с выездом и наведением, а не спорит с ними.
+// Компоненты со своим transition добавляют в него scale сами.
+button,
+.pressable {
+  transition: scale .45s var(--spring);
+}
+
 button:active:not([disabled]),
 .pressable:active {
-  transform: scale(.98);
-  transition: transform .12s var(--ease);
+  scale: var(--press, .96);
 }
 
 a:active {
@@ -129,6 +136,16 @@ html.js [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  button,
+  .pressable {
+    transition: none;
+  }
+
+  button:active:not([disabled]),
+  .pressable:active {
+    scale: none;
   }
 }
 

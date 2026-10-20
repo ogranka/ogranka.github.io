@@ -12,6 +12,23 @@ const preview = (name: string) => previews[`../assets/previews/${name}.webp`]?.d
 // Коллаж первого экрана: три кейса разного типа, каждое превью ведёт на кейс
 const collage = ['/cvety/', '/zhurnal/', '/forum-hero/'].map((href) => cases.find((c) => c.href === href)!);
 
+// Колонка карточки в ряду сетки для задержки выезда: широкая занимает ряд
+// целиком, половинки идут парами
+let column = 0;
+const cards = cases.map((item) => {
+  const col = item.size === 'wide' ? 0 : column;
+  column = item.size === 'wide' ? 0 : (column + 1) % 2;
+  return { ...item, col };
+});
+
+// Полоса цифр под первым экраном. Значения стоят в разметке итоговыми,
+// скрипт только отсчитывает их от нуля, когда полоса показалась
+const stats = [
+  { value: cases.length, label: 'кейсов с рабочими версиями внутри' },
+  { value: 100, label: 'баллов из 100 в проверке скорости Google' },
+  { value: 30, label: 'дней гарантии после запуска' },
+];
+
 const includes = [
   { title: 'Дизайн и сборка у одного человека', text: 'Макет согласуем до кода, второго подрядчика искать не нужно.' },
   { title: 'Интеграции', text: 'Оплата картой и СБП, доставка, CRM, заявки в Telegram, внешние сервисы.' },
@@ -20,7 +37,7 @@ const includes = [
 ];
 
 const afterLaunch = [
-  { title: '30 дней исправляю ошибки бесплатно', text: 'Если после запуска что-то работает не так, как договорились, чиню без доплаты.' },
+  { title: 'Гарантия 30 дней после запуска', text: 'Если что-то работает не так, как договорились, исправлю бесплатно и быстро.' },
   { title: 'Передаю все доступы', text: 'И короткую инструкцию к админке, чтобы менять сайт без меня.' },
   { title: 'Сопровождение по желанию', text: 'Правки, обновления и новые разделы, когда они понадобятся.' },
 ];
@@ -91,13 +108,31 @@ const steps = [
       </div>
     </section>
 
+    <section class="stats wrap" aria-label="Коротко в цифрах">
+      <ul>
+        {
+          stats.map((s) => (
+            <li>
+              <b>
+                <span class="visually-hidden">{s.value}</span>
+                <span class="stats__num" aria-hidden="true" data-count={s.value} style={`--digits:${String(s.value).length}`}>
+                  {s.value}
+                </span>
+              </b>
+              <span>{s.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
     <section class="wrap" id="cases" aria-labelledby="cases-h">
       <div class="cases-head">
         <h2 id="cases-h">Кейсы</h2>
         <p>Внутри каждого кейса задача, решение и рабочая версия, которую можно листать и нажимать.</p>
       </div>
       <div class="cases">
-        {cases.map((item, index) => <CaseCard {...item} preview={preview(item.preview)} index={index} />)}
+        {cards.map((item, index) => <CaseCard {...item} preview={preview(item.preview)} index={index} />)}
       </div>
     </section>
 

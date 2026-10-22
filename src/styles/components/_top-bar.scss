@@ -81,6 +81,22 @@
       font-size: var(--fs-s);
     }
   }
+
+  // Узкие телефоны 360–400: бренд и меню остаются в одну строку
+  @media (max-width: 400px) {
+    .wrap {
+      gap: 0 12px;
+      padding-right: 48px;
+    }
+
+    .brand {
+      font-size: 15px;
+    }
+
+    nav {
+      gap: 12px;
+    }
+  }
 }
 
 :root[data-theme='dark'] .top-bar .theme {

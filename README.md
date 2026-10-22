@@ -48,4 +48,4 @@ npm run build    # статическая сборка в dist/
 
 Деплой автоматически на GitHub Pages при пуше в `main`.
 
-© ogranka. Все права защищены, см. LICENSE.
+© Ogranka-web. Все права защищены, см. LICENSE.

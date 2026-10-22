@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 import ThemeBoot from '../../components/ThemeBoot.astro';
 import HouseDrawing from '../../components/dom/HouseDrawing.astro';
 import { projects, projectFrom, steps, priceTable, faq, FINISH, FOUNDATION, FLOORS, PACE, AREA, mln } from '../../data/dom';
-import unboundedSub from '../../assets/fonts/unbounded-sub.woff2?url';
+import jostSub from '../../assets/fonts/jost-sub.woff2?url';
 import manropeCyr from '../../assets/fonts/manrope-cyrillic.woff2?url';
 import '../../styles/pages/dom-site.scss';
 
@@ -32,7 +32,7 @@ const quizSteps = [
     <meta name="description" content="Демонстрационный лендинг мастерской каркасных домов: проекты, этапы стройки, состав цены и расчёт стоимости дома." />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href={unboundedSub} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jostSub} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={manropeCyr} as="font" type="font/woff2" crossorigin />
     <ThemeBoot />
     <script is:inline>

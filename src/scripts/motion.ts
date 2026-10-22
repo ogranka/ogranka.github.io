@@ -60,7 +60,8 @@ function followCursor() {
 
   const hero = document.querySelector<HTMLElement>('.hero');
   const items = [...document.querySelectorAll<HTMLElement>('.collage__item')];
-  const depth = [6, 10, 14];
+  // Глубина смещения за курсором: переднее окно двигается сильнее
+  const depth = [6, 10, 14, 18];
   if (hero && items.length) {
     track(hero, (x, y) => items.forEach((el, i) => (el.style.translate = x || y ? `${(x * depth[i] * 2).toFixed(2)}px ${(y * depth[i] * 2).toFixed(2)}px` : '')));
   }

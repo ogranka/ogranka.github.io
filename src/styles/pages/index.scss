@@ -101,7 +101,7 @@ html.js .hero .hero__actions {
   @media (min-width: $bp-wide) {
     display: block;
     position: relative;
-    aspect-ratio: 1 / .92;
+    aspect-ratio: 1 / .96;
   }
 }
 
@@ -132,7 +132,7 @@ html.js .hero .hero__actions {
 
   &:hover,
   &:focus-visible {
-    z-index: 4;
+    z-index: 5;
     transform: translateY(-8px) scale(1.025);
     box-shadow: 0 40px 80px -34px rgba(22, 24, 29, .55);
     transition-delay: 0s;
@@ -148,7 +148,7 @@ html.js .hero .hero__actions {
 .collage__item--1 {
   top: 0;
   left: 0;
-  width: 80%;
+  width: 74%;
   z-index: 1;
   --fx: -48px;
   --fy: -28px;
@@ -156,9 +156,9 @@ html.js .hero .hero__actions {
 }
 
 .collage__item--2 {
-  top: 30%;
+  top: 17%;
   right: 0;
-  width: 62%;
+  width: 56%;
   z-index: 2;
   --fx: 56px;
   --fy: 0px;
@@ -167,14 +167,26 @@ html.js .hero .hero__actions {
 }
 
 .collage__item--3 {
-  bottom: 0;
-  left: 8%;
-  width: 60%;
+  bottom: 6%;
+  left: 0;
+  width: 52%;
   z-index: 3;
   --fx: -20px;
   --fy: 52px;
   --fr: -2deg;
   --d: .2s;
+}
+
+// Лендинг стоит спереди справа внизу и влетает последним
+.collage__item--4 {
+  bottom: 0;
+  right: 5%;
+  width: 56%;
+  z-index: 4;
+  --fx: 36px;
+  --fy: 60px;
+  --fr: 2deg;
+  --d: .3s;
 }
 
 // backwards, а не both: после влёта transform свободен для наведения

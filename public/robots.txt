@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ogranka.github.io/sitemap.xml
+Sitemap: https://ogranka-web.ru/sitemap.xml

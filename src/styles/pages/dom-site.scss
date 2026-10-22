@@ -1,14 +1,14 @@
 // Лендинг «Линия дома»: светлый бетон, графит, хвоя и янтарь. Первый экран
 // всегда тёмный, как лист чертежа. Отдельно от стилей хаба.
 
-// Unbounded одним файлом только с нужными знаками: кириллица, латиница,
-// цифры, пунктуация, ₽, ± и ². Вместо трёх наборов на 196 КБ один на 53 КБ,
-// заголовок первого экрана не ждёт догрузки латиницы ради запятой.
+// Jost одним файлом только с нужными знаками: кириллица, латиница, цифры,
+// пунктуация, ₽, ± и ². Геометрический шрифт в духе архитектурных бюро,
+// 23 КБ вместо трёх наборов, заголовок первого экрана не ждёт догрузки.
 @font-face {
-  font-family: 'Unbounded';
+  font-family: 'Jost';
   font-weight: 500 800;
   font-display: swap;
-  src: url('../../assets/fonts/unbounded-sub.woff2') format('woff2');
+  src: url('../../assets/fonts/jost-sub.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Manrope';
@@ -46,7 +46,7 @@
   --bad: #b3261e;
   --r: 18px;
   --ease: cubic-bezier(.2, .7, .2, 1);
-  --display: 'Unbounded', system-ui, sans-serif;
+  --display: 'Jost', system-ui, sans-serif;
   --text: 'Manrope', system-ui, sans-serif;
 
   // Чертёж первого экрана: одинаковый в обеих темах
@@ -314,8 +314,8 @@ h2 {
 
   h1 {
     margin-top: 14px;
-    font: 800 clamp(2rem, 1.2rem + 2.6vw, 3.3rem) / 1.05 var(--display);
-    letter-spacing: -.03em;
+    font: 600 clamp(2.3rem, 1.3rem + 3.4vw, 4.1rem) / 1.04 var(--display);
+    letter-spacing: -.02em;
     text-wrap: balance;
   }
 }
@@ -793,7 +793,7 @@ html:not(.dom-anim) .step__dot {
   max-width: 640px;
 
   output {
-    font: 800 clamp(2.4rem, 1.8rem + 2vw, 3.4rem) / 1 var(--display);
+    font: 700 clamp(2.6rem, 2rem + 2vw, 3.6rem) / 1 var(--display);
     font-variant-numeric: tabular-nums;
   }
 
@@ -876,7 +876,7 @@ html:not(.dom-anim) .step__dot {
 
 .result__sum {
   margin-top: 6px;
-  font: 800 clamp(1.9rem, 1.3rem + 2.4vw, 3rem) / 1.1 var(--display);
+  font: 700 clamp(2rem, 1.4rem + 2.4vw, 3.2rem) / 1.1 var(--display);
   font-variant-numeric: tabular-nums;
 }
 

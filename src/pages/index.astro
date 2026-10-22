@@ -9,8 +9,8 @@ import '../styles/pages/index.scss';
 const previews = import.meta.glob<{ default: ImageMetadata }>('../assets/previews/*.webp', { eager: true });
 const preview = (name: string) => previews[`../assets/previews/${name}.webp`]?.default;
 
-// Коллаж первого экрана: три кейса разного типа, каждое превью ведёт на кейс
-const collage = ['/cvety/', '/zhurnal/', '/forum-hero/'].map((href) => cases.find((c) => c.href === href)!);
+// Коллаж первого экрана: четыре кейса разного типа, каждое превью ведёт на кейс
+const collage = ['/cvety/', '/zhurnal/', '/forum-hero/', '/dom/'].map((href) => cases.find((c) => c.href === href)!);
 
 // Колонка карточки в ряду сетки для задержки выезда: широкая занимает ряд
 // целиком, половинки идут парами
@@ -96,7 +96,7 @@ const steps = [
           <a class="btn btn--line pressable" href="#contact">Как заказать</a>
         </div>
       </div>
-      <div class="collage" aria-label="Три кейса">
+      <div class="collage" aria-label="Четыре кейса">
         {
           collage.map((item, i) => (
             <a class={`collage__item collage__item--${i + 1} pressable`} href={item.href} aria-label={`Кейс: ${item.title}`}>

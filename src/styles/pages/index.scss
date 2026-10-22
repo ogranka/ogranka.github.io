@@ -205,7 +205,7 @@ html.js .collage__item {
 // отсчёт не двигает вёрстку.
 .stats ul {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
   margin: 48px 0 0;
   padding: 22px 0;
@@ -245,7 +245,7 @@ html.js .collage__item {
     gap: 16px;
 
     li {
-      // Колонка числа по ширине «100» крупным кеглем, подписи ровно в строку
+      // Колонка числа по ширине двузначного числа крупным кеглем, подписи ровно в строку
       grid-template-columns: 5rem 1fr;
       align-items: center;
       gap: 14px;

@@ -101,5 +101,6 @@ export const faq = [
   { q: 'Можно приехать на стройку?', a: 'В любой день с прорабом. А каждый вечер присылаем фото и короткий отчёт в мессенджер.' },
 ];
 
-export const rub = (n: number) => n.toLocaleString('ru-RU').replace(/\s/g, ' ') + ' ₽';
-export const mln = (n: number) => (n / 1_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' млн ₽';
+// Неразрывные пробелы: число и знак рубля не разрываются по строкам
+export const rub = (n: number) => n.toLocaleString('ru-RU').replace(/\s/g, '\u00a0') + '\u00a0₽';
+export const mln = (n: number) => (n / 1_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + '\u00a0млн\u00a0₽';

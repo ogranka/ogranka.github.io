@@ -1,38 +1,9 @@
-// Движение на главной: отсчёт цифр в полосе под первым экраном и смещение
-// скриншотов за курсором. Нажатия, выезд карточек и сборка первого экрана
-// сделаны в CSS. При «уменьшить движение» скрипт ничего не делает: цифры уже
-// стоят итоговыми в разметке.
+// Движение на главной: смещение скриншотов за курсором. Нажатия и выезд
+// карточек ниже сгиба сделаны в CSS, первый экран и цифры стоят сразу.
+// При «уменьшить движение» скрипт ничего не делает.
 export function initMotion() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  countUp();
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) followCursor();
-}
-
-// Число отсчитывается от нуля за 1,2 с, замедляясь к концу, один раз, когда
-// строка цифр видна хотя бы на 40%
-function countUp() {
-  const nums = [...document.querySelectorAll<HTMLElement>('[data-count]')];
-  if (!nums.length || !('IntersectionObserver' in window)) return;
-  nums.forEach((el) => (el.textContent = '0'));
-  const run = () => {
-    const t0 = performance.now();
-    const frame = (t: number) => {
-      const p = Math.min(1, (t - t0) / 1200);
-      const eased = 1 - (1 - p) ** 3;
-      nums.forEach((el) => (el.textContent = String(Math.round(Number(el.dataset.count) * eased))));
-      if (p < 1) requestAnimationFrame(frame);
-    };
-    requestAnimationFrame(frame);
-  };
-  const io = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
-      io.disconnect();
-      run();
-    },
-    { threshold: 0.4 },
-  );
-  io.observe(nums[0].closest('ul') ?? nums[0]);
 }
 
 // Скриншот в карточке кейса смещается до 8 px за курсором, окна коллажа на

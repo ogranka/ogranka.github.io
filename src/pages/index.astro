@@ -21,8 +21,7 @@ const cards = cases.map((item) => {
   return { ...item, col };
 });
 
-// Полоса цифр под первым экраном. Значения стоят в разметке итоговыми,
-// скрипт только отсчитывает их от нуля, когда полоса показалась
+// Полоса цифр под первым экраном, значения стоят итоговыми без отсчёта
 const stats = [
   { value: cases.length, label: 'кейсов с рабочими версиями внутри' },
   { value: 30, label: 'дней гарантии после запуска' },
@@ -112,12 +111,7 @@ const steps = [
         {
           stats.map((s) => (
             <li>
-              <b>
-                <span class="visually-hidden">{s.value}</span>
-                <span class="stats__num" aria-hidden="true" data-count={s.value} style={`--digits:${String(s.value).length}`}>
-                  {s.value}
-                </span>
-              </b>
+              <b>{s.value}</b>
               <span>{s.label}</span>
             </li>
           ))

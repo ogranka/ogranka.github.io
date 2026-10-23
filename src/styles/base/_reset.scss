@@ -108,17 +108,15 @@ ol {
   animation-timing-function: ease;
 }
 
-// Появление блоков при скролле: класс js ставит инлайн-скрипт в <head>,
-// без него всё видно сразу.
+// Появление блоков при скролле. Прячется только то, что при загрузке ниже
+// сгиба: класс is-pending ставит скрипт, всё в первом экране видно сразу.
 html.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(14px);
   transition: opacity .6s var(--ease), transform .6s var(--ease);
   transition-delay: calc(var(--i, 0) * 70ms);
 
-  &.is-in {
-    opacity: 1;
-    transform: none;
+  &.is-pending {
+    opacity: 0;
+    transform: translateY(14px);
   }
 }
 

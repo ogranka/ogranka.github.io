@@ -200,10 +200,9 @@
 
 // Выезд при прокрутке: карточка поднимается на 40 px и выпрямляется по
 // пружине, скриншот внутри «садится» из приближения. --col это колонка в
-// ряду: правая карточка выезжает на 0,1 с позже левой.
+// ряду: правая карточка выезжает на 0,1 с позже левой. Только для карточек
+// ниже сгиба (is-pending), в первом экране карточка стоит сразу.
 html.js .case-card[data-reveal] {
-  opacity: 0;
-  transform: translateY(40px) scale(.97);
   transition:
     opacity .5s var(--ease) calc(var(--col, 0) * 100ms),
     transform .9s var(--spring) calc(var(--col, 0) * 100ms),
@@ -213,16 +212,15 @@ html.js .case-card[data-reveal] {
     border-color .3s;
 
   .shot img {
-    transform: scale(1.1);
     transition: transform 1.1s var(--ease) calc(var(--col, 0) * 100ms), scale .6s var(--ease);
   }
 
-  &.is-in {
-    opacity: 1;
-    transform: none;
+  &.is-pending {
+    opacity: 0;
+    transform: translateY(40px) scale(.97);
 
     .shot img {
-      transform: none;
+      transform: scale(1.1);
     }
   }
 }

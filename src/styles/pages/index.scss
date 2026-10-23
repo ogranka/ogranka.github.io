@@ -44,21 +44,6 @@
   }
 }
 
-// Первый экран собирается при загрузке одним коротким движением: кнопки
-// поднимаются, окна коллажа влетают слоями. Текст стоит сразу: на телефоне
-// самый крупный элемент экрана это абзац про опыт, и его проявление
-// задерживало бы загрузку в замере скорости.
-html.js .hero .hero__actions {
-  animation: hero-rise .7s var(--ease) .15s backwards;
-}
-
-@keyframes hero-rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-}
-
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -150,9 +135,6 @@ html.js .hero .hero__actions {
   left: 0;
   width: 74%;
   z-index: 1;
-  --fx: -48px;
-  --fy: -28px;
-  --fr: -3deg;
 }
 
 .collage__item--2 {
@@ -160,10 +142,6 @@ html.js .hero .hero__actions {
   right: 0;
   width: 56%;
   z-index: 2;
-  --fx: 56px;
-  --fy: 0px;
-  --fr: 3deg;
-  --d: .1s;
 }
 
 .collage__item--3 {
@@ -171,10 +149,6 @@ html.js .hero .hero__actions {
   left: 0;
   width: 52%;
   z-index: 3;
-  --fx: -20px;
-  --fy: 52px;
-  --fr: -2deg;
-  --d: .2s;
 }
 
 // Лендинг стоит спереди справа внизу и влетает последним
@@ -183,26 +157,10 @@ html.js .hero .hero__actions {
   right: 5%;
   width: 56%;
   z-index: 4;
-  --fx: 36px;
-  --fy: 60px;
-  --fr: 2deg;
-  --d: .3s;
-}
-
-// backwards, а не both: после влёта transform свободен для наведения
-html.js .collage__item {
-  animation: collage-in .9s var(--spring) var(--d, 0s) backwards;
-}
-
-@keyframes collage-in {
-  from {
-    transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(.94);
-  }
 }
 
 // Цифры: одна строка под первым экраном, отделена линиями, как строка
-// показателей в отчёте. Ширина числа задана заранее по числу цифр, поэтому
-// отсчёт не двигает вёрстку.
+// показателей в отчёте. Числа стоят итоговыми сразу, без отсчёта.
 .stats ul {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -233,16 +191,12 @@ html.js .collage__item {
   }
 }
 
-.stats__num {
-  display: inline-block;
-  min-width: calc(var(--digits) * 1ch);
-  font-variant-numeric: tabular-nums;
-}
 
 @media (max-width: $bp-small) {
   .stats ul {
     grid-template-columns: 1fr;
     gap: 16px;
+    margin-top: 32px;
 
     li {
       // Колонка числа по ширине двузначного числа крупным кеглем, подписи ровно в строку
@@ -254,13 +208,6 @@ html.js .collage__item {
     b {
       font-size: 2.1rem;
     }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.js .hero .hero__actions,
-  html.js .collage__item {
-    animation: none;
   }
 }
 

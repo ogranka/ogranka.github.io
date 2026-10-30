@@ -29,6 +29,14 @@ export const cases: CaseItem[] = [
     size: 'half',
   },
   {
+    href: '/mini-app/',
+    kind: 'Telegram Mini App',
+    title: 'Запись в барбершоп в Telegram',
+    description: 'Мини-приложение внутри Telegram: услуга, мастер и свободное время за минуту, подтверждение и напоминание присылает бот.',
+    preview: 'mini-app',
+    size: 'half',
+  },
+  {
     href: '/dom/',
     kind: 'Лендинг',
     title: 'Лендинг строительной компании',
@@ -74,7 +82,7 @@ export const cases: CaseItem[] = [
     title: 'Сайт отраслевого форума',
     description: 'Анимированный первый экран с рельефом из частиц, который весит меньше одной фотографии.',
     preview: 'forum-hero',
-    size: 'wide',
+    size: 'half',
   },
 ];
 

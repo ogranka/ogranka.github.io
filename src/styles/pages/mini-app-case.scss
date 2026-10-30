@@ -1,0 +1,202 @@
+@use '../abstracts/variables' as *;
+
+:root {
+  --title-max: 24ch;
+}
+
+.demo {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 40px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.phones--single {
+  margin-top: 24px;
+
+  .phones__strip {
+    display: block;
+    padding-top: 0;
+  }
+
+  .phone {
+    width: 100%;
+  }
+
+  // Фон приложения, пока фрейм грузится: светлая и тёмная темы Telegram
+  iframe {
+    background: #efeff4;
+  }
+}
+
+:root[data-theme='dark'] .phones--single iframe {
+  background: #0e1621;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .phones--single iframe {
+    background: #0e1621;
+  }
+}
+
+.side {
+  margin-top: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+// Чат с ботом: те же пузыри и кнопки под сообщением, что в Telegram
+.chat {
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+
+    b {
+      display: block;
+      line-height: 1.2;
+    }
+
+    small {
+      color: var(--dim);
+      font-size: var(--fs-s);
+    }
+  }
+
+  &__ava {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1c1b1f;
+    color: #d6a453;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: -.03em;
+  }
+
+  &__log {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    max-height: 520px;
+    min-height: 260px;
+    margin: 0;
+    padding: 18px;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  &__note {
+    padding: 12px 18px 16px;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-s);
+    color: var(--dim);
+  }
+}
+
+.msg {
+  justify-self: start;
+  max-width: 420px;
+  padding: 10px 14px;
+  border-radius: 4px 16px 16px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+
+  p + p {
+    margin-top: 2px;
+  }
+
+  &__title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  &__btns {
+    display: flex;
+    margin: 10px -6px -4px;
+  }
+
+  &__btn {
+    flex: 1;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--fs-s);
+    font-weight: 600;
+    text-align: center;
+    border: 0;
+  }
+
+  button.msg__btn {
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+  }
+
+  &--new {
+    animation: msg-in .3s var(--ease);
+  }
+
+  &--cancelled {
+    color: var(--dim);
+  }
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.tg-open {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.demo-note {
+  font-size: var(--fs-s);
+  color: var(--dim);
+  text-wrap: pretty;
+}
+
+@media (max-width: $bp-wide) {
+  .demo {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .phones--single .phone {
+    max-width: 380px;
+    margin: 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg--new {
+    animation: none;
+  }
+}

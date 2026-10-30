@@ -1,0 +1,42 @@
+---
+import ThemeBoot from '../../components/ThemeBoot.astro';
+import '../../styles/pages/mini-app-app.scss';
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Барбершоп 313, запись</title>
+    <meta name="description" content="Демонстрационное мини-приложение записи в барбершоп: услуга, мастер, свободное время и подтверждение в Telegram." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <ThemeBoot />
+  </head>
+  <body>
+    <header class="bar">
+      <button id="back" class="bar__back pressable" type="button" aria-label="Назад" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+      </button>
+      <div class="bar__title">
+        <h1 id="title" tabindex="-1">Запись в барбершоп</h1>
+        <p id="step" aria-live="polite"></p>
+      </div>
+    </header>
+    <main id="app" class="view">
+      <section class="brand" aria-label="Барбершоп 313">
+        <div class="brand__mark"><b>313</b><span>барбершоп</span></div>
+        <p>Санкт-Петербург, ежедневно с&nbsp;10 до&nbsp;22</p>
+      </section>
+      <noscript><p class="lead">Для записи нужен включённый JavaScript.</p></noscript>
+    </main>
+    <div class="mainbar" hidden>
+      <button id="main-btn" class="mainbtn pressable" type="button"></button>
+    </div>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <script>
+      import '../../scripts/mini-app/app';
+    </script>
+  </body>
+</html>

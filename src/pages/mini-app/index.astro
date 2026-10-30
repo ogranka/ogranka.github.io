@@ -8,8 +8,8 @@ import NextCase from '../../components/NextCase.astro';
 import PhoneSingle from '../../components/cvety/PhoneSingle.astro';
 import '../../styles/pages/mini-app-case.scss';
 
-// Адрес бота в Telegram без @. Пока бот не создан, кнопка «Открыть в Telegram» не показывается
-const bot = '';
+// Адрес бота в Telegram без @. Пустая строка прячет кнопку «Открыть в Telegram»
+const bot = 'bbarbershop313_demo_bot';
 
 const how = [
   {
@@ -45,7 +45,7 @@ const how = [
       <Fragment slot="title">Запись в барбершоп прямо в Telegram, без звонков и переписки</Fragment>
       <Fragment slot="lede">
         Мини-приложение открывается из чата с ботом: клиент выбирает услугу, мастера и время, а бот присылает
-        подтверждение и напоминание. Ниже рабочая версия: запишитесь, и справа появится то, что пришло бы в
+        подтверждение и напоминание. Ниже рабочая версия: запишитесь, и рядом появится то, что пришло бы в
         чат с ботом.
       </Fragment>
     </PageHeader>

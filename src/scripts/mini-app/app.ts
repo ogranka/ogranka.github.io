@@ -216,7 +216,7 @@ const views: Record<Screen, () => string> = {
         <h2>Вы записаны</h2>
         <p>${esc(d.master)} ждёт вас ${esc(d.when)}.</p>
         <p class="hint">${esc(d.service)} · ${esc(d.price)}</p>
-        <p class="hint">${shell.inTelegram ? 'Подтверждение уже в чате с ботом, там же можно отменить запись.' : embedded ? 'Справа показано, что пришло бы в чат с ботом.' : 'В Telegram бот прислал бы подтверждение и напомнил о визите.'}</p>
+        <p class="hint">${shell.inTelegram ? 'Подтверждение уже в чате с ботом, там же можно отменить запись.' : embedded ? 'Рядом показано, что пришло бы в чат с ботом.' : 'В Telegram бот прислал бы подтверждение и напомнил о визите.'}</p>
         <div class="done__actions">
           <button class="link" data-act="mine">Мои записи</button>
           <button class="link" data-act="again">Записаться ещё</button>

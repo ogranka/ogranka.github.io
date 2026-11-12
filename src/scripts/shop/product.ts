@@ -55,7 +55,8 @@ export function initProduct(cart: Cart, buy: HTMLButtonElement) {
     must('#pdText').textContent = p.text;
     must('#pdHeight').textContent = `${p.size[0]} см`;
     must('#pdDiameter').textContent = `${p.size[1]} см`;
-    must('[data-screen="product"] .topbar [data-like]').setAttribute('aria-pressed', 'false');
+    // Сердечко в шапке относится к показанному букету, его состояние выставит избранное
+    must('[data-screen="product"] .topbar [data-like]').dataset.like = p.id;
     syncBuy();
   };
 

@@ -30,6 +30,18 @@ export const TONES = [
   { name: 'Разноцветный', color: 'conic-gradient(#f6a9c0,#f5b48f,#f3d36b,#a9c8ea,#b7a6dc,#f6a9c0)' },
 ];
 
+// Ленты: выбираются в карточке букета и на шаге «Открытка» в оформлении
+export const RIBBONS = [
+  { name: 'Пудровая', color: '#f4c9d3' },
+  { name: 'Белая', color: '#ffffff' },
+  { name: 'Молочная', color: '#f1e6d2' },
+  { name: 'Мятная', color: '#bfe3d6' },
+  { name: 'Небесная', color: '#afcbe8' },
+  { name: 'Пионовая', color: '#e4476f' },
+  { name: 'Бордовая', color: '#7a2842' },
+  { name: 'Графит', color: '#4a4a5c' },
+];
+
 export const products: Product[] = [
   { id: 'peony-sarah', img: 'b16', name: 'Пионы «Сара Бернар»', price: 12900, text: 'Пионы «Сара Бернар» 15 шт, веточки мяты и эвкалипта, пудровая бумага, аквабокс.', flowers: ['Пионы', 'Эвкалипт'], tones: ['Розовый'], size: ['45–50', '40'], mono: true },
   { id: 'hundred-peonies', img: 'b15', name: 'Сто пионов', price: 24000, text: '100 розовых пионов, крафт, аквабокс. Большой букет, собираем по предзаказу за день.', flowers: ['Пионы'], tones: ['Розовый'], size: ['60–70', '70'], mono: true, preorder: true },
@@ -63,7 +75,7 @@ export const hero = [
   { img: 'b14', title: 'Гортензии на каждый день', alt: 'Букет с голубой и розовой гортензией' },
 ];
 
-// preset: готовый набор фильтра каталога, см. PRESETS в scripts/cvety-shop.ts
+// preset: готовый набор фильтра каталога, см. PRESETS в scripts/shop/catalog.ts
 export const categories = [
   { img: 'b15', name: 'Пионы', preset: 'peonies' },
   { img: 'b10', name: 'Розы', preset: 'roses' },

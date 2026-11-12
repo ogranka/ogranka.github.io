@@ -3,6 +3,7 @@
 import { products, rub, type Product } from '../../data/cvety';
 import { productById } from './cart';
 import { $, $$, bouquets, must } from './dom';
+import type { Favorites } from './favorites';
 
 export interface Filter {
   min: number;
@@ -10,15 +11,20 @@ export interface Filter {
   sale: boolean;
   today: boolean;
   mono: boolean;
+  // Только букеты из избранного: ставит подборка «Избранное»
+  fav: boolean;
   flowers: string[];
   tones: string[];
 }
 
-const EMPTY: Filter = { min: 0, max: Infinity, sale: false, today: false, mono: false, flowers: [], tones: [] };
+const EMPTY: Filter = { min: 0, max: Infinity, sale: false, today: false, mono: false, fav: false, flowers: [], tones: [] };
 
-// Подборки: кнопки над каталогом, кружки на главной, «Часто ищут» в поиске
+// Подборки: кнопки над каталогом, кружки на главной, «Часто ищут» в поиске,
+// «Показать их» на промо
 const PRESETS: Record<string, Partial<Filter>> = {
   all: {},
+  sale: { sale: true },
+  fav: { fav: true },
   mono: { mono: true },
   under6: { max: 6000 },
   under10: { max: 10000 },
@@ -33,15 +39,17 @@ const PRESETS: Record<string, Partial<Filter>> = {
 const SORT_LABELS: Record<string, string> = { popular: 'Популярные', cheap: 'Дешевле', dear: 'Дороже', new: 'Новинки' };
 
 // Внутри группы условия складываются через «или», между группами через «и»
-const matches = (p: Product, f: Filter) =>
+const matches = (p: Product, f: Filter, isFav: (id: string) => boolean) =>
   p.price >= f.min &&
   p.price <= f.max &&
   (!f.sale || !!p.sale) &&
   (!f.today || !p.preorder) &&
   (!f.mono || !!p.mono) &&
+  (!f.fav || isFav(p.id)) &&
   (!f.flowers.length || f.flowers.some((x) => p.flowers.includes(x))) &&
   (!f.tones.length || f.tones.some((x) => p.tones.includes(x)));
 
+// Избранное в счётчик фильтра не входит: это подборка, а не условие из шторки
 const activeCount = (f: Filter) =>
   [f.min > 0 || f.max !== Infinity, f.sale, f.today, f.mono, f.flowers.length > 0, f.tones.length > 0].filter(Boolean).length;
 
@@ -58,7 +66,7 @@ const search = (q: string) => {
 const parseNum = (v: string) => Number(v.replace(/\D/g, '')) || 0;
 
 // body: тело шторки, куда клонируются шаблоны фильтра, сортировки и поиска
-export function initCatalog(body: HTMLElement) {
+export function initCatalog(body: HTMLElement, favorites: Favorites) {
   const grid = must('#catalogGrid');
   const cards = $$('.pcard', grid);
   const order = new Map(cards.map((c, i) => [c, i]));
@@ -80,6 +88,7 @@ export function initCatalog(body: HTMLElement) {
       sale: !!input('sale')?.checked,
       today: !!input('today')?.checked,
       mono: draftMono,
+      fav: false,
       flowers: pressed('flower'),
       tones: pressed('tone'),
     };
@@ -110,28 +119,39 @@ export function initCatalog(body: HTMLElement) {
     const el = $('[data-apply-count]', body);
     if (!el) return;
     const f = readDraft();
-    el.textContent = bouquets(products.filter((p) => matches(p, f)).length);
+    el.textContent = bouquets(products.filter((p) => matches(p, f, favorites.has)).length);
   };
 
   const apply = (next: Filter, preset = '') => {
     Object.assign(filter, next);
     let n = 0;
     cards.forEach((c) => {
-      const ok = matches(productById(c.dataset.id!)!, filter);
+      const ok = matches(productById(c.dataset.id!)!, filter, favorites.has);
       c.hidden = !ok;
       if (ok) n++;
     });
     must('#catalogEmpty').hidden = n > 0;
+    must('#catalogEmptyText').textContent = filter.fav
+      ? 'В избранном пока пусто. Нажмите на сердечко у букета, и он появится здесь.'
+      : 'По этим условиям ничего нет.';
     must('#catalogCount').textContent = bouquets(n);
     const active = activeCount(filter);
     const badge = must('#filterCount');
     badge.textContent = String(active);
     badge.hidden = active === 0;
-    const chip = preset || (active ? '' : 'all');
+    const chip = preset || (filter.fav ? 'fav' : active ? '' : 'all');
     $$('.chips [data-preset]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.preset === chip)));
+    // Подборку могли включить с промо или кружков: её чип должен быть виден.
+    // Не scrollIntoView: во фрейме он прокрутил бы и страницу кейса.
+    const on = $<HTMLElement>('.chips [aria-pressed="true"]');
+    if (on?.parentElement) on.parentElement.scrollLeft = Math.max(0, on.offsetLeft - on.parentElement.offsetLeft - 16);
   };
 
   const applyDraft = () => apply(readDraft());
+  // Избранное поменялось: пересчитать сетку, если открыта подборка «Избранное»
+  const refresh = () => {
+    if (filter.fav) apply({ ...filter }, 'fav');
+  };
   const applyPreset = (key: string) => apply({ ...EMPTY, ...PRESETS[key] }, key);
 
   const sort = (mode: string) => {
@@ -169,5 +189,5 @@ export function initCatalog(body: HTMLElement) {
     if (t.type === 'search') renderResults(t.value);
   });
 
-  return { restoreDraft, resetDraft, updateDraftCount, applyDraft, applyPreset, sort, showSortChoice };
+  return { restoreDraft, resetDraft, updateDraftCount, applyDraft, applyPreset, refresh, sort, showSortChoice };
 }

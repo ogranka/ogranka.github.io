@@ -22,6 +22,38 @@ export function plural(n: number, forms: [string, string, string]) {
 
 export const bouquets = (n: number) => `${n} ${plural(n, ['букет', 'букета', 'букетов'])}`;
 
+// Хранилище вкладки: корзина, избранное и получатель переживают перезагрузку.
+// Во фрейме страницы кейса не сохраняем: четыре телефона делят одно хранилище,
+// и корзина из одного попадала бы в другой.
+const keep = window.top === window;
+export const store = {
+  get<T>(key: string, fallback: T): T {
+    if (!keep) return fallback;
+    try {
+      const raw = sessionStorage.getItem(key);
+      return raw ? (JSON.parse(raw) as T) : fallback;
+    } catch {
+      return fallback;
+    }
+  },
+  set(key: string, value: unknown) {
+    if (!keep) return;
+    try {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Хранилище недоступно (приватный режим): работаем без сохранения
+    }
+  },
+  drop(key: string) {
+    if (!keep) return;
+    try {
+      sessionStorage.removeItem(key);
+    } catch {
+      // см. выше
+    }
+  },
+};
+
 // Всплывашка внизу экрана
 export function createToast(el: HTMLElement) {
   let timer = 0;

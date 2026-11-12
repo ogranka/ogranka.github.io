@@ -77,31 +77,49 @@ export function initSheet({ background, fill, keepFocus }: SheetOptions) {
     if (e.key === 'Escape' && !sheet.hidden) close();
   });
 
-  // Шторку можно смахнуть вниз
-  let y0: number | null = null;
-  sheet.addEventListener(
-    'touchstart',
-    (e) => {
-      if (body.scrollTop <= 0) y0 = e.touches[0].clientY;
-    },
-    { passive: true },
+  // Шторку смахивают вниз за ручку или шапку: листание переписки и списков
+  // внутри её не закрывает. Пока палец на экране, переход выключен и шторка
+  // идёт за пальцем без опоздания. Закрывает длинный жест или быстрый короткий,
+  // вверх шторка только пружинит на несколько точек.
+  let drag: { y0: number; dy: number; lastY: number; lastT: number; speed: number } | null = null;
+  const release = () => {
+    drag = null;
+    sheet.classList.remove('is-dragging');
+    sheet.style.transform = '';
+  };
+  [must('.sheet__grip', sheet), must('.sheet__head', sheet)].forEach((handle) =>
+    handle.addEventListener(
+      'touchstart',
+      (e) => {
+        const y = e.touches[0].clientY;
+        drag = { y0: y, dy: 0, lastY: y, lastT: e.timeStamp, speed: 0 };
+        sheet.classList.add('is-dragging');
+      },
+      { passive: true },
+    ),
   );
   sheet.addEventListener(
     'touchmove',
     (e) => {
-      if (y0 === null) return;
-      const dy = e.touches[0].clientY - y0;
-      if (dy > 0) sheet.style.transform = `translateY(${dy}px)`;
+      if (!drag) return;
+      const y = e.touches[0].clientY;
+      drag.dy = y - drag.y0;
+      // Скорость по последнему отрезку, точек в миллисекунду
+      drag.speed = (y - drag.lastY) / Math.max(1, e.timeStamp - drag.lastT);
+      drag.lastY = y;
+      drag.lastT = e.timeStamp;
+      const shift = drag.dy > 0 ? drag.dy : -Math.min(24, Math.sqrt(-drag.dy) * 2);
+      sheet.style.transform = `translateY(${shift}px)`;
     },
     { passive: true },
   );
-  sheet.addEventListener('touchend', (e) => {
-    if (y0 === null) return;
-    const dy = e.changedTouches[0].clientY - y0;
-    sheet.style.transform = '';
-    y0 = null;
-    if (dy > 90) close();
+  sheet.addEventListener('touchend', () => {
+    if (!drag) return;
+    const { dy, speed } = drag;
+    release();
+    if (dy > Math.min(140, sheet.offsetHeight * 0.3) || (dy > 20 && speed > 0.5)) close();
   });
+  sheet.addEventListener('touchcancel', () => drag && release());
 
   return { open, close, body };
 }

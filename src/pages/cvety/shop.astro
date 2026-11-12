@@ -2,7 +2,7 @@
 import type { ImageMetadata } from 'astro';
 import { Image, getImage } from 'astro:assets';
 import ShopLogo from '../../components/cvety/ShopLogo.astro';
-import { products, lists, hero, categories, gallery, featured, rub, FLOWERS, TONES } from '../../data/cvety';
+import { products, lists, hero, categories, gallery, featured, rub, FLOWERS, TONES, RIBBONS } from '../../data/cvety';
 import onestCyr from '../../assets/fonts/onest-cyrillic.woff2?url';
 import oswaldCyr from '../../assets/fonts/oswald-cyrillic.woff2?url';
 import '../../styles/pages/cvety-shop.scss';
@@ -49,6 +49,7 @@ const phoneHref = 'tel:+79990000000';
         <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2Z"></path></symbol>
         <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z"></path></symbol>
         <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"></path></symbol>
         <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"></path></symbol>
         <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"></path></symbol>
         <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
@@ -90,8 +91,11 @@ const phoneHref = 'tel:+79990000000';
         <section class="promo" aria-label="Скидка по промокоду">
           <p class="promo__big">−15%</p>
           <div class="promo__body">
-            <p>на первый заказ по&nbsp;промокоду</p>
-            <button class="code" type="button" data-copy="МЯТА"><span>МЯТА</span><svg><use href="#i-copy"></use></svg></button>
+            <p>на букеты с отметкой по&nbsp;промокоду</p>
+            <div class="promo__actions">
+              <button class="code" type="button" data-copy="МЯТА" aria-label="Скопировать промокод МЯТА"><span>МЯТА</span><svg><use href="#i-copy"></use></svg></button>
+              <a class="promo__show" href="#catalog" data-preset="sale">Показать их</a>
+            </div>
           </div>
         </section>
 
@@ -116,7 +120,7 @@ const phoneHref = 'tel:+79990000000';
                     <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
                     {p.sale && <span class="badge">−15% по МЯТА</span>}
                   </a>
-                  <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+                  <button class="round pcard__like" type="button" aria-label={`В избранное: ${p.name}`} aria-pressed="false" data-like={p.id}><svg><use href="#i-heart"></use></svg></button>
                   <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
                   <button class="price-btn" type="button" data-add={p.id} aria-label={`В корзину: ${p.name}, ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
                 </article>
@@ -145,6 +149,8 @@ const phoneHref = 'tel:+79990000000';
           <button type="button" data-preset="under10" aria-pressed="false">До 10&nbsp;000&nbsp;₽</button>
           <button type="button" data-preset="big" aria-pressed="false">Большие</button>
           <button type="button" data-preset="eucalyptus" aria-pressed="false">С эвкалиптом</button>
+          <button type="button" data-preset="sale" aria-pressed="false">Скидка по МЯТА</button>
+          <button type="button" data-preset="fav" aria-pressed="false"><svg><use href="#i-heart"></use></svg>Избранное<b class="count" data-fav-count hidden>0</b></button>
         </div>
 
         <div class="toolbar">
@@ -160,14 +166,17 @@ const phoneHref = 'tel:+79990000000';
                   <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading={index > 1 ? 'lazy' : 'eager'} />
                   {p.sale && <span class="badge">−15% по МЯТА</span>}
                 </a>
-                <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+                <button class="round pcard__like" type="button" aria-label={`В избранное: ${p.name}`} aria-pressed="false" data-like={p.id}><svg><use href="#i-heart"></use></svg></button>
                 <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
                 <button class="price-btn" type="button" data-add={p.id} aria-label={`В корзину: ${p.name}, ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
               </article>
             ))
           }
         </div>
-        <p class="empty muted" id="catalogEmpty" hidden>По этим условиям ничего нет. Сбросьте фильтр, чтобы увидеть все букеты.</p>
+        <div class="empty" id="catalogEmpty" hidden>
+          <p class="muted" id="catalogEmptyText">По этим условиям ничего нет.</p>
+          <button class="pill pill--line" type="button" data-preset="all">Показать все букеты</button>
+        </div>
       </main>
 
       <!-- КАРТОЧКА ТОВАРА -->
@@ -175,7 +184,7 @@ const phoneHref = 'tel:+79990000000';
         <header class="topbar topbar--sticky">
           <a class="round" href="#catalog" aria-label="Назад в каталог"><svg><use href="#i-back"></use></svg></a>
           <ShopLogo />
-          <button class="round" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+          <button class="round" type="button" aria-label="В избранное" aria-pressed="false" data-like=""><svg><use href="#i-heart"></use></svg></button>
         </header>
 
         <div class="gallery">
@@ -231,7 +240,7 @@ const phoneHref = 'tel:+79990000000';
                   <a class="pcard__photo" href={`#product/${p.id}`}>
                     <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
                   </a>
-                  <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
+                  <button class="round pcard__like" type="button" aria-label={`В избранное: ${p.name}`} aria-pressed="false" data-like={p.id}><svg><use href="#i-heart"></use></svg></button>
                   <a class="pcard__name" href={`#product/${p.id}`}>{p.name}</a>
                   <button class="price-btn" type="button" data-add={p.id} aria-label={`В корзину: ${p.name}, ${rub(p.price)}`}>{rub(p.price)}<svg><use href="#i-plus"></use></svg></button>
                 </article>
@@ -293,6 +302,7 @@ const phoneHref = 'tel:+79990000000';
             <div class="fgroup">
               <h3>День</h3>
               <div class="opts" id="dayOpts" role="group" aria-label="День доставки"></div>
+              <p class="muted small" id="dayNote" hidden>В корзине букет по предзаказу, собираем его за день: ближайшая доставка завтра.</p>
             </div>
             <div class="fgroup">
               <h3>Интервал</h3>
@@ -316,11 +326,18 @@ const phoneHref = 'tel:+79990000000';
           </fieldset>
 
           <fieldset class="co__step" data-step="3" hidden>
-            <legend class="display" tabindex="-1">Открытка</legend>
+            <legend class="display" tabindex="-1">Открытка и лента</legend>
             <p class="muted">Напечатаем текст на открытке и вложим в конверт. Это бесплатно.</p>
             <label class="switch"><span>Без открытки</span><input type="checkbox" name="noCard" /><i></i></label>
             <label class="field" id="coCardField"><span class="sr">Текст открытки</span><textarea name="card" id="coCardText" maxlength="200" rows="4" placeholder="Например: С днём рождения, мама! Люблю тебя"></textarea></label>
             <p class="hint"><span id="coCardLen">0</span> из 200 знаков</p>
+            <div class="fgroup">
+              <h3>Лента</h3>
+              <div class="ribbons" role="group" aria-label="Цвет ленты">
+                <button type="button" class="ribbons__any" data-co-ribbon="" aria-pressed="true">На выбор флориста</button>
+                {RIBBONS.map((r) => <button type="button" style={`--c:${r.color}`} data-co-ribbon={r.name} aria-pressed="false"><i></i>{r.name}</button>)}
+              </div>
+            </div>
           </fieldset>
 
           <fieldset class="co__step" data-step="4" hidden>
@@ -338,6 +355,7 @@ const phoneHref = 'tel:+79990000000';
               </label>
               <button type="button" class="pill pill--line" data-promo>Применить</button>
             </div>
+            <dl class="details" id="coDetails" aria-label="Детали заказа"></dl>
             <div class="summary" id="coSummary"></div>
             <label class="agree" data-fld>
               <input type="checkbox" name="agree" required />
@@ -356,6 +374,7 @@ const phoneHref = 'tel:+79990000000';
           <span class="co__done-mark"><svg><use href="#i-check"></use></svg></span>
           <h2 class="display">Заказ принят</h2>
           <p id="coDoneText"></p>
+          <dl class="details details--done" id="coDoneList"></dl>
           <p class="muted">Это демонстрация: ничего не списано и никто не приедет. В рабочем магазине здесь был бы номер заказа и смс.</p>
           <a class="pill pill--ink pill--wide" href="#catalog">Вернуться в каталог</a>
         </section>
@@ -427,14 +446,7 @@ const phoneHref = 'tel:+79990000000';
 
       <template id="t-ribbon">
         <div class="ribbons">
-          <button type="button" style="--c:#f4c9d3" data-ribbon="Пудровая"><i></i>Пудровая</button>
-          <button type="button" style="--c:#ffffff" data-ribbon="Белая"><i></i>Белая</button>
-          <button type="button" style="--c:#f1e6d2" data-ribbon="Молочная"><i></i>Молочная</button>
-          <button type="button" style="--c:#bfe3d6" data-ribbon="Мятная"><i></i>Мятная</button>
-          <button type="button" style="--c:#afcbe8" data-ribbon="Небесная"><i></i>Небесная</button>
-          <button type="button" style="--c:#e4476f" data-ribbon="Пионовая"><i></i>Пионовая</button>
-          <button type="button" style="--c:#7a2842" data-ribbon="Бордовая"><i></i>Бордовая</button>
-          <button type="button" style="--c:#4a4a5c" data-ribbon="Графит"><i></i>Графит</button>
+          {RIBBONS.map((r) => <button type="button" style={`--c:${r.color}`} data-ribbon={r.name}><i></i>{r.name}</button>)}
         </div>
       </template>
 

@@ -3,15 +3,18 @@
 // шторка в sheet, оформление в checkout.
 import { featured, rub } from '../data/cvety';
 import { renderChat } from './cvety-chat';
-import { createCart, productById } from './shop/cart';
+import { createCart, productById, type CartLine } from './shop/cart';
 import { initCatalog } from './shop/catalog';
 import { initCheckout } from './shop/checkout';
-import { $, $$, createToast, must } from './shop/dom';
+import { $, $$, createToast, must, store } from './shop/dom';
+import { createFavorites } from './shop/favorites';
 import { initHero } from './shop/hero';
 import { initNavigation } from './shop/navigation';
 import { initProduct } from './shop/product';
 import { initSheet, type SheetKind } from './shop/sheet';
 import { initTune } from './shop/tune';
+
+const CART_KEY = 'pm:cart';
 
 export function initShop() {
   if (!$('#app')) return;
@@ -25,29 +28,45 @@ export function initShop() {
   const screens = $$('[data-screen]');
   const say = createToast(must('#toast'));
 
-  const syncCartCount = () => {
-    cartCount.textContent = String(cart.items.length);
-    cartCount.hidden = cart.items.length === 0;
+  // Кнопка цены под букетом помнит, что букет уже в корзине
+  const syncCart = () => {
+    const n = cart.count();
+    cartCount.textContent = String(n);
+    cartCount.hidden = n === 0;
+    $$('[data-add]').forEach((b) => b.toggleAttribute('data-added', cart.has(b.dataset.add!)));
+    product.syncBuy();
+    store.set(CART_KEY, cart.lines());
   };
   // Для показа оформления во фрейме кейса корзина сразу с двумя букетами
-  const cart = createCart(initial === 'checkout' ? [featured.id, 'roses-statice'] : [], () => {
-    syncCartCount();
-    product.syncBuy();
-  });
+  const demo: CartLine[] = [
+    [featured.id, 1],
+    ['roses-statice', 1],
+  ];
+  const cart = createCart(initial === 'checkout' ? demo : store.get<CartLine[]>(CART_KEY, []), () => syncCart());
   const product = initProduct(cart, buy);
-  syncCartCount();
   const tune = initTune(say);
-  const catalog = initCatalog(must('#sheetBody'));
+  const favorites = createFavorites(() => catalog.refresh());
+  const catalog = initCatalog(must('#sheetBody'), favorites);
+  syncCart();
+  favorites.sync();
 
   const renderCart = (body: HTMLElement) => {
-    if (!cart.items.length) {
+    if (!cart.count()) {
       body.innerHTML = '<p class="muted">Корзина пока пустая. Нажмите на цену под букетом, чтобы добавить его.</p>';
       return;
     }
-    const rows = cart.items
-      .map((id, i) => {
+    const rows = cart
+      .lines()
+      .map(([id, qty]) => {
         const p = productById(id)!;
-        return `<li><span class="name">${p.name}</span><span class="sum">${rub(p.price)}</span><button class="round" type="button" data-remove="${i}" aria-label="Убрать ${p.name}"><svg><use href="#i-trash"></use></svg></button></li>`;
+        return `<li>
+          <span class="info"><span class="name">${p.name}</span><span class="sum">${rub(p.price * qty)}</span></span>
+          <span class="qty">
+            <button class="round" type="button" data-dec="${id}" aria-label="${qty > 1 ? 'Убрать один' : 'Убрать из корзины'}: ${p.name}"><svg><use href="#i-${qty > 1 ? 'minus' : 'trash'}"></use></svg></button>
+            <b aria-label="${qty} шт.">${qty}</b>
+            <button class="round" type="button" data-inc="${id}" aria-label="Ещё один: ${p.name}"><svg><use href="#i-plus"></use></svg></button>
+          </span>
+        </li>`;
       })
       .join('');
     body.innerHTML = `<ul class="cart-list">${rows}</ul>
@@ -80,14 +99,17 @@ export function initShop() {
     searchBtn.hidden = isProduct;
     dock.classList.toggle('is-product', isProduct);
     dock.hidden = isCheckout;
-    if (isProduct) product.render(arg);
+    if (isProduct) {
+      product.render(arg);
+      favorites.sync();
+    }
     if (isCheckout) checkout.render();
   });
 
   const checkout = initCheckout({
     cart,
     say,
-    cardText: tune.cardText,
+    tune,
     back: () => {
       const prev = nav.previous();
       nav.go(`#${prev && !prev.startsWith('checkout') ? prev : 'catalog'}`);
@@ -107,15 +129,11 @@ export function initShop() {
       if ('close' in d) sheet.close();
       return;
     }
-    if ('like' in d) {
-      const on = t.getAttribute('aria-pressed') !== 'true';
-      t.setAttribute('aria-pressed', String(on));
-      return say(on ? 'Добавили в избранное' : 'Убрали из избранного');
-    }
+    if (d.like) return say(favorites.toggle(d.like) ? 'Добавили в избранное' : 'Убрали из избранного');
     if (d.add) {
-      d.added = '';
       cart.add(d.add);
-      return say('Добавили в корзину');
+      const n = cart.qty(d.add);
+      return say(n > 1 ? `Добавили ещё один, в корзине ${n}` : 'Добавили в корзину');
     }
     if (t === buy) {
       const id = product.shown().id;
@@ -123,8 +141,9 @@ export function initShop() {
       cart.add(id);
       return say('Добавили в корзину');
     }
-    if (d.remove !== undefined) {
-      cart.removeAt(Number(d.remove));
+    if (d.inc || d.dec) {
+      if (d.inc) cart.add(d.inc);
+      else cart.dec(d.dec!);
       return renderCart(sheet.body);
     }
     if (d.copy) {

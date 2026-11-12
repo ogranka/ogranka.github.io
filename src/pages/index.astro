@@ -91,7 +91,7 @@ const steps = [
         </p>
         <div class="hero__actions">
           <a class="btn btn--ink pressable" href="#cases">Смотреть кейсы</a>
-          <a class="btn btn--line pressable" href="#contact">Как заказать</a>
+          <a class="btn btn--line pressable" href="#contact">Обсудить проект</a>
         </div>
       </div>
       <div class="collage" aria-label="Четыре кейса">
@@ -149,7 +149,6 @@ const steps = [
         {
           steps.map((step, index) => (
             <li data-reveal style={`--i:${index}`}>
-              <span class="num" aria-hidden="true">{index + 1}</span>
               <b>{step.title}</b>
               <p>{step.text}</p>
             </li>

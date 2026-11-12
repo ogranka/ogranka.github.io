@@ -301,19 +301,6 @@
     counter-reset: step;
   }
 
-  .num {
-    display: inline-grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 600;
-    font-size: var(--fs-sm);
-    margin-bottom: 14px;
-  }
-
   @media (max-width: $bp-wide) {
     ol {
       grid-template-columns: repeat(2, 1fr);

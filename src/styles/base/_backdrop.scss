@@ -1,5 +1,5 @@
-// Фон хаба: три мягких цветовых пятна медленно плывут за контентом.
-// Только transform, без скриптов; при reduced-motion пятна стоят, но видны.
+// Фон хаба: три мягких цветовых пятна за контентом. Стоят на месте:
+// плывущие пятна читались шаблонным приёмом и двигали фон под размытием.
 .backdrop {
   position: fixed;
   inset: 0;
@@ -11,7 +11,6 @@
     position: absolute;
     border-radius: 50%;
     opacity: var(--blob-opacity);
-    will-change: transform;
   }
 
   .b1 {
@@ -20,7 +19,6 @@
     top: -28vw;
     left: -22vw;
     background: radial-gradient(circle at center, var(--blob-1) 0%, transparent 65%);
-    animation: blob-1 48s ease-in-out infinite alternate;
   }
 
   .b2 {
@@ -29,7 +27,6 @@
     top: 22vw;
     right: -26vw;
     background: radial-gradient(circle at center, var(--blob-2) 0%, transparent 65%);
-    animation: blob-2 58s ease-in-out infinite alternate;
   }
 
   .b3 {
@@ -38,57 +35,5 @@
     bottom: -30vw;
     left: 12vw;
     background: radial-gradient(circle at center, var(--blob-3) 0%, transparent 65%);
-    animation: blob-3 66s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes blob-1 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-
-  50% {
-    transform: translate3d(14vw, 10vw, 0) scale(1.08);
-  }
-
-  100% {
-    transform: translate3d(22vw, -4vw, 0) scale(.96);
-  }
-}
-
-@keyframes blob-2 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-
-  50% {
-    transform: translate3d(-16vw, -10vw, 0) scale(1.06);
-  }
-
-  100% {
-    transform: translate3d(-8vw, -22vw, 0) scale(.95);
-  }
-}
-
-@keyframes blob-3 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-
-  50% {
-    transform: translate3d(18vw, -12vw, 0) scale(1.1);
-  }
-
-  100% {
-    transform: translate3d(-6vw, -18vw, 0) scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  // По классам, а не по span: правила .backdrop .b1 и соседние сильнее
-  .backdrop .b1,
-  .backdrop .b2,
-  .backdrop .b3 {
-    animation: none;
   }
 }

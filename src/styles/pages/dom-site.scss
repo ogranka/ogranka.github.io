@@ -602,6 +602,30 @@ html.dom-anim .steps__fill {
   gap: 34px;
 }
 
+// Компьютер: заголовок и вводная слева, этапы справа. Список в
+// одну колонку занимал 760 точек из 1180, правая часть стояла пустой.
+@media (min-width: 1000px) {
+  .steps {
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    // Первая строка по высоте заголовка, остаток высоты списка уходит во вторую
+    grid-template-rows: auto 1fr;
+    column-gap: 64px;
+    align-items: start;
+
+    > h2,
+    > .lead {
+      grid-column: 1;
+    }
+
+    .steps__wrap {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      margin-top: 0;
+    }
+  }
+}
+
 .step {
   position: relative;
   display: grid;
@@ -738,6 +762,59 @@ html:not(.dom-anim) .step__dot {
 .quiz__progress {
   color: var(--dim);
   font-weight: 600;
+}
+
+// Предварительный расчёт: только на широком экране, справа от вопросов
+.quiz__live {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .quiz__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    column-gap: 48px;
+    align-items: start;
+
+    > .quiz__head {
+      grid-column: 1 / -1;
+    }
+
+    > form {
+      grid-column: 1;
+    }
+  }
+
+  .quiz__live:not([hidden]) {
+    display: grid;
+    gap: 8px;
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    margin-top: 30px;
+    padding: 24px;
+    border-radius: 18px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+  }
+}
+
+.quiz__live-label {
+  color: var(--dim);
+  font-weight: 600;
+}
+
+.quiz__live-sum {
+  font: 700 26px/1.2 var(--display);
+}
+
+.quiz__live-weeks {
+  font-weight: 600;
+}
+
+.quiz__live-note {
+  margin-top: 6px;
+  color: var(--dim);
+  font-size: 15px;
 }
 
 .quiz__bar {

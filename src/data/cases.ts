@@ -8,6 +8,8 @@ export interface CaseItem {
   /** Имя файла превью в src/assets/previews без расширения */
   preview: string;
   size: 'wide' | 'half';
+  /** Приём, а не проект: на главной идёт компактным рядом «Отдельные приёмы» */
+  technique?: boolean;
 }
 
 export const cases: CaseItem[] = [
@@ -16,7 +18,7 @@ export const cases: CaseItem[] = [
     kind: 'Интернет-магазин',
     title: 'Магазин букетов с доставкой',
     description:
-      'Мобильная витрина с каталогом, фильтром-шторкой, сборкой букета и оформлением заказа в четыре шага. Все экраны рабочие.',
+      'Витрина для телефона: каталог, фильтр, сборка букета и заказ в четыре шага. Всё нажимается.',
     preview: 'cvety',
     size: 'wide',
   },
@@ -32,7 +34,7 @@ export const cases: CaseItem[] = [
     href: '/mini-app/',
     kind: 'Telegram Mini App',
     title: 'Запись в барбершоп в Telegram',
-    description: 'Мини-приложение внутри Telegram: услуга, мастер и свободное время за минуту, подтверждение и напоминание присылает бот.',
+    description: 'Запись в Telegram за минуту: мастер и время, бот пришлёт подтверждение и напоминание.',
     preview: 'mini-app',
     size: 'half',
   },
@@ -40,7 +42,7 @@ export const cases: CaseItem[] = [
     href: '/dom/',
     kind: 'Лендинг',
     title: 'Лендинг строительной компании',
-    description: 'Чертёж на первом экране собирается в дом по прокрутке, дальше проекты, этапы и квиз, который считает стоимость дома.',
+    description: 'Чертёж на первом экране собирается в дом, дальше проекты, этапы и квиз с расчётом цены.',
     preview: 'dom',
     size: 'half',
   },
@@ -48,7 +50,7 @@ export const cases: CaseItem[] = [
     href: '/assistant/',
     kind: 'ИИ-консультант',
     title: 'Консультант в чате магазина',
-    description: 'Чат на витрине отвечает по каталогу и правилам доставки, ведёт к корзине и передаёт сложные вопросы флористу.',
+    description: 'Чат на витрине отвечает по каталогу и доставке, а сложные вопросы передаёт флористу.',
     preview: 'assistant',
     size: 'half',
   },
@@ -56,9 +58,9 @@ export const cases: CaseItem[] = [
     href: '/zhurnal/',
     kind: 'Онлайн-издание',
     title: 'Городской журнал',
-    description: 'Издание о жизни города с двумя городами в одной редакции: лента, рубрики, статьи, авторы, поиск и разметка для поисковиков.',
+    description: 'Городское издание на два города: лента, рубрики, статьи, авторы и поиск.',
     preview: 'zhurnal',
-    size: 'half',
+    size: 'wide',
   },
   {
     href: '/before-after/',
@@ -67,6 +69,7 @@ export const cases: CaseItem[] = [
     description: 'Тот же контент под одной шторкой: страница 2012 года и её сегодняшняя версия.',
     preview: 'before-after',
     size: 'half',
+    technique: true,
   },
   {
     href: '/speed-race/',
@@ -75,6 +78,7 @@ export const cases: CaseItem[] = [
     description: 'Две одинаковые страницы грузятся наперегонки: конструктор против аккуратной сборки.',
     preview: 'speed-race',
     size: 'half',
+    technique: true,
   },
   {
     href: '/forum-hero/',
@@ -83,6 +87,7 @@ export const cases: CaseItem[] = [
     description: 'Анимированный первый экран с рельефом из частиц, который весит меньше одной фотографии.',
     preview: 'forum-hero',
     size: 'half',
+    technique: true,
   },
 ];
 

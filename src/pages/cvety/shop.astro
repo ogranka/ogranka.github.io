@@ -154,10 +154,10 @@ const phoneHref = 'tel:+79990000000';
 
         <div class="grid" id="catalogGrid">
           {
-            lists.catalog.map((p, index) => (
+            lists.catalog.map((p) => (
               <article class="pcard" data-id={p.id} data-price={p.price} data-sale={p.sale ? '' : undefined}>
                 <a class="pcard__photo" href={`#product/${p.id}`}>
-                  <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading={index > 1 ? 'lazy' : 'eager'} />
+                  <Image src={photo(p.img)} alt={p.name} widths={[360, 720]} sizes={cardSizes} loading="lazy" />
                   {p.sale && <span class="badge">−15% по МЯТА</span>}
                 </a>
                 <button class="round pcard__like" type="button" aria-label="В избранное" aria-pressed="false" data-like><svg><use href="#i-heart"></use></svg></button>
@@ -180,7 +180,7 @@ const phoneHref = 'tel:+79990000000';
 
         <div class="gallery">
           <div class="gallery__track" id="galTrack">
-            {gallery.map((g, index) => <Image src={photo(g.img)} alt={g.alt} widths={[480, 720, 960]} sizes="100vw" loading={index === 0 ? 'eager' : 'lazy'} />)}
+            {gallery.map((g) => <Image src={photo(g.img)} alt={g.alt} widths={[480, 720, 960]} sizes="100vw" loading="lazy" />)}
           </div>
           <span class="gallery__count" id="galCount">1 из {gallery.length}</span>
         </div>

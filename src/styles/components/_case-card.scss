@@ -228,6 +228,16 @@ html.js .case-card[data-reveal] {
       transform: scale(1.1);
     }
   }
+
+  // Карточку выбрали с клавиатуры до того, как до неё долистали: показать сразу
+  &.is-pending:focus-visible {
+    opacity: 1;
+    transform: none;
+
+    .shot img {
+      transform: none;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

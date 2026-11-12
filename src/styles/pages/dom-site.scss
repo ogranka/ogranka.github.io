@@ -93,6 +93,8 @@
 
 html {
   scroll-behavior: smooth;
+  // Отступ под закреплённую шапку: элемент в фокусе и раздел по якорю не уходят под неё
+  scroll-padding-top: 80px;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -158,6 +160,11 @@ a {
 
   &:focus {
     top: 12px;
+  }
+
+  // Ссылка янтарная, янтарная обводка на ней почти не видна: обводка белая поверх тёмной шапки
+  &:focus-visible {
+    outline-color: #fff;
   }
 }
 

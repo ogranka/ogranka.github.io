@@ -123,6 +123,12 @@ html.js [data-reveal] {
     opacity: 0;
     transform: translateY(14px);
   }
+
+  // Фокус с клавиатуры показывает блок сразу: нельзя стоять на невидимом
+  &.is-pending:focus-within {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

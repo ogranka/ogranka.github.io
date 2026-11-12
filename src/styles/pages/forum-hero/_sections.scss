@@ -70,25 +70,36 @@ section {
   padding: 34px 30px 30px;
   background: linear-gradient(180deg, rgba(255, 255, 255, .032), rgba(255, 255, 255, 0));
   overflow: hidden;
-  transition: transform .45s cubic-bezier(.2, .7, .3, 1), border-color .45s;
+  transition: transform .25s cubic-bezier(.23, 1, .32, 1), border-color .25s;
 
-  // Подсветка, следующая за курсором
-  &::before {
-    content: "";
+  // Подсветка, следующая за курсором: слой 840×840 с центром в точке курсора,
+  // скрипт двигает его через transform
+  .card__glow {
     position: absolute;
-    inset: -1px;
-    border-radius: 18px;
+    top: -420px;
+    left: -420px;
+    width: 840px;
+    height: 840px;
     opacity: 0;
-    transition: opacity .45s;
-    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(53, 214, 208, .16), transparent 62%);
+    transition: opacity .25s;
+    background: radial-gradient(circle, rgba(53, 214, 208, .16), transparent 62%);
+    pointer-events: none;
   }
 
-  &:hover {
-    transform: translateY(-5px);
-    border-color: rgba(53, 214, 208, .42);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-5px);
+      border-color: rgba(53, 214, 208, .42);
 
-    &::before {
-      opacity: 1;
+      .card__glow {
+        opacity: 1;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
     }
   }
 

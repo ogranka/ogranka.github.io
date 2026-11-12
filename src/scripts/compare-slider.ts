@@ -1,5 +1,8 @@
 // Шторка сравнения «было → стало»: перетаскивание указателем,
 // стрелки с клавиатуры и лёгкое покачивание-приглашение при загрузке.
+// Положение пишется прямо в два элемента: обрезку верхнего макета и сдвиг
+// разделителя. Переменная на корне пересчитывала бы стили обоих макетов на
+// каждое движение. Без скрипта положение по умолчанию задаёт --x в CSS.
 
 const IDLE_X = 44;
 const KEY_STEP = 3;
@@ -11,15 +14,31 @@ function clamp(value: number, min: number, max: number): number {
 
 function initSlider(root: HTMLElement): void {
   const knob = root.querySelector<HTMLElement>('[data-knob]');
-  if (!knob) return;
+  const before = root.querySelector<HTMLElement>('.pane.before');
+  const divider = root.querySelector<HTMLElement>('.divider');
+  if (!knob || !before || !divider) return;
 
   let dragging = false;
+  let pct = IDLE_X;
+  let width = root.clientWidth;
+  divider.style.left = '0';
+
+  const clip = (p: number) => `inset(0 ${(100 - p).toFixed(2)}% 0 0)`;
+  const shift = (p: number) => `translateX(${((p / 100) * width).toFixed(1)}px)`;
 
   const setPosition = (percent: number): void => {
-    const pct = clamp(percent, 0, 100);
-    root.style.setProperty('--x', `${pct.toFixed(2)}%`);
+    pct = clamp(percent, 0, 100);
+    before.style.clipPath = clip(pct);
+    divider.style.transform = shift(pct);
     knob.setAttribute('aria-valuenow', String(Math.round(pct)));
   };
+  setPosition(pct);
+
+  // Ширина нужна для сдвига в точках: пересчитываем при изменении размера
+  new ResizeObserver(() => {
+    width = root.clientWidth;
+    setPosition(pct);
+  }).observe(root);
 
   const setFromPointer = (clientX: number): void => {
     const rect = root.getBoundingClientRect();
@@ -42,36 +61,29 @@ function initSlider(root: HTMLElement): void {
   });
 
   knob.addEventListener('keydown', (e) => {
-    const current = parseFloat(getComputedStyle(root).getPropertyValue('--x')) || 50;
     const step = e.shiftKey ? KEY_STEP_FAST : KEY_STEP;
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      setPosition(current - step);
+      setPosition(pct - step);
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
-      setPosition(current + step);
+      setPosition(pct + step);
     }
   });
 
-  startIdleWobble(root);
-}
-
-// Шторка один раз слегка качнётся, показывая, что её можно двигать.
-function startIdleWobble(root: HTMLElement): void {
+  // Шторка один раз слегка качнётся, показывая, что её можно двигать.
+  // Анимация в браузере, а не таймер: не занимает главный поток.
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  let tick = 0;
-  const timer = setInterval(() => {
-    tick += 1;
-    root.style.setProperty('--x', `${IDLE_X + Math.sin(tick / 8) * 4}%`);
-    if (tick > 48) {
-      clearInterval(timer);
-      root.style.setProperty('--x', `${IDLE_X}%`);
-    }
-  }, 16);
+  const path = [0, 4, 0, -4, 0, 2, 0].map((d) => IDLE_X + d);
+  const timing: KeyframeAnimationOptions = { duration: 900, delay: 400, easing: 'ease-in-out' };
+  const wobble = [
+    before.animate(path.map((p) => ({ clipPath: clip(p) })), timing),
+    divider.animate(path.map((p) => ({ transform: shift(p) })), timing),
+  ];
   // Человек сам взялся за шторку мышью или стрелками: покачивание больше не мешает
-  root.addEventListener('pointerdown', () => clearInterval(timer), { once: true });
-  root.addEventListener('keydown', () => clearInterval(timer), { once: true });
+  const stop = () => wobble.forEach((a) => a.cancel());
+  root.addEventListener('pointerdown', stop, { once: true });
+  root.addEventListener('keydown', stop, { once: true });
 }
 
 export function initCompareSliders(): void {

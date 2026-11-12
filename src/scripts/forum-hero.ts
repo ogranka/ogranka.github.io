@@ -26,20 +26,23 @@ function initHeader(): void {
   });
 }
 
+// Очередь появления задаёт CSS: номер в очереди уходит в --d, задержка
+// считается в transition-delay, таймеры не нужны
 function initRiseAnimation(): void {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        const el = entry.target as HTMLElement;
-        const delay = Number(el.dataset.d ?? 0);
-        setTimeout(() => el.classList.add('on'), reduceMotion ? 0 : delay * 90);
-        observer.unobserve(el);
+        entry.target.classList.add('on');
+        observer.unobserve(entry.target);
       });
     },
     { threshold: 0.18, rootMargin: '0px 0px -8% 0px' },
   );
-  document.querySelectorAll('.rise').forEach((el) => observer.observe(el));
+  document.querySelectorAll<HTMLElement>('.rise').forEach((el) => {
+    el.style.setProperty('--d', el.dataset.d ?? '0');
+    observer.observe(el);
+  });
 }
 
 function initCounters(): void {
@@ -71,12 +74,18 @@ function initCounters(): void {
   document.querySelectorAll('[data-count]').forEach((el) => observer.observe(el));
 }
 
+// Подсветка за курсором: отдельный слой двигается через transform. Размеры
+// карточки читаются один раз при входе курсора, а не на каждое движение.
 function initCardGlow(): void {
   document.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+    const glow = document.createElement('span');
+    glow.className = 'card__glow';
+    glow.setAttribute('aria-hidden', 'true');
+    card.prepend(glow);
+    let rect = card.getBoundingClientRect();
+    card.addEventListener('pointerenter', () => (rect = card.getBoundingClientRect()));
     card.addEventListener('pointermove', (e) => {
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+      glow.style.transform = `translate(${e.clientX - rect.left}px, ${e.clientY - rect.top}px)`;
     });
   });
 }

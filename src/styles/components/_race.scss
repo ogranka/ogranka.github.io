@@ -14,10 +14,21 @@
   font-size: var(--fs-m);
   padding: 15px 28px;
   border-radius: 999px;
-  transition: transform .2s;
+  // Своё наведение и общее нажатие из _reset: scale в списке, иначе нажатие дёргалось бы
+  transition: transform .2s var(--ease-out), scale .45s var(--spring);
 
-  &:hover {
-    transform: translateY(-2px);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 
   &[disabled] {

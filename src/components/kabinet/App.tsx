@@ -39,7 +39,7 @@ const fromUrl = () => {
 const currentTheme = () => (document.documentElement.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) as 'dark' | 'light';
 
 export default function App() {
-  const { state, busy, toast, run } = useKabinet();
+  const { state, busy, toast, toastShown, run } = useKabinet();
   const [view, setView] = useState<View>('week');
   const [role, setRole] = useState<Role>('tutor');
   const [lesson, setLesson] = useState<{ l: Lesson; requestId?: string } | null>(null);
@@ -184,7 +184,7 @@ export default function App() {
 
       <div className="kb-toast-wrap" aria-live="polite">
         {toast && (
-          <p key={toast.id} className={`kb-toast is-${toast.kind}`} role={toast.kind === 'error' ? 'alert' : undefined}>
+          <p className={`kb-toast is-${toast.kind}${toastShown ? ' show' : ''}`} role={toast.kind === 'error' ? 'alert' : undefined}>
             {toast.text}
           </p>
         )}

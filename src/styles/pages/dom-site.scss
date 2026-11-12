@@ -186,10 +186,12 @@ h2 {
   font: 700 16px/1 var(--text);
   text-decoration: none;
   cursor: pointer;
-  transition: background .2s, box-shadow .2s, transform .35s var(--ease);
+  // Нажатие: вниз за 0,12 с, обратно за 0,25 с
+  transition: background .2s, box-shadow .2s, transform .25s var(--ease);
 
   &:active {
     transform: scale(.97);
+    transition-duration: .2s, .2s, .12s;
   }
 
   &--amber {
@@ -224,7 +226,7 @@ h2 {
   background: var(--surface);
   color: var(--ink);
   cursor: pointer;
-  transition: border-color .2s, transform .35s var(--ease);
+  transition: border-color .2s, transform .25s var(--ease);
 
   &:hover {
     border-color: var(--ink);
@@ -232,6 +234,7 @@ h2 {
 
   &:active {
     transform: scale(.94);
+    transition-duration: .2s, .12s;
   }
 
   &:disabled {
@@ -391,9 +394,19 @@ html.dom-anim .hero {
 // Пока дом не собран, слои спрятаны. Класс dom-anim ставит скрипт в <head>
 // только при разрешённом движении, без скрипта виден готовый дом.
 html.dom-anim {
+  // Чертёж вычерчивается при открытии на CSS: с первой отрисовки, без ожидания
+  // скрипта, и линия идёт плавно (GSAP округлял смещение до целых точек, и
+  // линии появлялись рывком). Линии по очереди через 70 мс.
   .house .lines path {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
+    animation: draw-line 1.4s cubic-bezier(.45, 0, .55, 1) both;
+
+    @for $i from 1 through 11 {
+      &:nth-child(#{$i}) {
+        animation-delay: .2s + ($i - 1) * .07s;
+      }
+    }
   }
 
   .house .fill,
@@ -401,6 +414,12 @@ html.dom-anim {
   .house .pines,
   .house .dims {
     opacity: 0;
+  }
+}
+
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
@@ -747,13 +766,14 @@ html:not(.dom-anim) .step__dot {
   background: var(--rule);
   overflow: hidden;
 
+  // Заполнение растёт через scaleX: долю ставит скрипт, вёрстка не пересчитывается
   span {
     display: block;
     height: 100%;
-    width: 20%;
     background: var(--amber);
-    border-radius: inherit;
-    transition: width .45s var(--ease);
+    transform: scaleX(.2);
+    transform-origin: left;
+    transition: transform .3s var(--ease);
   }
 }
 
@@ -768,9 +788,16 @@ html:not(.dom-anim) .step__dot {
   margin: 0;
   min-width: 0;
 
+  // Новый шаг въезжает по ходу действия: «Дальше» справа, «Назад» слева.
+  // Переход, а не ключевые кадры: быстрое нажатие подхватывает его на ходу.
   &.is-active {
     display: block;
-    animation: step-in .45s var(--ease);
+    transition: opacity .22s var(--ease), transform .22s var(--ease);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateX(var(--step-from, 18px));
+    }
   }
 
   legend {
@@ -780,11 +807,8 @@ html:not(.dom-anim) .step__dot {
   }
 }
 
-@keyframes step-in {
-  from {
-    opacity: 0;
-    transform: translateX(18px);
-  }
+.quiz__form[data-dir='back'] {
+  --step-from: -18px;
 }
 
 .area {
@@ -1153,15 +1177,38 @@ html:not(.dom-anim) .step__dot {
   }
 }
 
+// «Меньше движения»: мягче, а не ноль. Сдвиги, нажатия и колесо подсказки
+// убраны, цвет и проявления остаются.
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
+  .hero__hint .wheel {
+    animation: none;
+  }
+
+  .hero__hint.is-gone {
+    translate: none;
+  }
+
+  .btn,
+  .round,
+  .quiz__bar span,
+  .faq summary::after {
+    transition: none;
+  }
+
+  .btn:active,
+  .round:active {
+    transform: none;
+  }
+
+  .quiz__step.is-active {
+    transition: opacity .15s linear;
+
+    @starting-style {
+      transform: none;
+    }
   }
 }

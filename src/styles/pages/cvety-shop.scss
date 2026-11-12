@@ -236,8 +236,11 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   text-wrap: balance;
 }
 .hero__dots { position: absolute; z-index: 2; left: var(--gut); bottom: 66px; display: flex; gap: 6px; }
-.hero__dots i { width: 8px; height: 8px; border-radius: var(--r-pill); background: rgba(255, 255, 255, .55); transition: width .3s var(--ease), background .3s; }
-.hero__dots i.on { width: 32px; background: #fff; }
+// Точки слайдера: полоски, у текущей белая заливка растёт слева через scaleX,
+// без пересчёта вёрстки
+.hero__dots i { position: relative; width: 20px; height: 6px; border-radius: var(--r-pill); background: rgba(255, 255, 255, .45); overflow: hidden; }
+.hero__dots i::after { content: ''; position: absolute; inset: 0; background: #fff; transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
+.hero__dots i.on::after { transform: none; }
 
 /* Промо: самый громкий элемент страницы */
 .promo {
@@ -330,7 +333,8 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   background: var(--chip);
   font: 500 var(--fs-base)/1 var(--f-text);
   font-variant-numeric: tabular-nums;
-  transition: background .2s;
+  // transform в списке: своё нажатие магазина иначе шло бы без перехода
+  transition: transform .12s cubic-bezier(.2, .8, .2, 1), background .2s;
 }
 .price-btn svg { width: 18px; height: 18px; stroke-width: 2; }
 .price-btn[data-added] { background: var(--ink); color: #fff; }
@@ -717,6 +721,17 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .co__done p, .co__empty p { max-width: 36ch; }
 .co__done .pill, .co__empty .pill { margin-top: 10px; max-width: 320px; }
 
+// «Меньше движения»: мягче, а не ноль. Шторка и всплывашка проявляются без
+// выезда, нажатия без проседания, переключатели и точки слайдера без хода.
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  html { scroll-behavior: auto; }
+  .sheet { transform: none; opacity: 0; transition: opacity .2s linear; }
+  .sheet.show { opacity: 1; }
+  .toast, .toast.show { transform: translate(-50%, 0); }
+  .round:active, .pill:active, .chips button:active, .price-btn:active, .code:active, .opts button:active, .opts a:active,
+  .swatches button:active, .ribbons button:active, .tune__tile:active, .dock__buy:active, .pcard__photo:active,
+  .circles a:active, .list-opts button:active, .pay__opt:active, .chat__hints button:active, .chat__florist:active, .link:active {
+    transform: none;
+  }
+  .switch i, .switch i::after, .hero__dots i::after { transition: none; }
 }

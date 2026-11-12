@@ -49,22 +49,27 @@ nav a.lnk {
   padding: 6px 0;
   transition: color .25s;
 
+  // Подчёркивание растёт слева через scaleX: без пересчёта вёрстки
   &::after {
     content: "";
     position: absolute;
     left: 0;
-    right: 100%;
+    right: 0;
     bottom: 0;
     height: 1.5px;
     background: var(--cyan);
-    transition: right .3s cubic-bezier(.2, .7, .3, 1);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s cubic-bezier(.23, 1, .32, 1);
   }
 
-  &:hover {
-    color: var(--ink);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--ink);
 
-    &::after {
-      right: 0;
+      &::after {
+        transform: none;
+      }
     }
   }
 }

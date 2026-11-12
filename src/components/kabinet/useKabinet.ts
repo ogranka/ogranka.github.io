@@ -13,13 +13,17 @@ export interface Toast {
 export function useKabinet() {
   const [state, setState] = useState<KabinetState | null>(null);
   const [busy, setBusy] = useState(false);
+  // Последняя всплывашка остаётся в разметке и прячется классом: так у неё
+  // есть плавный уход, а новая подхватывает её с текущего места
   const [toast, setToast] = useState<Toast | null>(null);
+  const [toastShown, setToastShown] = useState(false);
   const timer = useRef(0);
 
   const say = useCallback((text: string, kind: Toast['kind'] = 'ok') => {
     setToast({ id: Date.now(), text, kind });
+    setToastShown(true);
     clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setToast(null), 2600);
+    timer.current = window.setTimeout(() => setToastShown(false), 2600);
   }, []);
 
   useEffect(() => {
@@ -44,5 +48,5 @@ export function useKabinet() {
     [say],
   );
 
-  return { state, busy, toast, run, say };
+  return { state, busy, toast, toastShown, run, say };
 }

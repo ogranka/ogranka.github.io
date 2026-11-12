@@ -263,6 +263,7 @@ function render(focus = false) {
   document.documentElement.dataset.screen = s.screen;
   setButtons();
   if (focus) {
+    root.dataset.dir = dir;
     root.classList.remove('enter');
     void root.offsetWidth;
     root.classList.add('enter');
@@ -271,7 +272,11 @@ function render(focus = false) {
   }
 }
 
+// Направление смены экрана: «назад» въезжает слева, всё остальное справа
+let dir: 'forward' | 'back' = 'forward';
+
 function go(screen: Screen) {
+  dir = backOf[s.screen] === screen ? 'back' : 'forward';
   s.screen = screen;
   render(true);
 }
@@ -287,12 +292,14 @@ function setButtons() {
   else shell.setMain(null);
 }
 
+// Всплывашка появляется и уходит переходом: повторный вызов подхватывает
+// её с текущего места, а не начинает с нуля
 let toastTimer = 0;
 function toast(text: string) {
   toastEl.textContent = text;
-  toastEl.hidden = false;
+  toastEl.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => (toastEl.hidden = true), 3500);
+  toastTimer = window.setTimeout(() => toastEl.classList.remove('show'), 3500);
 }
 
 async function submit() {

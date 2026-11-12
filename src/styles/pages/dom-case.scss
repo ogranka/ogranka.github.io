@@ -22,16 +22,29 @@
   }
 }
 
+// Выход во весь экран: на телефоне фрейм занимает почти весь экран и забирает
+// прокрутку, поэтому отдельный вход сделан кнопкой, а не мелкой ссылкой
 .demo-open {
-  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 14px;
   font-size: var(--fs-s);
   color: var(--dim);
+}
 
-  a {
-    color: inherit;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--line-strong);
-  }
+.demo-open__btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--fs-m);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 @media (max-width: $bp-mobile) {

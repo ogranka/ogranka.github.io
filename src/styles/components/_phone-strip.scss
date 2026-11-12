@@ -130,8 +130,26 @@
   }
 }
 
+// Телефон: рамка уже экрана, чтобы рядом оставалось место листать саму
+// страницу и было видно следующий экран. Вход в магазин целиком кнопкой.
 @media (max-width: $bp-mobile) {
   .phone {
-    flex-basis: 100%;
+    flex-basis: 82%;
+  }
+
+  .phones__open {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--paper);
+    }
   }
 }

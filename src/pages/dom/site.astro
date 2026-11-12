@@ -173,6 +173,12 @@ const quizSteps = [
             <p class="quiz__progress" aria-live="polite"><span data-step-label>Шаг 1 из 5</span></p>
             <span class="quiz__bar" aria-hidden="true"><span data-bar></span></span>
           </div>
+          <aside class="quiz__live" data-live aria-label="Предварительный расчёт">
+            <p class="quiz__live-label">Предварительно</p>
+            <p class="quiz__live-sum" data-live-sum></p>
+            <p class="quiz__live-weeks" data-live-weeks></p>
+            <p class="quiz__live-note">Считаем по тем же ценам, что в проектах. Точную сумму назовём в смете по пунктам.</p>
+          </aside>
           <form class="quiz__form" novalidate data-quiz>
             <fieldset class="quiz__step is-active" data-step="0">
               <legend>Какая площадь нужна?</legend>
@@ -263,7 +269,10 @@ const quizSteps = [
         </div>
         <a class="btn btn--amber" href="#quiz">Рассчитать стоимость</a>
       </div>
-      <p class="wrap foot__note">Демонстрационный сайт: мастерская, проекты и цены вымышленные, фото с Unsplash.</p>
+      <p class="wrap foot__note">
+        Демонстрационный сайт: мастерская, проекты и цены вымышленные, фото с Unsplash. Это кейс из портфолио ogranka,
+        <a href="/dom/" target="_top">как устроен этот лендинг</a>.
+      </p>
     </footer>
 
     <script>

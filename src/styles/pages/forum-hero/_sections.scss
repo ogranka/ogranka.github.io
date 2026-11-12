@@ -41,10 +41,8 @@ section {
     font-weight: 800;
     letter-spacing: -.035em;
     line-height: 1;
-    background: linear-gradient(140deg, var(--ink) 25%, var(--cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    // Сплошной цвет вместо градиента в тексте: цифра читается сразу
+    color: var(--ink);
   }
 
   span {

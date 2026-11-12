@@ -15,6 +15,8 @@ export function initQuiz() {
   const label = document.querySelector<HTMLElement>('[data-step-label]')!;
   const bar = document.querySelector<HTMLElement>('[data-bar]')!;
   const areaOut = form.querySelector<HTMLOutputElement>('[data-area-out]')!;
+  // Предварительный расчёт рядом с вопросами на широком экране: меняется с каждым ответом
+  const live = document.querySelector<HTMLElement>('[data-live]');
   let at = 0;
 
   const answers = (): QuizAnswers => {
@@ -30,6 +32,13 @@ export function initQuiz() {
     form.querySelector('[data-lines]')!.innerHTML = e.lines.map((l) => `<li><span>${l.label}</span><span>${rub(l.value)}</span></li>`).join('');
   };
 
+  const renderLive = () => {
+    if (!live) return;
+    const e = estimate(answers());
+    live.querySelector('[data-live-sum]')!.innerHTML = `<span class="nowrap">${rub(e.low)}</span> — <span class="nowrap">${rub(e.high)}</span>`;
+    live.querySelector('[data-live-weeks]')!.textContent = `Стройка около ${e.weeks} недель`;
+  };
+
   const show = (i: number, focus = true) => {
     // Направление для въезда шага: назад слева, вперёд справа
     form.dataset.dir = i < at ? 'back' : 'forward';
@@ -42,7 +51,9 @@ export function initQuiz() {
     next.hidden = result;
     next.textContent = i === TOTAL - 1 ? 'Посчитать' : 'Дальше';
     lead.hidden = !result;
+    if (live) live.hidden = result;
     if (result) render();
+    else renderLive();
     if (focus) {
       // Фокус на заголовок шага: экранный диктор прочитает вопрос
       const target = steps[i].querySelector<HTMLElement>('legend, .result__sum');
@@ -57,6 +68,7 @@ export function initQuiz() {
     const t = e.target as HTMLInputElement;
     if (t.name === 'area') areaOut.textContent = `${t.value} м²`;
     if (at === TOTAL) render();
+    else renderLive();
   });
   next.addEventListener('click', () => show(Math.min(TOTAL, at + 1)));
   back.addEventListener('click', () => show(Math.max(0, at - 1)));

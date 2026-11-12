@@ -38,14 +38,17 @@ function buildHouse(track: HTMLElement, house: Element) {
   // размеры проявляются следом, прокрутка дальше строит дом
   gsap.to(layer('dims'), { opacity: 1, duration: 0.6, delay: 0.9 });
 
-  // Сборка идёт, пока первый экран прилипает к верху: от начала дорожки
-  // до её конца. Длина дорожки задана в CSS, короче на телефоне.
+  // Сборка идёт, пока первый экран прилипает к верху. На низком телефоне
+  // экран выше окна и начинает уезжать раньше конца дорожки, поэтому сборка
+  // кончается, когда он ещё стоит: дом готов до того, как крыша уйдёт под шапку.
+  // Длина дорожки задана в CSS, короче на телефоне.
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
       trigger: track,
       start: 'top top',
-      end: 'bottom bottom',
+      end: () => `+=${stickyLength(track)}`,
+      invalidateOnRefresh: true,
       scrub: 0.8,
       onUpdate: (self) => {
         setStage(self.progress);
@@ -76,7 +79,7 @@ function autoplay(track: HTMLElement) {
     (entries) => {
       if (!entries.some((e) => e.intersectionRatio >= 0.6)) return;
       io.disconnect();
-      const end = track.offsetHeight - innerHeight;
+      const end = track.offsetTop + stickyLength(track);
       const pos = { y: scrollY };
       const tween = gsap.to(pos, {
         y: end,
@@ -97,6 +100,12 @@ function autoplay(track: HTMLElement) {
   // Без явного корня наблюдатель во фрейме меряет видимость в окне браузера,
   // то есть на странице кейса, а не внутри фрейма
   io.observe(track.querySelector('.hero')!);
+}
+
+// Сколько точек прокрутки первый экран стоит на месте
+function stickyLength(track: HTMLElement) {
+  const hero = track.querySelector<HTMLElement>('.hero');
+  return Math.max(1, track.offsetHeight - (hero?.offsetHeight ?? innerHeight));
 }
 
 function fillSteps() {

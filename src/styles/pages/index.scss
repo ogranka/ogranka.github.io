@@ -3,6 +3,11 @@
 .hero {
   padding: 56px 0 8px;
 
+  // Узкий телефон: меньше воздуха сверху, чтобы первая работа попала на первый экран
+  @media (max-width: $bp-small) {
+    padding-top: 28px;
+  }
+
   @media (min-width: $bp-wide) {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
@@ -33,12 +38,13 @@
     text-wrap: pretty;
   }
 
-  // Строка доверия: факты, а не слоган, поэтому обычным текстом с меткой слева
+  // Строка доверия: четыре коротких факта столбиком, каждый своей строкой
   .trust {
-    margin-top: 18px;
-    max-width: 58ch;
-    padding-left: 14px;
-    border-left: 3px solid var(--accent);
+    display: grid;
+    gap: 4px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
     font-weight: 500;
     text-wrap: pretty;
   }
@@ -62,6 +68,13 @@
   font-size: var(--fs-m);
   text-decoration: none;
   transition: background .2s var(--ease), box-shadow .2s var(--ease), scale .45s var(--spring);
+}
+
+// Узкий телефон: две кнопки помещаются в одну строку
+@media (max-width: $bp-small) {
+  .btn {
+    padding: 0 16px;
+  }
 }
 
 .btn--ink {
@@ -240,6 +253,13 @@
 }
 
 
+// На телефоне полосы цифр нет: она отодвигала работы за первый экран
+@media (max-width: $bp-mobile) {
+  .stats {
+    display: none;
+  }
+}
+
 @media (max-width: $bp-small) {
   .stats ul {
     grid-template-columns: 1fr;
@@ -274,10 +294,9 @@
   }
 }
 
-// Заголовки и строки пунктов в трёх блоках под кейсами устроены одинаково
+// Заголовки и строки пунктов в блоках под кейсами устроены одинаково
 .includes,
-.process,
-.after-launch {
+.process {
   h2 {
     font-size: clamp(1.6rem, 1.1rem + 2vw, 2.3rem);
     font-weight: 700;
@@ -306,8 +325,7 @@
   }
 }
 
-.includes,
-.after-launch {
+.includes {
   margin-top: 96px;
 
   ul {
@@ -325,17 +343,13 @@
 }
 
 .includes ul {
-  grid-template-columns: repeat(2, 1fr);
-
-  @media (max-width: $bp-small) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.after-launch ul {
   grid-template-columns: repeat(3, 1fr);
 
   @media (max-width: $bp-wide) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: $bp-small) {
     grid-template-columns: 1fr;
   }
 }
@@ -348,19 +362,6 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     counter-reset: step;
-  }
-
-  .num {
-    display: inline-grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 600;
-    font-size: var(--fs-sm);
-    margin-bottom: 14px;
   }
 
   @media (max-width: $bp-wide) {
@@ -401,4 +402,85 @@
     margin-top: 64px;
     padding: 24px 20px;
   }
+}
+
+// Отдельные приёмы: не проекты, а показ одного умения. Компактный ряд под
+// сеткой кейсов: маленькое превью, тип, название и строка описания.
+.techniques-head {
+  margin-top: 56px;
+  font-size: var(--fs-l);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+.techniques {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: $bp-wide) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.technique {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  color: inherit;
+  text-decoration: none;
+  --press: .98;
+  transition: border-color .2s, scale .45s var(--spring);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--line-strong);
+    }
+  }
+}
+
+.technique__shot {
+  display: block;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  aspect-ratio: 16 / 10;
+  background: var(--surface-2);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+}
+
+.technique__body {
+  display: grid;
+  gap: 4px;
+}
+
+.technique__kind {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.technique b {
+  font-size: var(--fs-m);
+  line-height: 1.25;
+}
+
+.technique__text {
+  color: var(--dim);
+  font-size: var(--fs-sm);
+  text-wrap: pretty;
 }

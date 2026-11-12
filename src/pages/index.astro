@@ -12,10 +12,12 @@ const preview = (name: string) => previews[`../assets/previews/${name}.webp`]?.d
 // Коллаж первого экрана: четыре кейса разного типа, каждое превью ведёт на кейс
 const collage = ['/cvety/', '/zhurnal/', '/forum-hero/', '/dom/'].map((href) => cases.find((c) => c.href === href)!);
 
+// Проекты идут сеткой карточек, приёмы компактным рядом под ней.
 // Колонка карточки в ряду сетки для задержки выезда: широкая занимает ряд
 // целиком, половинки идут парами
+const techniques = cases.filter((item) => item.technique);
 let column = 0;
-const cards = cases.map((item) => {
+const cards = cases.filter((item) => !item.technique).map((item) => {
   const col = item.size === 'wide' ? 0 : column;
   column = item.size === 'wide' ? 0 : (column + 1) % 2;
   return { ...item, col };
@@ -27,16 +29,16 @@ const stats = [
   { value: 30, label: 'дней гарантии после запуска' },
 ];
 
+// Строка доверия: четыре факта, на телефоне каждый своей строкой
+const trust = ['Больше восьми лет в разработке', 'Договор и чек самозанятого', 'Гибкая оплата по этапам', 'Отвечаю в тот же день'];
+
+// Что входит и что после запуска: один блок, гарантия названа один раз
 const includes = [
   { title: 'Дизайн и сборка у одного человека', text: 'Макет согласуем до кода, второго подрядчика искать не нужно.' },
   { title: 'Интеграции', text: 'Оплата картой и СБП, доставка, CRM, заявки в Telegram, внешние сервисы.' },
-  { title: 'Админка', text: 'Тексты, товары и цены меняете сами, без программиста.' },
+  { title: 'Админка и доступы', text: 'Тексты, товары и цены меняете сами. Передаю все доступы и короткую инструкцию.' },
   { title: 'Скорость и телефон', text: 'Быстрая загрузка, версия для телефона, базовая SEO-подготовка, согласие на обработку данных по 152-ФЗ.' },
-];
-
-const afterLaunch = [
   { title: 'Гарантия 30 дней после запуска', text: 'Если что-то работает не так, как договорились, исправлю бесплатно и быстро.' },
-  { title: 'Передаю все доступы', text: 'И короткую инструкцию к админке, чтобы менять сайт без меня.' },
   { title: 'Сопровождение по желанию', text: 'Правки, обновления и новые разделы, когда они понадобятся.' },
 ];
 
@@ -85,10 +87,9 @@ const steps = [
           Интернет-магазины, сайты компаний, лендинги, личные кабинеты, <span class="nowrap">Telegram-боты</span> и
           ИИ-ассистенты. От сметы до запуска одним исполнителем.
         </p>
-        <p class="trust">
-          Больше восьми лет в коммерческой разработке, последние годы в команде крупного сервиса,
-          детали под NDA. Держу немного проектов одновременно и отвечаю в тот же день.
-        </p>
+        <ul class="trust" aria-label="Коротко о работе">
+          {trust.map((fact) => <li>{fact}</li>)}
+        </ul>
         <div class="hero__actions">
           <a class="btn btn--ink pressable" href="#cases">Смотреть кейсы</a>
           <a class="btn btn--line pressable" href="#contact">Обсудить проект</a>
@@ -127,6 +128,23 @@ const steps = [
       <div class="cases">
         {cards.map((item, index) => <CaseCard {...item} preview={preview(item.preview)} index={index} />)}
       </div>
+      <h3 class="techniques-head">Отдельные приёмы</h3>
+      <div class="techniques">
+        {
+          techniques.map((item) => (
+            <a class="technique pressable" href={item.href}>
+              <span class="technique__shot">
+                <Image src={preview(item.preview)!} alt="" widths={[240, 480]} sizes="(max-width: 760px) 30vw, 180px" loading="lazy" decoding="async" />
+              </span>
+              <span class="technique__body">
+                <span class="technique__kind">{item.kind}</span>
+                <b>{item.title}</b>
+                <span class="technique__text">{item.description}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
     </section>
 
     <section class="includes wrap" aria-labelledby="includes-h">
@@ -155,20 +173,6 @@ const steps = [
           ))
         }
       </ol>
-    </section>
-
-    <section class="after-launch wrap" aria-labelledby="after-h">
-      <h2 id="after-h">После запуска</h2>
-      <ul>
-        {
-          afterLaunch.map((item) => (
-            <li data-reveal>
-              <b>{item.title}</b>
-              <p>{item.text}</p>
-            </li>
-          ))
-        }
-      </ul>
     </section>
 
     <section class="contact wrap" id="contact" aria-labelledby="contact-h">

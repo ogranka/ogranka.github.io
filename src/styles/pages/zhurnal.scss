@@ -48,6 +48,7 @@
   --wrap: 1120px;
   --gut: 16px;
   --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
 }
 
 :root[data-theme='dark'] {
@@ -401,12 +402,24 @@ ol {
       width: 100%;
       aspect-ratio: 16 / 10;
       object-fit: cover;
-      transition: transform .5s var(--ease);
+      transition: transform .25s var(--ease-out);
     }
   }
 
-  &:hover &__cover img {
-    transform: scale(1.03);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover &__cover img {
+      transform: scale(1.03);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__cover img {
+      transition: none;
+    }
+
+    &:hover &__cover img {
+      transform: none;
+    }
   }
 
   &__meta {

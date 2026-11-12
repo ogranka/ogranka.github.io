@@ -34,9 +34,8 @@ function buildHouse(track: HTMLElement, house: Element) {
   };
   setStage(0);
 
-  // При открытии чертёж вычерчивается сам, прокрутка дальше строит дом
-  const lines = house.querySelectorAll('.lines path');
-  gsap.to(lines, { strokeDashoffset: 0, duration: 1.4, stagger: 0.07, ease: 'power1.inOut', delay: 0.2 });
+  // При открытии чертёж вычерчивается сам (линии на CSS, см. dom-site.scss),
+  // размеры проявляются следом, прокрутка дальше строит дом
   gsap.to(layer('dims'), { opacity: 1, duration: 0.6, delay: 0.9 });
 
   // Сборка идёт, пока первый экран прилипает к верху. На низком телефоне

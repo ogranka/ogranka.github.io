@@ -67,13 +67,19 @@ const next = nextCase(Astro.props.current);
     transition: transform .2s var(--ease);
   }
 
-  a:hover svg {
-    transform: translateX(4px);
+  @media (hover: hover) and (pointer: fine) {
+    a:hover svg {
+      transform: translateX(4px);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     svg {
       transition: none;
+    }
+
+    a:hover svg {
+      transform: none;
     }
   }
 </style>

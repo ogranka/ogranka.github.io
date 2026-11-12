@@ -138,6 +138,12 @@ svg {
   margin-left: -12px;
   border-radius: 50%;
   color: var(--link);
+  transition: scale .2s cubic-bezier(.23, 1, .32, 1);
+
+  &:active {
+    scale: .92;
+    transition-duration: .12s;
+  }
 
   svg {
     width: 26px;
@@ -158,15 +164,20 @@ svg {
   margin: 0 auto;
   padding: 4px 16px calc(96px + var(--safe-b));
 
+  // Новый экран въезжает по ходу действия: вперёд справа, «назад» слева
   &.enter {
     animation: enter .22s var(--ease);
+  }
+
+  &[data-dir='back'] {
+    --enter-from: -14px;
   }
 }
 
 @keyframes enter {
   from {
     opacity: 0;
-    transform: translateX(14px);
+    transform: translateX(var(--enter-from, 14px));
   }
 }
 
@@ -638,9 +649,14 @@ svg {
   color: var(--page);
   font-size: 14px;
   text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .2s cubic-bezier(.23, 1, .32, 1), transform .2s cubic-bezier(.23, 1, .32, 1);
 
-  &[hidden] {
-    display: none;
+  &.show {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -682,14 +698,29 @@ svg {
   }
 }
 
+// «Меньше движения»: экраны и всплывашка без сдвига, только проявление
 @media (prefers-reduced-motion: reduce) {
-  .view.enter,
+  .view.enter {
+    animation: fade .15s linear;
+  }
+
   .done__icon {
     animation: none;
   }
 
+  .toast {
+    transform: none;
+  }
+
   .slot,
-  .mainbtn {
+  .mainbtn,
+  .bar__back {
     transition: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
   }
 }

@@ -105,42 +105,90 @@
 
 .collage__item {
   position: absolute;
-  overflow: hidden;
   border-radius: var(--r-m);
   border: 1px solid var(--line);
   background: var(--surface);
   box-shadow: var(--shadow);
-  // Наведение: окно плавно поднимается и выходит вперёд, соседние чуть
-  // отступают. Слой меняется сразу при наведении, а обратно только через
-  // 0,5 с, когда окно уже опустилось: иначе оно резко пряталось бы за соседа.
-  // translate ставит скрипт плавным догоняющим движением, поэтому его в
-  // transition нет.
+  // Наведение: окно поднимается и выходит вперёд, соседние чуть отступают.
+  // Слой меняется сразу при наведении, а обратно только через 0,3 с, когда
+  // окно уже опустилось: иначе оно резко пряталось бы за соседа. Глубокую
+  // тень несёт слой ::after, у него меняется только прозрачность. translate
+  // ставит скрипт плавным догоняющим движением, поэтому его в transition нет.
   transition:
-    transform .7s var(--ease),
-    box-shadow .7s var(--ease),
-    opacity .6s var(--ease),
+    transform .3s var(--ease-out),
+    opacity .25s var(--ease-out),
     scale .45s var(--spring),
-    z-index 0s linear .5s;
+    z-index 0s linear .3s;
+
+  // Углы скругляют сами полоска окна и картинка: у окна нет overflow, иначе
+  // обрезалась бы тень слоя ::after
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    box-shadow: 0 40px 80px -34px rgba(22, 24, 29, .55);
+    opacity: 0;
+    transition: opacity .3s var(--ease-out);
+    pointer-events: none;
+  }
 
   img {
     display: block;
     width: 100%;
     height: auto;
+    border-radius: 0 0 calc(var(--r-m) - 1px) calc(var(--r-m) - 1px);
   }
 
-  &:hover,
   &:focus-visible {
     z-index: 5;
     transform: translateY(-8px) scale(1.025);
-    box-shadow: 0 40px 80px -34px rgba(22, 24, 29, .55);
     transition-delay: 0s;
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      z-index: 5;
+      transform: translateY(-8px) scale(1.025);
+      transition-delay: 0s;
+
+      &::after {
+        opacity: 1;
+      }
+    }
   }
 }
 
-.collage:has(.collage__item:hover) .collage__item:not(:hover),
+@media (hover: hover) and (pointer: fine) {
+  .collage:has(.collage__item:hover) .collage__item:not(:hover) {
+    transform: scale(.985);
+    opacity: .88;
+  }
+}
+
 .collage:has(:focus-visible) .collage__item:not(:focus-visible) {
   transform: scale(.985);
   opacity: .88;
+}
+
+// «Меньше движения»: окна не поднимаются и не отступают, тень и порядок слоёв
+// меняются сразу
+@media (prefers-reduced-motion: reduce) {
+  .collage__item,
+  .collage__item::after {
+    transition: none;
+  }
+
+  .collage__item:hover,
+  .collage__item:focus-visible,
+  .collage:has(.collage__item:hover) .collage__item:not(:hover),
+  .collage:has(:focus-visible) .collage__item:not(:focus-visible) {
+    transform: none;
+  }
 }
 
 .collage__item--1 {
@@ -236,6 +284,7 @@
   gap: 5px;
   padding: 8px 10px;
   border-bottom: 1px solid var(--line);
+  border-radius: calc(var(--r-m) - 1px) calc(var(--r-m) - 1px) 0 0;
 
   i {
     width: 7px;

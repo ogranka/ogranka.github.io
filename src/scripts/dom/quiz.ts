@@ -40,11 +40,13 @@ export function initQuiz() {
   };
 
   const show = (i: number, focus = true) => {
+    // Направление для въезда шага: назад слева, вперёд справа
+    form.dataset.dir = i < at ? 'back' : 'forward';
     at = i;
     steps.forEach((s, n) => s.classList.toggle('is-active', n === i));
     const result = i === TOTAL;
     label.textContent = result ? 'Готово' : `Шаг ${i + 1} из ${TOTAL}`;
-    bar.style.width = `${((result ? TOTAL : i + 1) / TOTAL) * 100}%`;
+    bar.style.transform = `scaleX(${(result ? TOTAL : i + 1) / TOTAL})`;
     back.hidden = i === 0;
     next.hidden = result;
     next.textContent = i === TOTAL - 1 ? 'Посчитать' : 'Дальше';

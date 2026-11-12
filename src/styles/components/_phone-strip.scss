@@ -36,7 +36,8 @@
       font-size: var(--fs-sm);
       font-weight: 500;
       color: var(--dim);
-      transition: background .2s, color .2s;
+      // scale в списке: общее нажатие из _reset иначе шло бы без перехода
+      transition: background .2s, color .2s, scale .45s var(--spring);
 
       &[aria-pressed='true'] {
         background: var(--surface);

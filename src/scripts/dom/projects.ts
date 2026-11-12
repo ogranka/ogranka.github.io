@@ -11,7 +11,9 @@ export function initProjects() {
     const max = row.scrollWidth - row.clientWidth - 8;
     buttons.forEach((b) => (b.disabled = Number(b.dataset.scroll) < 0 ? row.scrollLeft <= 8 : row.scrollLeft >= max));
   };
-  buttons.forEach((b) => b.addEventListener('click', () => row.scrollBy({ left: Number(b.dataset.scroll) * step(), behavior: 'smooth' })));
+  // При «меньше движения» листаем сразу, без плавной прокрутки
+  const behavior: ScrollBehavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  buttons.forEach((b) => b.addEventListener('click', () => row.scrollBy({ left: Number(b.dataset.scroll) * step(), behavior })));
   row.addEventListener('scroll', sync, { passive: true });
   addEventListener('resize', sync);
   sync();
@@ -43,7 +45,7 @@ export function initProjects() {
     // У правого края последняя карточка не кратна шагу: остаёмся у края
     const max = row.scrollWidth - row.clientWidth;
     const target = row.scrollLeft > max - s / 2 ? max : Math.round(row.scrollLeft / s) * s;
-    row.scrollTo({ left: target, behavior: 'smooth' });
+    row.scrollTo({ left: target, behavior });
     setTimeout(() => row.classList.remove('is-dragging'), 450);
   };
   row.addEventListener('pointerup', end);

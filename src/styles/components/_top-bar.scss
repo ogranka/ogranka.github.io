@@ -55,7 +55,8 @@
     display: grid;
     place-items: center;
     color: var(--ink);
-    transition: border-color .2s, background .2s;
+    // scale в списке: общее нажатие из _reset иначе шло бы без перехода
+    transition: border-color .2s, background .2s, scale .45s var(--spring);
 
     &:hover {
       border-color: var(--line-strong);

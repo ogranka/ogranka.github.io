@@ -28,6 +28,8 @@
 }
 
 :root {
+  // Сильный выход для откликов и появлений
+  --kb-ease: cubic-bezier(.23, 1, .32, 1);
   color-scheme: light;
   --paper: #fdfdfb;
   --paper-2: #f3f5f8;
@@ -404,10 +406,11 @@ button {
   background: var(--pen);
   color: var(--paper);
   font-weight: 600;
-  transition: transform 0.12s, background-color 0.15s;
+  transition: scale 0.2s var(--kb-ease), background-color 0.15s;
 
   &:active:not(:disabled) {
-    transform: translateY(1px);
+    scale: 0.97;
+    transition-duration: 0.12s, 0.15s;
   }
 
   &:disabled {
@@ -956,6 +959,19 @@ button.kb-card:hover {
   border-color: var(--tone);
 }
 
+// Отклик на нажатие у кнопок без своего: проседают за 0,12 с, встают за 0,2 с
+.kb-iconbtn,
+.kb-nav button,
+.kb-lesson,
+button.kb-card {
+  transition: scale 0.2s var(--kb-ease);
+
+  &:active {
+    scale: 0.97;
+    transition-duration: 0.12s;
+  }
+}
+
 .kb-card__top {
   display: flex;
   align-items: center;
@@ -1223,7 +1239,12 @@ button.kb-card:hover {
   }
 
   &[open] {
-    animation: kb-pop 0.18s ease-out;
+    animation: kb-pop 0.18s var(--kb-ease);
+  }
+
+  // Затемнение под окном проявляется, а не появляется рывком
+  &[open]::backdrop {
+    animation: kb-fade 0.15s linear;
   }
 }
 
@@ -1231,6 +1252,12 @@ button.kb-card:hover {
   from {
     opacity: 0;
     transform: translateY(8px);
+  }
+}
+
+@keyframes kb-fade {
+  from {
+    opacity: 0;
   }
 }
 
@@ -1281,7 +1308,21 @@ button.kb-card:hover {
   font-size: 14px;
   font-weight: 500;
   box-shadow: 0 12px 30px -12px rgb(0 0 0 / 0.5);
-  animation: kb-pop 0.2s ease-out;
+  // Переход, а не ключевые кадры: новая всплывашка подхватывает текущую с её
+  // места, и у неё есть уход
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s var(--kb-ease), transform 0.2s var(--kb-ease);
+
+  &.show {
+    opacity: 1;
+    transform: none;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
 
   &.is-error {
     background: var(--bad);
@@ -1424,13 +1465,41 @@ button.kb-card:hover {
   }
 }
 
+// «Меньше движения»: мягче, а не ноль. Сдвиги и нажатия убраны, проявления
+// остаются. Полоса загрузки не бежит, а мерцает на месте, чтобы ожидание
+// было видно.
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .kb-progress.is-on {
+    transform: scaleX(0.6);
+    animation: kb-pulse 1.2s ease-in-out infinite;
+  }
+
+  .kb-dialog[open] {
+    animation-name: kb-fade;
+  }
+
+  .kb-toast {
+    transform: none;
+
+    &.show {
+      @starting-style {
+        transform: none;
+      }
+    }
+  }
+
+  .kb-btn:active:not(:disabled),
+  .kb-iconbtn:active,
+  .kb-nav button:active,
+  .kb-lesson:active,
+  button.kb-card:active {
+    scale: none;
+  }
+}
+
+@keyframes kb-pulse {
+  50% {
+    opacity: 0.45;
   }
 }
 
